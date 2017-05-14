@@ -1,13 +1,12 @@
 package com.yy.cloud.core.usermgmt.service;
 
+import java.util.List;
+
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.PageInfo;
-import com.yy.cloud.common.data.dto.accountcenter.RoleProfile;
-import com.yy.cloud.common.data.otd.role.RoleItem;
-import com.yy.cloud.common.data.otd.user.UserItem;
-import com.yy.cloud.core.usermgmt.data.domain.FoxUser;
-
-import java.util.List;
+import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
+import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 
 public interface RoleService {
 

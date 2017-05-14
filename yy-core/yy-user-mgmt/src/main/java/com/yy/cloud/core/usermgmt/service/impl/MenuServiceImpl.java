@@ -1,11 +1,17 @@
 package com.yy.cloud.core.usermgmt.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.yy.cloud.common.constant.CommonConstant;
-import com.yy.cloud.common.data.dto.accountcenter.RoleProfile;
-import com.yy.cloud.common.data.dto.menu.MenuProfile;
-import com.yy.cloud.common.data.otd.menu.MenuItem;
-import com.yy.cloud.common.data.otd.role.RoleDetailsItem;
-import com.yy.cloud.common.data.otd.role.RoleItem;
+import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
+import com.yy.cloud.common.data.otd.sysbase.MenuItem;
+import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
 import com.yy.cloud.core.usermgmt.data.domain.FoxMenu;
 import com.yy.cloud.core.usermgmt.data.domain.FoxRole;
 import com.yy.cloud.core.usermgmt.data.domain.FoxRoleMenu;
@@ -13,15 +19,6 @@ import com.yy.cloud.core.usermgmt.data.repositories.FoxMenuRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.FoxRoleMenuRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.FoxRoleRepository;
 import com.yy.cloud.core.usermgmt.service.MenuService;
-
-import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MenuServiceImpl implements MenuService {

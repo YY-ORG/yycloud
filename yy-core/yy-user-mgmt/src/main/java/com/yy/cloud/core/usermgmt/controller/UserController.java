@@ -1,33 +1,34 @@
 package com.yy.cloud.core.usermgmt.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
-import com.yy.cloud.common.constant.UserConstant;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
-import com.yy.cloud.common.data.dto.accountcenter.PasswordProfile;
-import com.yy.cloud.common.data.dto.accountcenter.UserProfile;
-import com.yy.cloud.common.data.otd.user.FoxUserItem;
-import com.yy.cloud.common.data.otd.user.UserDetailsItem;
-import com.yy.cloud.common.data.otd.user.UserItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.core.usermgmt.exception.PasswordNotMatchException;
 import com.yy.cloud.core.usermgmt.exception.UserExistException;
 import com.yy.cloud.core.usermgmt.service.UserService;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Slf4j

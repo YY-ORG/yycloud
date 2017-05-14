@@ -2,10 +2,9 @@ package com.yy.cloud.core.usermgmt.service;
 
 import java.util.List;
 
-import com.yy.cloud.common.data.dto.accountcenter.RoleProfile;
-import com.yy.cloud.common.data.dto.menu.MenuProfile;
-import com.yy.cloud.common.data.otd.menu.MenuItem;
-import com.yy.cloud.common.data.otd.role.RoleDetailsItem;
+import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
+import com.yy.cloud.common.data.otd.sysbase.MenuItem;
+import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
 
 /**
  * Created by guof on 2016/11/15.

@@ -4,13 +4,8 @@ import java.util.List;
 
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.PageInfo;
-import com.yy.cloud.common.data.dto.accountcenter.OrganizationProfile;
-import com.yy.cloud.common.data.dto.accountcenter.PasswordProfile;
-import com.yy.cloud.common.data.dto.accountcenter.UserProfile;
-import com.yy.cloud.common.data.otd.organization.OrganizationItem;
-import com.yy.cloud.common.data.otd.user.FoxUserItem;
-import com.yy.cloud.common.data.otd.user.UserDetailsItem;
-import com.yy.cloud.common.data.otd.user.UserItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 
 public interface UserService {
 

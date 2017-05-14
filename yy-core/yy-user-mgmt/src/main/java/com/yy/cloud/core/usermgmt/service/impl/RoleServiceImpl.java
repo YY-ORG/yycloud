@@ -1,13 +1,22 @@
 package com.yy.cloud.core.usermgmt.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.PageInfo;
-import com.yy.cloud.common.data.dto.accountcenter.RoleProfile;
-import com.yy.cloud.common.data.otd.role.RoleItem;
-import com.yy.cloud.common.data.otd.user.UserDetailsItem;
-import com.yy.cloud.common.data.otd.user.UserItem;
+import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
+import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.core.usermgmt.constant.RoleTypeConstant;
 import com.yy.cloud.core.usermgmt.data.domain.FoxRole;
@@ -18,15 +27,6 @@ import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRoleRepository;
 import com.yy.cloud.core.usermgmt.service.RoleService;
 
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Slf4j

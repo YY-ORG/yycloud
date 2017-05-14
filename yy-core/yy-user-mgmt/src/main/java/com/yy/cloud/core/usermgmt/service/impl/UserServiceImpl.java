@@ -1,26 +1,12 @@
 package com.yy.cloud.core.usermgmt.service.impl;
 
-import com.yy.cloud.common.constant.CommonConstant;
-import com.yy.cloud.common.constant.ResultCode;
-import com.yy.cloud.common.data.GeneralContentResult;
-import com.yy.cloud.common.data.PageInfo;
-import com.yy.cloud.common.data.dto.accountcenter.PasswordProfile;
-import com.yy.cloud.common.data.dto.accountcenter.UserProfile;
-import com.yy.cloud.common.data.otd.organization.OrganizationItem;
-import com.yy.cloud.common.data.otd.role.RoleItem;
-import com.yy.cloud.common.data.otd.user.FoxUserItem;
-import com.yy.cloud.common.data.otd.user.UserDetailsItem;
-import com.yy.cloud.common.data.otd.user.UserItem;
-import com.yy.cloud.common.exception.NoRecordFoundException;
-import com.yy.cloud.common.service.SecurityService;
-import com.yy.cloud.core.usermgmt.constant.AdUserMgmtConstants;
-import com.yy.cloud.core.usermgmt.data.domain.*;
-import com.yy.cloud.core.usermgmt.data.repositories.*;
-import com.yy.cloud.core.usermgmt.exception.PasswordNotMatchException;
-import com.yy.cloud.core.usermgmt.exception.UserExistException;
-import com.yy.cloud.core.usermgmt.service.UserService;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -28,13 +14,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.yy.cloud.common.constant.CommonConstant;
+import com.yy.cloud.common.constant.ResultCode;
+import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.otd.tenant.OrganizationItem;
+import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserItem;
+import com.yy.cloud.common.exception.NoRecordFoundException;
+import com.yy.cloud.common.service.SecurityService;
+import com.yy.cloud.core.usermgmt.constant.AdUserMgmtConstants;
+import com.yy.cloud.core.usermgmt.data.domain.FoxRole;
+import com.yy.cloud.core.usermgmt.data.domain.FoxUser;
+import com.yy.cloud.core.usermgmt.data.domain.FoxUserRole;
+import com.yy.cloud.core.usermgmt.data.repositories.ExtLdapSourceRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.ExtLdapUserRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.FoxOrganizationRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.FoxRoleRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.FoxTenantRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.FoxUserOrganizationRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRoleRepository;
+import com.yy.cloud.core.usermgmt.exception.PasswordNotMatchException;
+import com.yy.cloud.core.usermgmt.exception.UserExistException;
+import com.yy.cloud.core.usermgmt.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
