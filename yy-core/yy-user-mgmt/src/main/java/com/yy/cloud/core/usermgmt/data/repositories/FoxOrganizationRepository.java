@@ -8,8 +8,8 @@
 
 package com.yy.cloud.core.usermgmt.data.repositories;
 
-import com.hpe.foxcloud.common.constant.CommonConstant;
-import com.hpe.foxcloud.core.usermgmt.data.domain.FoxOrganization;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +17,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.yy.cloud.core.usermgmt.data.domain.FoxOrganization;
 
 @Repository
 public interface FoxOrganizationRepository extends JpaRepository<FoxOrganization, String> {
