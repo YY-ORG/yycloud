@@ -39,19 +39,13 @@ public class Application {
 
     @PostConstruct
     public void postConstructConfiguration() {
-        // repositoryRestConfiguration.objectMapper().registerModule(new
-        // Jackson2HalModule());
 
         repositoryRestConfiguration.config().exposeIdsFor(FoxUser.class);
         repositoryRestConfiguration.config().exposeIdsFor(FoxUserRole.class);
-        repositoryRestConfiguration.config().exposeIdsFor(FoxTenant.class);
         repositoryRestConfiguration.config().exposeIdsFor(FoxRole.class);
         repositoryRestConfiguration.config().exposeIdsFor(FoxPermType.class);
         repositoryRestConfiguration.config().exposeIdsFor(FoxPermRole.class);
         repositoryRestConfiguration.config().exposeIdsFor(FoxPerm.class);
-        repositoryRestConfiguration.config().exposeIdsFor(FoxOrgRole.class);
-        repositoryRestConfiguration.config().exposeIdsFor(FoxOrganization.class);
         repositoryRestConfiguration.config().exposeIdsFor(FoxMenu.class);
-        repositoryRestConfiguration.config().exposeIdsFor(FoxAccess.class);
     }
 }
