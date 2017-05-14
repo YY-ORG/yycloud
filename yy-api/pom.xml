@@ -51,10 +51,10 @@
 	<modules>
 		<module>yy-admin-api</module>
 		<module>yy-basis-api</module>
-		<module>yy-groupadmin-api</module>
-		<module>yy-h5-api</module>
-		<module>yy-marketplace-api</module>
-		<module>yy-taskadmin-api</module>
-		<module>yy-tenantadmin-api</module>
+		
+		
+		
+		
+		
 	</modules>
 </project>
