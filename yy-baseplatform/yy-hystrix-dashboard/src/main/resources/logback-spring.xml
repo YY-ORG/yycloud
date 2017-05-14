@@ -27,7 +27,7 @@
 	</appender>
 
 	<springProfile name="development">
-		<logger name="com.gemii.lizcloud">
+		<logger name="com.yy.cloud">
 			<level value="DEBUG" />
 			<appender-ref ref="LOGSTASH" />
 		</logger>
@@ -38,7 +38,7 @@
 	</springProfile>
 
 	<springProfile name="cloud">
-		<logger name="com.gemii.lizcloud">
+		<logger name="com.yy.cloud">
 			<level value="DEBUG" />
 			<appender-ref ref="LOGSTASH" />
 		</logger>

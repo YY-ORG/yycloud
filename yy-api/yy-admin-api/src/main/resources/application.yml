@@ -1,7 +1,7 @@
 server:
   port: 9302
 logging:
-  path: /gemii/logs/gemii_micro/api/
+  path: /yy/logs/yy_micro/api/
 #    信道维持时间
 ribbon:
   ConnectTimeout: 600000

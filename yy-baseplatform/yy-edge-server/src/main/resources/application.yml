@@ -14,7 +14,7 @@ spring:
   aop:
     proxy-target-class: true
 logging:
-  path: /gemii/logs/gemii_micro/baseplatform/
+  path: /yy/logs/yy_micro/baseplatform/
   level:
     org.springframework.security: DEBUG
 

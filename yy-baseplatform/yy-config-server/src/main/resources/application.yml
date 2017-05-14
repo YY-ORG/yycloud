@@ -2,7 +2,7 @@
 server:
   port: 8888
 logging:
-  path: /gemii/logs/gemii_micro/baseplatform/
+  path: /yy/logs/yy_micro/baseplatform/
 
 ---
 spring:

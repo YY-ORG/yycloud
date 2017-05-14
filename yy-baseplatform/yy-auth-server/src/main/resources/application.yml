@@ -29,7 +29,7 @@ hystrix:
 logging:
   level:
     org.springframework.security: DEBUG
-  path: /gemii/logs/gemii_micro/baseplatform/
+  path: /yy/logs/yy_micro/baseplatform/
 
 foxcloud:
   security:

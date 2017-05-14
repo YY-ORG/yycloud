@@ -2,7 +2,7 @@
 server:
   port: 9021
 logging:
-  path: /gemii/logs/gemii_micro/core/
+  path: /yy/logs/yy_micro/core/
   
 ribbon:
   eureka:

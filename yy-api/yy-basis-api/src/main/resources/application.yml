@@ -2,7 +2,7 @@
 server:
   port: 9806
 logging:
-  path: /gemii/logs/gemii_micro/api/
+  path: /yy/logs/yy_micro/api/
   level:
     org.springframework.security: DEBUG
 #    信道维持时间

@@ -2,7 +2,7 @@
 server:
   port: 9101
 logging:
-  path: /gemii/logs/gemii_micro/core/
+  path: /yy/logs/yy_micro/core/
   level:
     org.springframework.security: DEBUG
 
