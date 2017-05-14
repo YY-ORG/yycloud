@@ -11,8 +11,6 @@ package com.yy.cloud.api.admin.controller;
 
 import java.util.List;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +18,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.yy.cloud.api.admin.service.SysBaseService;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralPagingResult;
-import com.yy.cloud.common.data.system.SysDic;
+import com.yy.cloud.common.data.otd.sysbase.SysDic;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;

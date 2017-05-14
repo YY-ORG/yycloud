@@ -1,25 +1,22 @@
 package com.yy.cloud.api.admin.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.yy.cloud.api.admin.service.UserMgmtService;
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.data.GeneralContentResult;
-import com.yy.cloud.common.data.GeneralPagingResult;
-import com.yy.cloud.common.data.PageParameter;
-import com.yy.cloud.common.data.dto.accountcenter.AccountProfile;
-import com.yy.cloud.common.data.dto.accountcenter.AuthenticationProfile;
-import com.yy.cloud.common.data.otd.enterprise.CommonKeyValue;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
-/**
- * Created by chenluo on 10/25/2016.
- */
 @RestController
 @Slf4j
 public class UserMgmtController {

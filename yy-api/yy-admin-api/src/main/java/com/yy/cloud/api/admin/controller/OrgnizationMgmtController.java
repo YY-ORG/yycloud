@@ -1,20 +1,18 @@
 package com.yy.cloud.api.admin.controller;
 
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.otd.tenant.OrganizationItem;
+
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-
-import com.yy.cloud.common.data.GeneralContentResult;
-import com.yy.cloud.common.data.PageParameter;
-import com.yy.cloud.common.data.dto.accountcenter.OrganizationProfile;
-import com.yy.cloud.common.data.otd.organization.OrganizationItem;
-
-/**
- * Created by chenluo on 10/24/2016.
- */
 @RestController
 public class OrgnizationMgmtController {
 
