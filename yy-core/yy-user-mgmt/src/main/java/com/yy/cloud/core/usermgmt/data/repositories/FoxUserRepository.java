@@ -1,19 +1,14 @@
 package com.yy.cloud.core.usermgmt.data.repositories;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.stereotype.Repository;
 
-import com.yy.cloud.core.usermgmt.data.domain.FoxOrganization;
 import com.yy.cloud.core.usermgmt.data.domain.FoxUser;
 
 /**

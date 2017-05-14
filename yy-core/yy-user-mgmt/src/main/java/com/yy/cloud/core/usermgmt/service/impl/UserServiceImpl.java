@@ -22,7 +22,10 @@ import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
+import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.tenant.OrganizationItem;
+import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
@@ -32,11 +35,8 @@ import com.yy.cloud.core.usermgmt.constant.AdUserMgmtConstants;
 import com.yy.cloud.core.usermgmt.data.domain.FoxRole;
 import com.yy.cloud.core.usermgmt.data.domain.FoxUser;
 import com.yy.cloud.core.usermgmt.data.domain.FoxUserRole;
-import com.yy.cloud.core.usermgmt.data.repositories.ExtLdapSourceRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.ExtLdapUserRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.FoxOrganizationRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.FoxRoleRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxTenantRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.FoxUserOrganizationRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRoleRepository;
@@ -65,17 +65,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private FoxRoleRepository foxRoleRepository;
 
-    @Autowired
-    private FoxTenantRepository foxTenantRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    private ExtLdapUserRepository extLdapUserRepository;
-
-    @Autowired
-    private ExtLdapSourceRepository extLdapSourceRepository;
 
     @Autowired
     private SecurityService securityService;
@@ -135,14 +128,14 @@ public class UserServiceImpl implements UserService {
         }
 
         // 绑定机构
-        if (_userProfile.getOrganizations() != null && !_userProfile.getOrganizations().isEmpty()) {
+  /*      if (_userProfile.getOrganizations() != null && !_userProfile.getOrganizations().isEmpty()) {
             _userProfile.getOrganizations().forEach(organizationProfile -> {
                 FoxUserOrganization foxUserOrganization = new FoxUserOrganization();
                 foxUserOrganization.setUserId(foxUser.getId());
                 foxUserOrganization.setOrganizationId(organizationProfile.getId());
                 foxUserOrganizationRepository.save(foxUserOrganization);
             });
-        }
+        }*/
 
         return foxUser.getId();
     }
@@ -190,22 +183,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 绑定机构
-        if (_userProfile.getOrganizations() != null && !_userProfile.getOrganizations().isEmpty()) {
-            List<FoxUserOrganization> foxUserOrganizations = foxUserOrganizationRepository.findByUserId(userId);
-            foxUserOrganizationRepository.deleteInBatch(foxUserOrganizations);
-
-            Set<String> organIdSet = new HashSet<String>();
-            _userProfile.getOrganizations().forEach(organizationProfile -> {
-                organIdSet.add(organizationProfile.getId());
-            });
-
-            organIdSet.forEach(organId -> {
-                FoxUserOrganization foxUserOrganization = new FoxUserOrganization();
-                foxUserOrganization.setUserId(userId);
-                foxUserOrganization.setOrganizationId(organId);
-                foxUserOrganizationRepository.save(foxUserOrganization);
-            });
-        }
+        
     }
 
     @Override
@@ -227,151 +205,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserItem> listUsersByPage(PageInfo _pageInfo, Byte _status) {
-
-        PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
-                Sort.Direction.DESC, "createDate");
-
-        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        //当前登录用户的部门/机构
-        String organizationName = userDetailsItem.getOrganizationName();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
-
-        List<UserItem> userItems = new ArrayList<>();
-
-        Page<FoxUser> foxUsers;
-        // 后台需要根据机构查询：
-        String organizationId = userDetailsItem.getOrganizationId();
-        if(CommonConstant.DIC_TENANT_TYPE_PROVIDER.equals(userDetailsItem.getEnterpriseType()) || null == userDetailsItem.getEnterpriseType()){
-            List<FoxUserOrganization> userOrganizations =  foxUserOrganizationRepository.findByOrganizationId(organizationId);
-            List<String> userIdList = new ArrayList<String>();
-            userOrganizations.forEach(foxUserOrganization -> {
-                userIdList.add(foxUserOrganization.getUserId());
-            });
-            foxUsers = foxUserRepository.findByIdInAndStatusLessThan(userIdList, CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
-            log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属机构的用户结果：{}", foxUsers);
-            foxUsers.forEach(foxUser -> {
-                UserItem userItem = modelMapper.map(foxUser, UserItem.class);
-                //给每个用户赋值相同的机构
-                userItem.setOrganizationName(organizationName);
-                //获取每个用户的角色
-                List<FoxRole> foxRoles = foxRoleRepository.findRolesByUserId(foxUser.getId());
-                if(!CollectionUtils.isEmpty(foxRoles)){
-                    userItem.setRoleName(foxRoles.get(0).getName());
-                }
-                userItems.add(userItem);
-            });
-        }else {
-            //前台根据企业ID查询，
-            // TODO: 角色和部门
-            if (null == _status) {
-                // 过滤掉已删除用户
-
-                foxUsers = foxUserRepository.findByTenantIdAndStatusLessThan(userDetailsItem.getEnterpriseId(), CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
-            } else {
-                foxUsers = foxUserRepository.findByStatusAndTenantId(_status, userDetailsItem.getEnterpriseId(), pageRequest);
-            }
-            log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
-            foxUsers.forEach(foxUser -> {
-                UserItem userItem = modelMapper.map(foxUser, UserItem.class);
-                //获取每个用户的部门
-                List<FoxOrganization> foxOrganizations = foxOrganizationRepository.findOrganizationByUserId(foxUser.getId());
-                if (!CollectionUtils.isEmpty(foxOrganizations)){
-                    userItem.setOrganizationName(foxOrganizations.get(0).getName());
-                }
-                //获取每个用户的角色
-                List<FoxRole> foxRoles = foxRoleRepository.findRolesByUserId(foxUser.getId());
-                if(!CollectionUtils.isEmpty(foxRoles)){
-                    userItem.setRoleName(foxRoles.get(0).getName());
-                }
-                userItems.add(userItem);
-            });
-        }
-
-        _pageInfo.setTotalPage(foxUsers.getTotalPages());
-        _pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()).intValue());
-
-        return userItems;
+    	
+    	return new ArrayList<UserItem>();
     }
 
     @Override
     public List<UserItem> listUsersByUserName(PageInfo _pageInfo, String _userName) {
-        PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
-                Sort.Direction.DESC, "createDate");
-
-        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        //当前登录用户的机构
-        String organizationName = userDetailsItem.getOrganizationName();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
-
-        Page<FoxUser> foxUsers;
-
-        List<UserItem> userItems = new ArrayList<>();
-
-//        if (StringUtils.isBlank(_userName)) {
-//            foxUsers = foxUserRepository.findAll(pageRequest);
-//        } else {
-//            foxUsers = foxUserRepository.findByUserNameLike("%" + _userName + "%", pageRequest);
-//        }
-
-        // 后台需要根据机构查询：
-        String organizationId = userDetailsItem.getOrganizationId();
-        if(CommonConstant.DIC_TENANT_TYPE_PROVIDER.equals(userDetailsItem.getEnterpriseType()) || null == userDetailsItem.getEnterpriseType()){
-            List<FoxUserOrganization> userOrganizations =  foxUserOrganizationRepository.findByOrganizationId(organizationId);
-            List<String> userIdList = new ArrayList<String>();
-            userOrganizations.forEach(foxUserOrganization -> {
-                userIdList.add(foxUserOrganization.getUserId());
-            });
-            if (StringUtils.isBlank(_userName)) {
-                // foxUsers = foxUserRepository.findAll(pageRequest);
-                foxUsers = foxUserRepository.findByIdInAndStatusLessThan(userIdList, CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
-            } else {
-                foxUsers = foxUserRepository.findByIdInAndStatusLessThanAndUserNameLike(userIdList, CommonConstant.DIC_GLOBAL_STATUS_DELETED, "%" + _userName + "%", pageRequest);
-            }
-            log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属机构的用户结果：{}", foxUsers);
-            foxUsers.forEach(foxUser -> {
-                UserItem userItem = modelMapper.map(foxUser, UserItem.class);
-                //给每个用户赋值相同的机构
-                userItem.setOrganizationName(organizationName);
-                //获取每个用户的角色
-                List<FoxRole> foxRoles = foxRoleRepository.findRolesByUserId(foxUser.getId());
-                if(!CollectionUtils.isEmpty(foxRoles)){
-                    userItem.setRoleName(foxRoles.get(0).getName());
-                }
-                userItems.add(userItem);
-            });
-        }else {
-//            if (null == _status) {
-//                // 过滤掉已删除用户
-//                foxUsers = foxUserRepository.findByTenantIdAndStatusLessThan(userDetailsItem.getEnterpriseId(), CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
-//            } else {
-//                foxUsers = foxUserRepository.findByStatusAndTenantId(_status, userDetailsItem.getEnterpriseId(), pageRequest);
-//            }
-            if(StringUtils.isBlank(_userName)){
-                foxUsers = foxUserRepository.findByTenantIdAndStatusLessThan(userDetailsItem.getEnterpriseId(), CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
-            }else {
-                foxUsers = foxUserRepository.findByTenantIdAndStatusLessThanAndUserNameLike(userDetailsItem.getEnterpriseId(), CommonConstant.DIC_GLOBAL_STATUS_DELETED, "%" + _userName + "%", pageRequest);
-            }
-            log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
-            foxUsers.forEach(foxUser -> {
-                UserItem userItem = modelMapper.map(foxUser, UserItem.class);
-                //获取每个用户的部门
-                List<FoxOrganization> foxOrganizations = foxOrganizationRepository.findOrganizationByUserId(foxUser.getId());
-                if (!CollectionUtils.isEmpty(foxOrganizations)){
-                    userItem.setOrganizationName(foxOrganizations.get(0).getName());
-                }
-                //获取每个用户的角色
-                List<FoxRole> foxRoles = foxRoleRepository.findRolesByUserId(foxUser.getId());
-                if(!CollectionUtils.isEmpty(foxRoles)){
-                    userItem.setRoleName(foxRoles.get(0).getName());
-                }
-                userItems.add(userItem);
-            });
-        }
-
-        _pageInfo.setTotalPage(foxUsers.getTotalPages());
-        _pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()).intValue());
-
-        return userItems;
+    	
+    	return new ArrayList<UserItem>();
     }
 
     @Override
@@ -395,16 +236,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserItem> listUsersInOrganization(String _organizationId) {
-        List<FoxUserOrganization> foxUserOrganizations = foxUserOrganizationRepository
-                .findByOrganizationId(_organizationId);
-        List<String> userIds = foxUserOrganizations.stream().map(foxUserOrganization -> foxUserOrganization.getUserId())
-                .collect(Collectors.toList());
-
-        List<FoxUser> foxUsers = foxUserRepository.findAll(userIds);
-        List<UserItem> userItems = foxUsers.stream().map(foxUser -> modelMapper.map(foxUser, UserItem.class))
-                .sorted((u1, u2) -> u1.getId().compareTo(u2.getId())).collect(Collectors.toList());
-
-        return userItems;
+    	
+    	return new ArrayList<UserItem>();
     }
 
     @Override
@@ -445,53 +278,6 @@ public class UserServiceImpl implements UserService {
         });
         userDetailsItem.setRoles(roleItems);
 
-        List<OrganizationItem> organizationItems = new ArrayList<>();
-        foxUserOrganizationRepository.findByUserId(foxUser.getId()).forEach(foxUserOrganization -> {
-            FoxOrganization foxOrganization = foxOrganizationRepository
-                    .findOne(foxUserOrganization.getOrganizationId());
-            OrganizationItem organizationItem = new OrganizationItem();
-            organizationItem.setId(foxOrganization.getId());
-            organizationItem.setName(foxOrganization.getName());
-            organizationItem.setLeaderId(foxOrganization.getLeaderId());
-            organizationItem.setStatus(foxOrganization.getStatus());
-            organizationItems.add(organizationItem);
-        });
-        userDetailsItem.setOrganizations(organizationItems);
-
-        OrganizationItem organizationItem = organizationItems.get(0);
-
-        userDetailsItem.setOrganizationId(organizationItem.getId());
-        userDetailsItem.setOrganizationName(organizationItem.getName());
-
-        String leaderId = organizationItem.getLeaderId();
-        if (!StringUtils.isBlank(leaderId)) {
-            userDetailsItem.setLeaderId(leaderId);
-            Optional.ofNullable(foxUserRepository.findOne(leaderId)).ifPresent(
-                    leaderUser -> userDetailsItem.setLeaderName(leaderUser.getUserName())
-            );
-        }
-
-        String tenantId = foxUser.getTenantId();
-        if (!StringUtils.isBlank(tenantId)) {
-            userDetailsItem.setEnterpriseId(tenantId);
-            Optional.ofNullable(foxTenantRepository.findOne(tenantId)).ifPresent(
-                    foxTenant -> {
-                        userDetailsItem.setEnterpriseName(foxTenant.getName());
-                        userDetailsItem.setEnterpriseType(foxTenant.getType());
-                        userDetailsItem.setEnterpriseAuthMode(foxTenant.getAuthmode());
-                    }
-            );
-        }
-
-        userDetailsItem.setIsAD(false);
-        if (foxUser.getType() != null && foxUser.getType().byteValue() == AdUserMgmtConstants.USER_TYPE_AD) {
-            userDetailsItem.setIsAD(true);
-            ExtLdapUser ldapUser = extLdapUserRepository.findOneByUserId(foxUser.getId());
-            ExtLdapSource ldap = extLdapSourceRepository.findOne(ldapUser.getLdapSourceId());
-            userDetailsItem.setLdapId(ldapUser.getLdapSourceId());
-            userDetailsItem.setLoginName(ldapUser.getLogin());
-            userDetailsItem.setLdapName(ldap.getName());
-        }
         return userDetailsItem;
     }
 
@@ -523,16 +309,7 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setRoles(roleItems);
 
         List<OrganizationItem> organizationItems = new ArrayList<>();
-        foxUserOrganizationRepository.findByUserId(foxUser.getId()).forEach(foxUserOrganization -> {
-            FoxOrganization foxOrganization = foxOrganizationRepository
-                    .findOne(foxUserOrganization.getOrganizationId());
-            OrganizationItem organizationItem = new OrganizationItem();
-            organizationItem.setId(foxOrganization.getId());
-            organizationItem.setName(foxOrganization.getName());
-            organizationItem.setLeaderId(foxOrganization.getLeaderId());
-            organizationItem.setStatus(foxOrganization.getStatus());
-            organizationItems.add(organizationItem);
-        });
+       
         userDetailsItem.setOrganizations(organizationItems);
 
         OrganizationItem organizationItem = organizationItems.get(0);
@@ -549,24 +326,12 @@ public class UserServiceImpl implements UserService {
         }
 
         String tenantId = foxUser.getTenantId();
-        if (!StringUtils.isBlank(tenantId)) {
-            userDetailsItem.setEnterpriseId(tenantId);
-            Optional.ofNullable(foxTenantRepository.findOne(tenantId)).ifPresent(
-                    foxTenant -> {
-                        userDetailsItem.setEnterpriseName(foxTenant.getName());
-                        userDetailsItem.setEnterpriseType(foxTenant.getType());
-                    }
-            );
-        }
+        if (!StringUtils.isBlank(tenantId)) {}
 
         userDetailsItem.setIsAD(false);
         if (foxUser.getType() != null && foxUser.getType().byteValue() == AdUserMgmtConstants.USER_TYPE_AD) {
-            userDetailsItem.setIsAD(true);
-            ExtLdapUser ldapUser = extLdapUserRepository.findOneByUserId(foxUser.getId());
-            ExtLdapSource ldap = extLdapSourceRepository.findOne(ldapUser.getLdapSourceId());
-            userDetailsItem.setLdapId(ldapUser.getLdapSourceId());
-            userDetailsItem.setLoginName(ldapUser.getLogin());
-            userDetailsItem.setLdapName(ldap.getName());
+        	
+        	
         }
         return userDetailsItem;
     }
@@ -604,16 +369,7 @@ public class UserServiceImpl implements UserService {
 
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取机构/部门信息：{}", loginNameOrId);
         List<OrganizationItem> organizationItems = new ArrayList<>();
-        foxUserOrganizationRepository.findByUserId(foxUser.getId()).forEach(foxUserOrganization -> {
-            FoxOrganization foxOrganization = foxOrganizationRepository
-                    .findOne(foxUserOrganization.getOrganizationId());
-            OrganizationItem organizationItem = new OrganizationItem();
-            organizationItem.setId(foxOrganization.getId());
-            organizationItem.setName(foxOrganization.getName());
-            organizationItem.setLeaderId(foxOrganization.getLeaderId());
-            organizationItem.setStatus(foxOrganization.getStatus());
-            organizationItems.add(organizationItem);
-        });
+       
         userDetailsItem.setOrganizations(organizationItems);
 
         OrganizationItem organizationItem = organizationItems.get(0);
@@ -631,23 +387,14 @@ public class UserServiceImpl implements UserService {
 
         String tenantId = foxUser.getTenantId();
         if (!StringUtils.isBlank(tenantId)) {
-            userDetailsItem.setEnterpriseId(tenantId);
-            Optional.ofNullable(foxTenantRepository.findOne(tenantId)).ifPresent(
-                    foxTenant -> {
-                        userDetailsItem.setEnterpriseName(foxTenant.getName());
-                        userDetailsItem.setEnterpriseType(foxTenant.getType());
-                    }
-            );
+        	
+        	
         }
 
         userDetailsItem.setIsAD(false);     //TODO 这里可能有问题，需要确认
         if (foxUser.getType() != null && foxUser.getType().byteValue() == AdUserMgmtConstants.USER_TYPE_AD) {
-            userDetailsItem.setIsAD(true);
-            ExtLdapUser ldapUser = extLdapUserRepository.findOneByUserId(foxUser.getId());
-            ExtLdapSource ldap = extLdapSourceRepository.findOne(ldapUser.getLdapSourceId());
-            userDetailsItem.setLdapId(ldapUser.getLdapSourceId());
-            userDetailsItem.setLoginName(ldapUser.getLogin());
-            userDetailsItem.setLdapName(ldap.getName());
+        	
+        	
         }
 
         log.info(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息结果：{}", userDetailsItem);

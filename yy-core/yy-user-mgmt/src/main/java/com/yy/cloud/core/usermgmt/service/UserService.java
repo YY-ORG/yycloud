@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
+import com.yy.cloud.common.data.dto.sysbase.UserProfile;
+import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 

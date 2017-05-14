@@ -31,9 +31,6 @@ public class FoxPerm implements Serializable {
 	@Column(name="TENANT_ID")
 	private Long tenantId;
 
-	//bi-directional many-to-one association to FoxAccess
-	@OneToMany(mappedBy="foxPerm")
-	private List<FoxAccess> foxAccesses;
 
 	//bi-directional many-to-one association to FoxPermType
 	@ManyToOne
@@ -87,27 +84,7 @@ public class FoxPerm implements Serializable {
 		this.tenantId = tenantId;
 	}
 
-	public List<FoxAccess> getFoxAccesses() {
-		return this.foxAccesses;
-	}
 
-	public void setFoxAccesses(List<FoxAccess> foxAccesses) {
-		this.foxAccesses = foxAccesses;
-	}
-
-	public FoxAccess addFoxAccess(FoxAccess foxAccess) {
-		getFoxAccesses().add(foxAccess);
-		foxAccess.setFoxPerm(this);
-
-		return foxAccess;
-	}
-
-	public FoxAccess removeFoxAccess(FoxAccess foxAccess) {
-		getFoxAccesses().remove(foxAccess);
-		foxAccess.setFoxPerm(null);
-
-		return foxAccess;
-	}
 
 	public FoxPermType getFoxPermType() {
 		return this.foxPermType;

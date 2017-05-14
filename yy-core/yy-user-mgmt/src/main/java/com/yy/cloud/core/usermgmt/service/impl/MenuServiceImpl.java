@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yy.cloud.common.constant.CommonConstant;
+import com.yy.cloud.common.data.dto.menu.MenuProfile;
 import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
 import com.yy.cloud.common.data.otd.sysbase.MenuItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;

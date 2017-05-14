@@ -18,6 +18,9 @@ import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
+import com.yy.cloud.common.data.dto.sysbase.UserProfile;
+import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.service.SecurityService;
@@ -58,7 +61,6 @@ public class UserController {
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
         // 学进， 获取当前用户企业ID，--WXDOK
-        String USER_ID = UserConstant.MPP_USER_ID;
         //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
         UserDetailsItem userDetailsItem = securityService.getCurrentUser();
         log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
@@ -92,7 +94,6 @@ public class UserController {
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
         // 学进， 获取当前用户企业ID，--WXDOK
-        String USER_ID = UserConstant.ADM_USER_ID;
         //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
         UserDetailsItem userDetailsItem = securityService.getCurrentUser();
         log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
