@@ -1,12 +1,11 @@
 package com.yy.cloud.api.admin.service;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.yy.cloud.common.data.GeneralContentResult;
-import com.yy.cloud.common.data.GeneralPagingResult;
-import com.yy.cloud.common.data.otd.enterprise.CommonKeyValue;
-
-import java.util.List;
+import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 
 /**
  * Created by chenluo on 11/7/2016.
