@@ -1,0 +1,19 @@
+---
+spring:
+  profiles: test
+  redis:
+    database: 11
+    host: 15.114.102.10
+    port: 6379
+    pool:
+      max-active: 10
+      max-idle: 10
+      max-wait: -1
+      min-idle: 0
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://test-discovery:8761/eureka/
+  instance:
+    preferIpAddress: true
+

@@ -1,0 +1,82 @@
+
+
+#debug: true
+server:
+  port: 10000
+#  ssl:
+#    key-store: classpath:server.jks
+#    key-store-password: password
+#    key-password: password
+
+spring:
+  session:
+    store-type: redis
+  aop:
+    proxy-target-class: true
+logging:
+  path: /gemii/logs/gemii_micro/baseplatform/
+  level:
+    org.springframework.security: DEBUG
+
+#management:
+#  security:
+#    enabled: false
+
+#security:
+#  sessions: NEVER #"security.sessions" setting means that Spring Security will accept cookies as authentication tokens but won't create them unless they already exist.
+#  basic:
+#    enabled: false
+#  user:
+ #   password: none
+
+ribbon:
+  ConnectTimeout: 600000
+  ReadTimeout: 600000
+  eureka:
+    enabled: true
+    ReadTimeout: 600000
+    MaxAutoRetries: 1
+
+hystrix:
+  command:
+    frontend:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    admin:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    marketplace:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 600000
+
+proxy:
+  auth:
+    routes:
+      basis: oauth2
+
+security:
+#  sessions: NEVER #"security.sessions" setting means that Spring Security will accept cookies as authentication tokens but won't create them unless they already exist.
+  basic:
+    enabled: false
+  ignored: /, /**/*.html,/authsec/users/loadByLoginName,/*/swagger**,/*/swagger**/**, /*/webjars/**, /*/v2/**, /*/js/**, /*/css/**
+  oauth2:
+    client:
+      client-id: fox-service
+      client-secret: secret
+      access-token-uri: http://authserver:9001/uaa/oauth/token
+      grant-type: client_credentials
+    resource:
+      token-info-uri: http://authserver:9001/uaa/oauth/check_token
+  sessions: stateless

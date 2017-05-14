@@ -1,0 +1,59 @@
+
+server:
+  port: 8761
+   
+logging:
+  path: /gemii/logs/gemii_micro/baseplatform/
+
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+  health:
+    sensitive: true
+    
+---
+spring:
+  profiles: cloud
+eureka:
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${PRODISCOVERY_SERVICE_HOST}:${PRODISCOVERY_SERVICE_PORT}/eureka/
+
+---
+spring:
+  profiles: development
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${DEVDISCOVERY_SERVICE_HOST}:${DEVDISCOVERY_SERVICE_PORT}/eureka/
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+    
+
+---
+spring:
+  profiles: test
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    preferIpAddress: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${DISCOVERY_SERVICE_HOST}:${DISCOVERY_SERVICE_PORT}/eureka/
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+  
+#spring.cloud.config.discovery.enabled: true

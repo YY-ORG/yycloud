@@ -1,0 +1,12 @@
+./gcbi-api-gateway.sh start
+./gcbi-config.sh restart
+./gcbi-discovery.sh restart
+./gcbi-gate.sh restart
+./gcbi-hystrix-dashboard.sh restart
+#./gcbi-metamap.sh restart
+#./gcbi-metarep.sh restart
+./gcbi-remote.sh restart
+./gcbi-searchengine.sh restart
+#./gcbi-semrep.sh restart
+./gcbi-solr.sh restart
+./gcbi-sysbase.sh restart

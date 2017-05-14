@@ -1,0 +1,150 @@
+hystrix:
+  image: canlehui/clh-hystrix-dashboard
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+   - "7979:7979"
+  links:
+   - gateway
+   - discovery
+   - configserver
+   - adminmgmt
+   - ordermgmt
+   - storemgmt
+   - usermgmt
+   - workflow
+   - recommendation
+   - adminui
+   - storemgmtui
+   - webui
+discovery:
+  image: canlehui/clh-discovery
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+   - "8761:8761"
+configserver:
+  image: canlehui/clh-config
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+   - "8888:8888"
+  links:
+   - discovery
+gateway:
+  image: canlehui/clh-api-gateway
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+   - "10000:10000"
+  links:
+   - discovery
+   - configserver
+   - adminmgmt
+   - ordermgmt
+   - storemgmt
+   - usermgmt
+   - workflow
+   - recommendation
+   - adminui
+   - storemgmtui
+   - webui
+adminmgmt:
+  image: canlehui/clh-adminmgmt
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9001:9001"
+  links:
+   - discovery
+   - configserver
+ordermgmt:
+  image: canlehui/clh-ordermgmt
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9002:9002"
+  links:
+   - discovery
+   - configserver
+storemgmt:
+  image: canlehui/clh-storemgmt
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9003:9003"
+  links:
+   - discovery
+   - configserver
+usermgmt:
+  image: canlehui/clh-usermgmt
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9004:9004"
+  links:
+   - discovery
+   - configserver
+workflow:
+  image: canlehui/clh-workflow
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9005:9005"
+  links:
+   - discovery
+   - configserver
+recommendation:
+  image: canlehui/clh-recommendation
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9006:9006"
+  links:
+   - discovery
+   - configserver
+adminui:
+  image: canlehui/clh-adminui
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9007:9007"
+  links:
+   - discovery
+   - configserver
+   - adminmgmt
+   - ordermgmt
+   - storemgmt
+   - usermgmt
+   - workflow
+   - recommendation
+storemgmtui:
+  image: canlehui/clh-storemgmtui
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9008:9008"
+  links:
+   - discovery
+   - configserver
+   - adminmgmt
+   - ordermgmt
+   - storemgmt
+   - usermgmt
+   - workflow
+   - recommendation
+webui:
+  image: canlehui/clh-webui
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9009:9009"
+  links:
+   - discovery
+   - configserver
+   - adminmgmt
+   - ordermgmt
+   - storemgmt
+   - usermgmt
+   - workflow
+   - recommendation

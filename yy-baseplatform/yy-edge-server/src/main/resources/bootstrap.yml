@@ -1,0 +1,57 @@
+
+spring:
+  application:
+    name: edge-server
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
+encrypt:
+  failOnError: false
+
+---
+spring:
+  profiles: cloud
+  application:
+    name: edge-server
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+encrypt:
+  failOnError: false
+  
+---
+spring:
+  profiles: development
+  application:
+    name: edge-server
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
+encrypt:
+  failOnError: false
+
+---
+spring:
+  profiles: test
+  application:
+    name: edge-server
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
+encrypt:
+  failOnError: false
+
+---
+spring:
+  profiles: auth
+  application:
+    name: edge-server
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
+encrypt:
+  failOnError: false

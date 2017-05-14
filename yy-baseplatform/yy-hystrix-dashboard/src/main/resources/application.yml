@@ -1,0 +1,60 @@
+info:
+  component: Hystrix Dashboard
+  
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+
+server:
+  port: 9002
+
+logging:
+  path: /gemii/logs/gemii_micro/baseplatform/
+  
+---
+spring:
+  profiles: cloud
+eureka:
+  client:
+    registryFetchIntervalSeconds: 3
+    serviceUrl:
+      defaultZone: http://pro-discovery:8761/eureka/
+    healthcheck:
+      enabled: true
+  instance:
+    preferIpAddress: true
+turbine:
+  appConfig: adminmgmt,ordermgmt,mailmgmt,usermgmt,workflow,sysbase,platformmgmt,purchase,servicemgmt,authserver,edgeserver
+  aggregator:
+    clusterConfig: ADMINMGMT,ORDERMGMT,MAILMGMT,USERMGMT,WORKFLOW,SYSBASE,PLATFORMMGMT,PURCHASE,SERVICEMGMT,AUTHSERVER,EDGESERVER
+    
+
+spring.cloud.config.discovery.enabled: true
+
+---
+spring:
+  profiles: development
+  
+eureka:
+  client:
+    registryFetchIntervalSeconds: 3
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+    healthcheck:
+      enabled: true
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 5
+    #hostname: hystrix
+    #Virtual host name by which the clients identifies this service
+    #virtualHostName: ${spring.application.name}
+
+turbine:
+  appConfig: adminmgmt,ordermgmt,mailmgmt,usermgmt,workflow,sysbase,platformmgmt,purchase,servicemgmt,authserver,edgeserver
+  aggregator:
+    clusterConfig: ADMINMGMT,ORDERMGMT,MAILMGMT,USERMGMT,WORKFLOW,SYSBASE,PLATFORMMGMT,PURCHASE,SERVICEMGMT,AUTHSERVER,EDGESERVER
+    
+
+spring.cloud.config.discovery.enabled: true

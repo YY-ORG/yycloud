@@ -1,0 +1,39 @@
+server:
+  port: 10001
+  context-path: /uaa
+  use-forward-headers: true
+
+feign:
+  hystrix:
+    enabled: false
+
+ribbon:
+  ConnectTimeout: 600000
+  ReadTimeout: 600000
+  eureka:
+    enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+#security:
+#  basic:
+ #   enabled: false
+ # sessions: if_required
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+  path: /gemii/logs/gemii_micro/baseplatform/
+
+foxcloud:
+  security:
+    ldap_salt: a6dd4ac4-c1d1-11e6-80e4-0050568a49fd
+
+
+

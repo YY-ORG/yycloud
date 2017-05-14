@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="yy-usermgmt">
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxAccess</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxMenu</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxOrganization</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxOrgRole</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxPerm</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxPermRole</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxPermType</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxRole</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxRoleMenu</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxTenant</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxUser</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxUserActivation</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxUserRole</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxOrganizationPlatformMap</class>
+		<class>com.yy.cloud.core.usermgmt.data.domain.FoxTenantPaltformRelation</class>
+	</persistence-unit>
+</persistence>

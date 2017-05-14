@@ -1,0 +1,18 @@
+
+---
+spring:
+  profiles: cloud
+  application:
+    name: config-Server
+  
+---
+spring:
+  profiles: development
+  application:
+    name: config-server
+
+---
+spring:
+  profiles: test
+  application:
+    name: config-server

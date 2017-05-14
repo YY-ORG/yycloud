@@ -1,0 +1,42 @@
+
+spring:
+  application:
+    name: admin-api
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+encrypt:
+  failOnError: false
+
+---
+spring:
+  profiles: cloud
+  application:
+    name: admin-api
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+encrypt:
+  failOnError: false
+  
+---
+spring:
+  profiles: development
+  application:
+    name: admin-api
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+encrypt:
+  failOnError: false
+  
+---
+spring:
+  profiles: test
+  application:
+    name: admin-api
+  cloud:
+    config:
+      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+encrypt:
+  failOnError: false

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: discoveryrc-test
+  namespace: fox-test
+spec:
+  replicas: 1
+  selector:
+    app: discoveryrc-test
+  template:
+    metadata:
+      name: discoveryrc-test
+      labels:
+        app: discoveryrc-test
+      namespace: fox-test
+    spec:
+      containers:
+        - name: discoveryrc-test
+          image: 192.168.0.32:443/lizcloud/liz-discovery:test
+          ports:
+            - name: server-port
+              containerPort: 8761
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: test
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: foxtest-sec

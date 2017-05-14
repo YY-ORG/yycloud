@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: dev-discovery
+  name: dev-discovery
+  namespace: default
+spec:
+  ports:
+  - name: server-port
+    port: 8761
+    targetPort: 8761
+    nodePort: 30071
+  selector:
+    app: discoveryrc
+  type: NodePort

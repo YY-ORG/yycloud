@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: discoveryrc
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    app: discoveryrc
+  template:
+    metadata:
+      name: discoveryrc
+      labels:
+        app: discoveryrc
+      namespace: default
+    spec:
+      containers:
+        - name: discoveryrc
+          image: 192.168.0.32:443/lizcloud/liz-discovery:latest
+          ports:
+            - name: server-port
+              containerPort: 8761
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: development
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: dev-sec

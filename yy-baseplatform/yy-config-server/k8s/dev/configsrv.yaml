@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: configserver
+  name: configserver
+  namespace: default
+spec:
+  ports:
+  - name: server-port
+    port: 8888
+    targetPort: 8888
+    nodePort: 30088
+  selector:
+    app: config
+  type: NodePort

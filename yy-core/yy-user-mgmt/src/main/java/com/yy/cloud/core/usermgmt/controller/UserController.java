@@ -1,0 +1,440 @@
+package com.yy.cloud.core.usermgmt.controller;
+
+import com.yy.cloud.common.constant.CommonConstant;
+import com.yy.cloud.common.constant.ResultCode;
+import com.yy.cloud.common.constant.UserConstant;
+import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.dto.accountcenter.PasswordProfile;
+import com.yy.cloud.common.data.dto.accountcenter.UserProfile;
+import com.yy.cloud.common.data.otd.user.FoxUserItem;
+import com.yy.cloud.common.data.otd.user.UserDetailsItem;
+import com.yy.cloud.common.data.otd.user.UserItem;
+import com.yy.cloud.common.service.SecurityService;
+import com.yy.cloud.core.usermgmt.exception.PasswordNotMatchException;
+import com.yy.cloud.core.usermgmt.exception.UserExistException;
+import com.yy.cloud.core.usermgmt.service.UserService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@Slf4j
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SecurityService securityService;
+
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    /**
+     * MPP企业创建账号，分开为了测试，等学进的鉴权
+     * @param _userProfile
+     * @return
+     */
+    @RequestMapping(value = "/authsec/user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，MPP创建账号，本地")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<String> createUser(
+            @RequestBody UserProfile _userProfile) {
+        GeneralContentResult<String> result = new GeneralContentResult<>();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        // 学进， 获取当前用户企业ID，--WXDOK
+        String USER_ID = UserConstant.MPP_USER_ID;
+        //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
+        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
+        String tenantId = userDetailsItem.getEnterpriseId();
+        _userProfile.setTenantId(tenantId);
+        String userId = null;
+        try {
+            userId = userService.createUser(_userProfile);
+        } catch (UserExistException e) {
+            result.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
+            result.setDetailDescription(String.format("用户名 %s 已存在.", _userProfile.getLoginName()));
+            return result;
+        }
+        result.setResultContent(userId);
+        return result;
+    }
+
+    /**
+     * ADM企业创建账号
+     * @param _userProfile
+     * @return
+     */
+    @RequestMapping(value = "/authsec/admuser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，ADM创建账号，本地")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<String> createAdmUser(
+            @RequestBody UserProfile _userProfile) {
+        GeneralContentResult<String> result = new GeneralContentResult<>();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        // 学进， 获取当前用户企业ID，--WXDOK
+        String USER_ID = UserConstant.ADM_USER_ID;
+        //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
+        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
+        String tenantId = userDetailsItem.getEnterpriseId();
+        _userProfile.setTenantId(tenantId);
+        String userId = null;
+        try {
+            userId = userService.createUser(_userProfile);
+        } catch (UserExistException e) {
+            result.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
+            result.setDetailDescription(String.format("用户名 %s 已存在.", _userProfile.getLoginName()));
+            return result;
+        }
+        result.setResultContent(userId);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，查询单个账户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<UserItem> findUserById(
+            @PathVariable("user_id") String _userId) {
+        GeneralContentResult<UserItem> result = new GeneralContentResult<>();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        UserItem userItem = userService.findUserById(_userId);
+        result.setResultContent(userItem);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/user/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，查询当前账户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<UserDetailsItem> findCurrentUser() {
+        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult<>();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        // String userId = "6dc92ceb-af37-4010-a1e0-d33a526ee66b";
+        // 先写死一个用户，等学进完成      --WXDOK
+        //临时禁用权限系统
+//        String loginName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //String userId = UserConstant.MPP_USER_ID;
+        //String userId = securityService.getCurrentUser().getUserId();
+        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" + userDetailsItem);
+        //UserItem userItem = userService.findUserById(userId);
+        result.setResultContent(userDetailsItem);
+        return result;
+    }
+
+    /**
+     * MPP企业: 获取当前企业ID
+     * @return
+     */
+    @RequestMapping(value = "/authsec/currentEnterpriseId", method = RequestMethod.GET)
+    @ApiOperation(value = "用户中心-账户管理，获得当前用户企业（MPP）ID")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<String> getCurrentEnterpriseId() {
+        GeneralContentResult<String> result = new GeneralContentResult<>();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        // 先写死一个用户，等学进完成      --WXDOK
+        //临时禁用权限系统
+//        String loginName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //String USER_ID = UserConstant.MPP_USER_ID;
+        //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
+        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
+
+        result.setResultContent(userDetailsItem.getEnterpriseId());
+
+        return result;
+    }
+
+    /**
+     * ADM企业：获取后台企业ID
+     * @return
+     */
+    @RequestMapping(value = "/authsec/currentAdmEnterpriseId", method = RequestMethod.GET)
+    @ApiOperation(value = "用户中心-账户管理，获得当前用户企业（ADM）ID")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<String> getCurrentADMEnterpriseId() {
+        GeneralContentResult<String> result = new GeneralContentResult<>();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        // 先写死一个用户，等学进完成      --WXDOK
+        //临时禁用权限系统
+//        String loginName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //String USER_ID = UserConstant.ADM_USER_ID;
+        //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
+        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
+
+        result.setResultContent(userDetailsItem.getEnterpriseId());
+
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/user/password/modify", method = RequestMethod.PUT)
+    @ApiOperation(value = "用户中心-账户管理，修改当前密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult modifyPassword(
+            @RequestBody PasswordProfile _passwordProfile) {
+        GeneralResult result = new GeneralResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        // 先写死一个用户，等学进完成      --WXDOK
+        //String userId = UserConstant.MPP_USER_ID;
+        //String userId = "6dc92ceb-af37-4010-a1e0-d33a526ee66b";
+        String userId = securityService.getCurrentUser().getUserId();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户ID：{}" + userId);
+        _passwordProfile.setId(userId);
+
+        try {
+            userService.modifyPassword(_passwordProfile);
+        } catch (PasswordNotMatchException e) {
+            result.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
+            result.setDetailDescription("password not match.");
+            return result;
+        }
+
+        return result;
+    }
+
+    /**
+     * TODO 等学进完成后，可以删除该方法
+     * @param _passwordProfile
+     * @return
+     */
+    @RequestMapping(value = "/authsec/admuser/password/modify", method = RequestMethod.PUT)
+    @ApiOperation(value = "用户中心-账户管理，修改当前密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult modifyAdmPassword(
+            @RequestBody PasswordProfile _passwordProfile) {
+        GeneralResult result = new GeneralResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        // 先写死一个用户，等学进完成      --WXDOK
+        //String USER_ID = UserConstant.ADM_USER_ID;
+        //String userId = "6dc92ceb-af37-4010-a1e0-d33a526ee66b";
+        String userId = securityService.getCurrentUser().getUserId();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户ID：{}" + userId);
+        _passwordProfile.setId(userId);
+
+        try {
+            userService.modifyPassword(_passwordProfile);
+        } catch (PasswordNotMatchException e) {
+            result.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
+            result.setDetailDescription("password not match.");
+            return result;
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，获取所有账户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralPagingResult<List<UserItem>> findUsers(
+            @RequestParam(value = "status", required = false) Byte _status,
+            @RequestParam(value = "page") Integer _page,
+            @RequestParam(value = "size") Integer _size) {
+        GeneralPagingResult<List<UserItem>> result = new GeneralPagingResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setCurrentPage(_page);
+        pageInfo.setPageSize(_size);
+
+        List<UserItem> userItems = userService.listUsersByPage(pageInfo, _status);
+
+        result.setResultContent(userItems);
+        result.setPageInfo(pageInfo);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/users/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，通过用户名模糊查询账户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralPagingResult<List<UserItem>> findUsersByUserName(
+            @RequestParam(value = "userName", required = false) String _userName,
+            @RequestParam(value = "page") Integer _page,
+            @RequestParam(value = "size") Integer _size) {
+        GeneralPagingResult<List<UserItem>> result = new GeneralPagingResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setCurrentPage(_page);
+        pageInfo.setPageSize(_size);
+
+        List<UserItem> userItems = userService.listUsersByUserName(pageInfo, _userName);
+
+        result.setResultContent(userItems);
+        result.setPageInfo(pageInfo);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，编辑账号，本地")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult modifyUser(
+            @PathVariable("user_id") String _userId,
+            @RequestBody UserProfile _userProfile) {
+        GeneralResult result = new GeneralResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        _userProfile.setId(_userId);
+        userService.modifyUser(_userProfile);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/user/{user_id}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，修改状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult updateStatus(
+            @PathVariable("user_id") String _userId,
+            @RequestParam("status") Byte _status) {
+        GeneralResult result = new GeneralResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        userService.updateUserStatus(_userId, _status);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/users/organization/{organization_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<List<UserItem>> getMembersInOrganization(
+            @PathVariable("organization_id") String _organizationId) {
+        GeneralContentResult<List<UserItem>> result = new GeneralContentResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        List<UserItem> userItems = userService.listUsersInOrganization(_organizationId);
+        result.setResultContent(userItems);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/users/nonorganization", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，获取所有无所属机构账户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralPagingResult<List<UserItem>> getNonOrganizationMembers(
+            @RequestParam(value = "page") Integer _page,
+            @RequestParam(value = "size") Integer _size) {
+        GeneralPagingResult<List<UserItem>> result = new GeneralPagingResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setCurrentPage(_page);
+        pageInfo.setPageSize(_size);
+
+        List<UserItem> userItems = userService.listNonOrganizationMembers(pageInfo);
+
+        result.setResultContent(userItems);
+        result.setPageInfo(pageInfo);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/users/loadByLoginName", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<UserDetailsItem> loadUserByLoginName(
+            @RequestParam("login_name") String _loginName) {
+        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        UserDetailsItem userDetailsItem = null;
+        try {
+            userDetailsItem = userService.loadUserByLoginName(_loginName);
+            result.setResultContent(userDetailsItem);
+        } catch (Exception e) {
+            result.setResultCode(ResultCode.USERMGMT_USER_NOT_FOUND);
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/users/loadById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<UserDetailsItem> loadUserById(
+            @RequestParam("user_id") String _userId) {
+        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        UserDetailsItem userDetailsItem = userService.loadUserByUserId(_userId);
+        result.setResultContent(userDetailsItem);
+        return result;
+    }
+
+    /**
+     * 根据loginName 或者 userId获取用户信息
+     * @param _loginNameOrId
+     * @return
+     */
+    @RequestMapping(value = "/noauth/user/loginnameorid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public GeneralContentResult<UserDetailsItem> loadUserByLoginNameOrId(
+            @RequestParam("_loginNameOrId") String _loginNameOrId) {
+        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        UserDetailsItem userDetailsItem = userService.loadUserByLoginNameOrId(_loginNameOrId);
+        result.setResultContent(userDetailsItem);
+        return result;
+    }
+
+    /**
+     * 验证本地用户登录名是否存在
+     * @param _loginName
+     * @return
+     */
+    @RequestMapping(value = "/authsec/user/{_loginName}/validation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，验证帐号唯一性")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<String> validateLoginName(
+            @PathVariable("_loginName") String _loginName) {
+        GeneralContentResult<String> result = userService.validateLoginName(_loginName);
+        return result;
+    }
+
+    @RequestMapping(value="/noauth/user/type", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value="校验用户类型，0：前台；1：后台; 2:登录名不存在")
+    public GeneralContentResult<FoxUserItem> validateUserType(@RequestParam(value = "loginName") String loginName){
+        return userService.validateUserType(loginName);
+    }
+}

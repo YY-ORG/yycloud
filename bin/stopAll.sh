@@ -1,0 +1,12 @@
+./gcbi-api-gateway.sh stop
+./gcbi-config.sh stop
+./gcbi-discovery.sh stop
+./gcbi-gate.sh stop
+./gcbi-hystrix-dashboard.sh stop
+#./gcbi-metamap.sh stop
+#./gcbi-metarep.sh stop
+./gcbi-remote.sh stop
+./gcbi-searchengine.sh stop
+#./gcbi-semrep.sh stop
+./gcbi-solr.sh stop
+./gcbi-sysbase.sh stop

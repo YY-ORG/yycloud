@@ -1,0 +1,94 @@
+
+discovery:
+  image: foxcloud/fox-discovery:0.1.0
+  environment:
+   - SPRING_PROFILES_ACTIVE=development
+  ports:
+   - "8761:8761"
+
+#configserver:
+#  image: youyin/yy-config
+#  environment:
+#    - SPRING_PROFILES_ACTIVE=development
+#  ports:
+#   - "8888:8888"
+#  links:
+#   - discovery
+
+edgeserver:
+  image: foxcloud/fox-edge-server:0.1.0
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+   - "9000:9000"
+  links:
+   - discovery
+#   - marketplace
+#   - adminui
+   - basis
+
+
+#consul:
+#  image: youyin/yy-consul
+#  environment:
+#    - SPRING_PROFILES_ACTIVE=development
+#  ports:
+#   - "9200:9200"
+#  links:
+#   - discovery
+#   
+#authserver:
+#  image: youyin/yy-auth-server
+#  environment:
+#    - SPRING_PROFILES_ACTIVE=development
+#  ports:
+#   - "9999:9999"
+#  links:
+#   - discovery
+#   - sysbase
+#
+#marketplace:
+#  image: foxcloud/fox-marketplace:0.1.0
+#  environment:
+#    - SPRING_PROFILES_ACTIVE=development
+#  ports:
+#     - "9301:9301"
+#  links:
+#   - discovery
+#
+#adminui:
+#  image: foxcloud/fox-admin:0.1.0
+#  environment:
+#    - SPRING_PROFILES_ACTIVE=development
+#  ports:
+#     - "9302:9302"
+#  links:
+#   - discovery
+#   
+basis:
+  image: foxcloud/fox-basis:0.1.0
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9303:9303"
+  links:
+   - discovery
+   - sysbase
+   
+#mailmgmt:
+#  image: youyin/yy-mailmgmt
+#  environment:
+#    - SPRING_PROFILES_ACTIVE=development
+#  ports:
+#     - "9006:9006"
+#  links:
+#   - discovery
+
+sysbase:
+  image: foxcloud/fox-sysbase:0.1.0
+  environment:
+    - SPRING_PROFILES_ACTIVE=development
+  ports:
+     - "9102:9102"
+  links:
+   - discovery

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: edgerc
+  namespace: fox-test
+spec:
+  replicas: 1
+  selector:
+    app: edgerc
+  template:
+    metadata:
+      name: edgerc
+      labels:
+        app: edgerc
+      namespace: fox-test
+    spec:
+      containers:
+        - name: edgerc
+          image: 192.168.0.32:443/lizcloud/liz-edge-server:0.2.0
+          ports:
+            - name: server-port
+              containerPort: 9000
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: test
+      imagePullSecrets:
+        - name: foxtest-sec
