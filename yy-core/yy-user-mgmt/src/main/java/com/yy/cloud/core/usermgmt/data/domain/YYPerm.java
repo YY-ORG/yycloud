@@ -6,13 +6,13 @@ import java.util.List;
 
 
 /**
- * The persistent class for the FOX_PERM database table.
+ * The persistent class for the YYPerm database table.
  * 
  */
 @Entity
-@Table(name="FOX_PERM")
-@NamedQuery(name="FoxPerm.findAll", query="SELECT f FROM FoxPerm f")
-public class FoxPerm implements Serializable {
+@Table(name="YY_PERM")
+@NamedQuery(name="YYPerm.findAll", query="SELECT f FROM YYPerm f")
+public class YYPerm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -35,13 +35,13 @@ public class FoxPerm implements Serializable {
 	//bi-directional many-to-one association to FoxPermType
 	@ManyToOne
 	@JoinColumn(name="PERM_TYPE_ID")
-	private FoxPermType foxPermType;
+	private YYPermType foxPermType;
 
 	//bi-directional many-to-one association to FoxPermRole
 	@OneToMany(mappedBy="foxPerm")
-	private List<FoxPermRole> foxPermRoles;
+	private List<YYPermRole> foxPermRoles;
 
-	public FoxPerm() {
+	public YYPerm() {
 	}
 
 	public Long getId() {
@@ -86,30 +86,30 @@ public class FoxPerm implements Serializable {
 
 
 
-	public FoxPermType getFoxPermType() {
+	public YYPermType getFoxPermType() {
 		return this.foxPermType;
 	}
 
-	public void setFoxPermType(FoxPermType foxPermType) {
+	public void setFoxPermType(YYPermType foxPermType) {
 		this.foxPermType = foxPermType;
 	}
 
-	public List<FoxPermRole> getFoxPermRoles() {
+	public List<YYPermRole> getFoxPermRoles() {
 		return this.foxPermRoles;
 	}
 
-	public void setFoxPermRoles(List<FoxPermRole> foxPermRoles) {
+	public void setFoxPermRoles(List<YYPermRole> foxPermRoles) {
 		this.foxPermRoles = foxPermRoles;
 	}
 
-	public FoxPermRole addFoxPermRole(FoxPermRole foxPermRole) {
+	public YYPermRole addFoxPermRole(YYPermRole foxPermRole) {
 		getFoxPermRoles().add(foxPermRole);
 		foxPermRole.setFoxPerm(this);
 
 		return foxPermRole;
 	}
 
-	public FoxPermRole removeFoxPermRole(FoxPermRole foxPermRole) {
+	public YYPermRole removeFoxPermRole(YYPermRole foxPermRole) {
 		getFoxPermRoles().remove(foxPermRole);
 		foxPermRole.setFoxPerm(null);
 

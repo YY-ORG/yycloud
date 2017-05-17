@@ -56,4 +56,19 @@ eureka:
   server:
     waitTimeInMsWhenSyncEmpty: 0
   
+---
+spring:
+  profiles: local
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    preferIpAddress: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+  
+  
 #spring.cloud.config.discovery.enabled: true

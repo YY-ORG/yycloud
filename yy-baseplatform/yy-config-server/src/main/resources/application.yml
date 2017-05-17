@@ -228,3 +228,77 @@ eureka:
     fetchRegistry: true
     serviceUrl:
       defaultZone: http://${TESTDISCOVERY_SERVICE_HOST}:${TESTDISCOVERY_SERVICE_PORT}/eureka/
+      
+---
+spring:
+  profiles: local
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/YY-ORG/yycloud.git
+           #If you need to build your own config server, please use your account & password
+          username: cxj110
+          password: C-_sg1zzEAz5GaJuYDZH
+        health:
+          repositories:
+            discovery:
+              label: master
+              profiles: cloud
+            admin-api:
+              label: master
+              profiles: cloud
+            basis-api:
+              label: master
+              profiles: cloud
+            groupadmin-api:
+              label: master
+              profiles: cloud
+            h5-api:
+              label: master
+              profiles: cloud
+            marketplace-api:
+              label: master
+              profiles: cloud
+            taskadmin-api:
+              label: master
+              profiles: cloud
+            tenantadmin-api:
+              label: master
+              profiles: cloud
+            edge-server:
+              label: master
+              profiles: cloud
+            auth-server:
+              label: master
+              profiles: cloud
+            groupadmin-mgmt:
+              label: master
+              profiles: cloud
+            joingroup-mgmt:
+              label: master
+              profiles: cloud
+            robot-sys:
+              label: master
+              profiles: cloud
+            tenant-mgmt:
+              label: master
+              profiles: cloud
+            mgadapter:
+              label: master
+              profiles: cloud
+            sysbase:
+              label: master
+              profiles: cloud
+            user-mgmt:
+              label: master
+              profiles: cloud
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

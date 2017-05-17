@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.yy.cloud.core.usermgmt.data.domain.FoxRoleMenu;
+import com.yy.cloud.core.usermgmt.data.domain.YYRoleMenu;
 
 /**
  * ClassName: FoxRoleRepository <br/>
@@ -18,12 +18,12 @@ import com.yy.cloud.core.usermgmt.data.domain.FoxRoleMenu;
  * @since JDK 1.8
  */
 @Repository
-public interface FoxRoleMenuRepository extends JpaRepository<FoxRoleMenu, String> {
+public interface YYRoleMenuRepository extends JpaRepository<YYRoleMenu, String> {
 
-    List<FoxRoleMenu> findByRoleId(String roleId);
+    List<YYRoleMenu> findByRoleId(String roleId);
 
-    List<FoxRoleMenu> findByRoleIdIn(Collection<String> roleIds);
+    List<YYRoleMenu> findByRoleIdIn(Collection<String> roleIds);
 
-    List<FoxRoleMenu> findByMenuIdAndRoleId(String menuId, String roleId);
+    List<YYRoleMenu> findByMenuIdAndRoleId(String menuId, String roleId);
 
 }

@@ -5,9 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +30,14 @@ import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.exception.NoRecordFoundException;
 import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.core.usermgmt.constant.AdUserMgmtConstants;
-import com.yy.cloud.core.usermgmt.data.domain.FoxRole;
-import com.yy.cloud.core.usermgmt.data.domain.FoxUser;
-import com.yy.cloud.core.usermgmt.data.domain.FoxUserRole;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxOrganizationRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxRoleRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxUserOrganizationRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRoleRepository;
+import com.yy.cloud.core.usermgmt.data.domain.YYRole;
+import com.yy.cloud.core.usermgmt.data.domain.YYUser;
+import com.yy.cloud.core.usermgmt.data.domain.YYUserRole;
+import com.yy.cloud.core.usermgmt.data.repositories.YYOrganizationRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYUserOrganizationRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYUserRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYUserRoleRepository;
 import com.yy.cloud.core.usermgmt.exception.PasswordNotMatchException;
 import com.yy.cloud.core.usermgmt.exception.UserExistException;
 import com.yy.cloud.core.usermgmt.service.UserService;
@@ -51,19 +49,19 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private FoxUserRepository foxUserRepository;
+    private YYUserRepository foxUserRepository;
 
     @Autowired
-    private FoxUserOrganizationRepository foxUserOrganizationRepository;
+    private YYUserOrganizationRepository foxUserOrganizationRepository;
 
     @Autowired
-    private FoxUserRoleRepository foxUserRoleRepository;
+    private YYUserRoleRepository foxUserRoleRepository;
 
     @Autowired
-    private FoxOrganizationRepository foxOrganizationRepository;
+    private YYOrganizationRepository foxOrganizationRepository;
 
     @Autowired
-    private FoxRoleRepository foxRoleRepository;
+    private YYRoleRepository foxRoleRepository;
 
 
     @Autowired
@@ -99,13 +97,13 @@ public class UserServiceImpl implements UserService {
 //        });
 
         // 只校验本地
-        FoxUser foxUserExist = foxUserRepository.findByLoginNameAndType(_userProfile.getLoginName(), AdUserMgmtConstants.USER_TYPE_LOCAL);
+        YYUser foxUserExist = foxUserRepository.findByLoginNameAndType(_userProfile.getLoginName(), AdUserMgmtConstants.USER_TYPE_LOCAL);
         if(null != foxUserExist){
             log.info(CommonConstant.LOG_DEBUG_TAG + "该用户名已存在：" + _userProfile.getLoginName());
             throw new UserExistException();
         }
 
-        FoxUser foxUser = modelMapper.map(_userProfile, FoxUser.class);
+        YYUser foxUser = modelMapper.map(_userProfile, YYUser.class);
         foxUser.setStatus(CommonConstant.DIC_GLOBAL_STATUS_INITIAL);
         if (_userProfile.getAuthMode() != null && _userProfile.getAuthMode().equals(AdUserMgmtConstants.USER_TYPE_AD) ) {
             foxUser.setType(AdUserMgmtConstants.USER_TYPE_AD);
@@ -120,7 +118,7 @@ public class UserServiceImpl implements UserService {
         // 绑定角色
         if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
             _userProfile.getRoles().forEach(roleProfile -> {
-                FoxUserRole foxUserRole = new FoxUserRole();
+                YYUserRole foxUserRole = new YYUserRole();
                 foxUserRole.setRoleId(roleProfile.getId());
                 foxUserRole.setUserId(foxUser.getId());
                 foxUserRoleRepository.save(foxUserRole);
@@ -143,7 +141,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void modifyUser(UserProfile _userProfile) {
-        FoxUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userProfile.getId())).orElseThrow(
+        YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userProfile.getId())).orElseThrow(
                 () -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
 
         String userId = _userProfile.getId();
@@ -152,7 +150,7 @@ public class UserServiceImpl implements UserService {
         Byte type = foxUser.getType();
         String loginName = foxUser.getLoginName();
 
-        foxUser = modelMapper.map(_userProfile, FoxUser.class);
+        foxUser = modelMapper.map(_userProfile, YYUser.class);
         foxUser.setStatus(status);
         foxUser.setPassword(password);
         foxUser.setType(type);
@@ -165,7 +163,7 @@ public class UserServiceImpl implements UserService {
 
         // 绑定角色
         if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
-            List<FoxUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
+            List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
             foxUserRoleRepository.deleteInBatch(foxUserRoles);
 
             // 过滤重复的roleId
@@ -175,7 +173,7 @@ public class UserServiceImpl implements UserService {
             });
 
             roleIdSet.forEach(roleId -> {
-                FoxUserRole foxUserRole = new FoxUserRole();
+                YYUserRole foxUserRole = new YYUserRole();
                 foxUserRole.setRoleId(roleId);
                 foxUserRole.setUserId(userId);
                 foxUserRoleRepository.save(foxUserRole);
@@ -188,7 +186,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserStatus(String _userId, Byte _status) {
-        FoxUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userId))
+        YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userId))
                 .orElseThrow(() -> new NoRecordFoundException(String.format("user %s not found.", _userId)));
         foxUser.setStatus(_status);
         foxUserRepository.save(foxUser);
@@ -196,7 +194,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserItem findUserById(String _userId) {
-        FoxUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userId))
+        YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userId))
                 .orElseThrow(() -> new NoRecordFoundException(String.format("user %s not found.", _userId)));
 
         UserItem userItem = modelMapper.map(foxUser, UserItem.class);
@@ -223,7 +221,7 @@ public class UserServiceImpl implements UserService {
 
         List<UserItem> userItems = new ArrayList<>();
         userIds.forEach(userId -> {
-            FoxUser foxUser = foxUserRepository.findOne(userId);
+            YYUser foxUser = foxUserRepository.findOne(userId);
             UserItem userItem = modelMapper.map(foxUser, UserItem.class);
             userItems.add(userItem);
         });
@@ -242,7 +240,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void modifyPassword(PasswordProfile _passwordProfile) {
-        FoxUser foxUser = foxUserRepository.findOne(_passwordProfile.getId());
+        YYUser foxUser = foxUserRepository.findOne(_passwordProfile.getId());
         if (!encoder.matches(_passwordProfile.getPassword(), foxUser.getPassword())) {
             throw new PasswordNotMatchException();
         }
@@ -254,7 +252,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailsItem loadUserByLoginName(String _loginName) {
         UserDetailsItem userDetailsItem = new UserDetailsItem();
-        FoxUser foxUser = foxUserRepository.findByLoginName(_loginName).orElseThrow(
+        YYUser foxUser = foxUserRepository.findByLoginName(_loginName).orElseThrow(
                 () -> new NoRecordFoundException(String.format("user with login name %s not exist.", _loginName)));
 
         userDetailsItem.setUserId(foxUser.getId());
@@ -268,7 +266,7 @@ public class UserServiceImpl implements UserService {
 
         List<RoleItem> roleItems = new ArrayList<>();
         foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
-            FoxRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
+            YYRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
             RoleItem roleItem = new RoleItem();
             roleItem.setId(foxRole.getId());
             roleItem.setName(foxRole.getName());
@@ -284,7 +282,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailsItem loadUserByUserId(String _userId) {
         UserDetailsItem userDetailsItem = new UserDetailsItem();
-        FoxUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userId))
+        YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userId))
                 .orElseThrow(() -> new NoRecordFoundException(String.format("user %s not exist.", _userId)));
 
         userDetailsItem.setUserId(foxUser.getId());
@@ -298,7 +296,7 @@ public class UserServiceImpl implements UserService {
 
         List<RoleItem> roleItems = new ArrayList<>();
         foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
-            FoxRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
+            YYRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
             RoleItem roleItem = new RoleItem();
             roleItem.setId(foxRole.getId());
             roleItem.setName(foxRole.getName());
@@ -340,7 +338,7 @@ public class UserServiceImpl implements UserService {
     public UserDetailsItem loadUserByLoginNameOrId(String loginNameOrId){
         UserDetailsItem userDetailsItem = new UserDetailsItem();
         log.info(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息：{}", loginNameOrId);
-        FoxUser foxUser = foxUserRepository.findByLoginNameOrId(loginNameOrId.trim(), loginNameOrId.trim());
+        YYUser foxUser = foxUserRepository.findByLoginNameOrId(loginNameOrId.trim(), loginNameOrId.trim());
         if(null == foxUser){
             throw new NoRecordFoundException(String.format("user %s not exist.", loginNameOrId));
         }
@@ -357,7 +355,7 @@ public class UserServiceImpl implements UserService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取角色信息：{}", loginNameOrId);
         List<RoleItem> roleItems = new ArrayList<>();
         foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
-            FoxRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
+            YYRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
             RoleItem roleItem = new RoleItem();
             roleItem.setId(foxRole.getId());
             roleItem.setName(foxRole.getName());
@@ -421,7 +419,7 @@ public class UserServiceImpl implements UserService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "验证登录名是否存在：{}", loginName);
         GeneralContentResult<String> generalContentResult = new GeneralContentResult<String>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        FoxUser foxUser = foxUserRepository.findByLoginNameAndType(loginName, AdUserMgmtConstants.USER_TYPE_LOCAL);
+        YYUser foxUser = foxUserRepository.findByLoginNameAndType(loginName, AdUserMgmtConstants.USER_TYPE_LOCAL);
         if(null != foxUser){
             log.debug(CommonConstant.LOG_DEBUG_TAG + "登录名已存在：{}", loginName);
             generalContentResult.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
@@ -438,12 +436,12 @@ public class UserServiceImpl implements UserService {
         FoxUserItem foxUserItem = new FoxUserItem();
         foxUserItem.setLoginName(loginName);//设置返回值的的登录名为当前登录名
         // 首先取当前用户进行判断，如果不能取到当前用户，再通过loginName判断
-        Optional<FoxUser> optional = foxUserRepository.findByLoginName(loginName);
+        Optional<YYUser> optional = foxUserRepository.findByLoginName(loginName);
         if(!optional.isPresent()){
             log.warn(CommonConstant.LOG_DEBUG_TAG + "当前用户不存在：{}", loginName);
             foxUserItem.setUserType(CommonConstant.USER_NOT_FOUND);
         }else{
-            FoxUser foxUser = optional.get();
+            YYUser foxUser = optional.get();
             String tenantId = foxUser.getTenantId();
             foxUserItem.setPassword(foxUser.getPassword());
             if(StringUtils.isBlank(tenantId)){

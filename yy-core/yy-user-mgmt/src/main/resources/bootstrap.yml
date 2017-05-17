@@ -48,6 +48,6 @@ spring:
     name: user-mgmt
   cloud:
     config:
-      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
+      uri: http://localhost:8888
 encrypt:
   failOnError: false

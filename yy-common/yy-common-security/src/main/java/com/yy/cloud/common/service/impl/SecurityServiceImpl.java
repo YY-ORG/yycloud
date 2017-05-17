@@ -1,20 +1,20 @@
 package com.yy.cloud.common.service.impl;
 
-import com.yy.cloud.common.clients.SecurityClient;
-import com.yy.cloud.common.constant.ResultCode;
-import com.yy.cloud.common.data.GeneralContentResult;
-import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
-import com.yy.cloud.common.data.security.LDAPPrincipal;
-import com.yy.cloud.common.service.SecurityService;
+import java.security.Principal;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
+import com.yy.cloud.common.clients.SecurityClient;
+import com.yy.cloud.common.constant.ResultCode;
+import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
+import com.yy.cloud.common.service.SecurityService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by chenxj on 12/10/16.

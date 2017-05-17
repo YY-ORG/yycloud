@@ -1,24 +1,30 @@
 package com.yy.cloud.core.usermgmt.data.domain;
 
-import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import lombok.Data;
 
 @Entity
-@Table(name = "FOX_ORGANIZATION")
-@NamedQuery(name = "FoxOrganization.findAll", query = "SELECT f FROM FoxOrganization f")
+@Table(name = "YY_ORGANIZATION")
+@NamedQuery(name = "YYOrganization.findAll", query = "SELECT f FROM YYOrganization f")
 @DynamicInsert
 @DynamicUpdate
 @Data
-public class FoxOrganization implements Serializable {
+public class YYOrganization implements Serializable {
 
 	@Id
 	@GeneratedValue(generator = "system-uuid")

@@ -16,3 +16,10 @@ spring:
   profiles: test
   application:
     name: config-server
+
+---
+spring:
+  profiles: local
+  application:
+    name: config-server
+    

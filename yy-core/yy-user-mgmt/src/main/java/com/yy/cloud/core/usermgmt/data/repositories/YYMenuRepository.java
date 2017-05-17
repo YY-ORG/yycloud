@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.yy.cloud.core.usermgmt.data.domain.FoxMenu;
+import com.yy.cloud.core.usermgmt.data.domain.YYMenu;
 
 @Repository
-public interface FoxMenuRepository extends JpaRepository<FoxMenu, String> {
+public interface YYMenuRepository extends JpaRepository<YYMenu, String> {
 
-    List<FoxMenu> findByIdIn(Collection<String> menuIds);
+    List<YYMenu> findByIdIn(Collection<String> menuIds);
 
 }

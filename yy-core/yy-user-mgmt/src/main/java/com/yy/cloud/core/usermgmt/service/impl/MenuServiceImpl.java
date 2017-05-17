@@ -13,32 +13,32 @@ import com.yy.cloud.common.data.dto.menu.MenuProfile;
 import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
 import com.yy.cloud.common.data.otd.sysbase.MenuItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
-import com.yy.cloud.core.usermgmt.data.domain.FoxMenu;
-import com.yy.cloud.core.usermgmt.data.domain.FoxRole;
-import com.yy.cloud.core.usermgmt.data.domain.FoxRoleMenu;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxMenuRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxRoleMenuRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxRoleRepository;
+import com.yy.cloud.core.usermgmt.data.domain.YYMenu;
+import com.yy.cloud.core.usermgmt.data.domain.YYRole;
+import com.yy.cloud.core.usermgmt.data.domain.YYRoleMenu;
+import com.yy.cloud.core.usermgmt.data.repositories.YYMenuRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYRoleMenuRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
 import com.yy.cloud.core.usermgmt.service.MenuService;
 
 @Service
 public class MenuServiceImpl implements MenuService {
 
     @Autowired
-    private FoxMenuRepository foxMenuRepository;
+    private YYMenuRepository foxMenuRepository;
 
     @Autowired
-    private FoxRoleMenuRepository foxRoleMenuRepository;
+    private YYRoleMenuRepository foxRoleMenuRepository;
 
     @Autowired
-    private FoxRoleRepository foxRoleRepository;
+    private YYRoleRepository foxRoleRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
     @Override
     public String createMenu(MenuProfile _menuProfile) {
-        FoxMenu foxMenu = new FoxMenu();
+        YYMenu foxMenu = new YYMenu();
         foxMenu.setName(_menuProfile.getName());
         foxMenu.setCode(_menuProfile.getCode());
         foxMenu.setRouting(_menuProfile.getRouting());
@@ -50,16 +50,16 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void addRole(String _menuId, String _roleId) {
-        List<FoxRoleMenu> foxRoleMenus = foxRoleMenuRepository.findByMenuIdAndRoleId(_menuId, _roleId);
+        List<YYRoleMenu> foxRoleMenus = foxRoleMenuRepository.findByMenuIdAndRoleId(_menuId, _roleId);
         if (foxRoleMenus.isEmpty()) {
-            FoxRoleMenu foxRoleMenu = new FoxRoleMenu();
+            YYRoleMenu foxRoleMenu = new YYRoleMenu();
             foxRoleMenu.setMenuId(_menuId);
             foxRoleMenu.setRoleId(_roleId);
             foxRoleMenuRepository.save(foxRoleMenu);
         }
     }
 
-    private List<MenuItem> generateMenuTree(List<FoxMenu> foxMenus) {
+    private List<MenuItem> generateMenuTree(List<YYMenu> foxMenus) {
         // 把全部FoxMenu转换成MenuItem
         List<MenuItem> menuItems = foxMenus.stream()
                 .map(foxMenu -> modelMapper.map(foxMenu, MenuItem.class))
@@ -96,7 +96,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuItem> getAllMenuTree() {
-        List<FoxMenu> foxMenus = foxMenuRepository.findAll();
+        List<YYMenu> foxMenus = foxMenuRepository.findAll();
         return generateMenuTree(foxMenus);
     }
 
@@ -104,16 +104,16 @@ public class MenuServiceImpl implements MenuService {
     public RoleDetailsItem getMenuTreeByRoleId(String _roleId) {
         RoleDetailsItem roleDetailsItem = new RoleDetailsItem();
 
-        List<FoxRoleMenu> foxRoleMenus = foxRoleMenuRepository.findByRoleId(_roleId);
+        List<YYRoleMenu> foxRoleMenus = foxRoleMenuRepository.findByRoleId(_roleId);
         List<String> menuIds = foxRoleMenus.stream()
                 .map(foxRoleMenu -> foxRoleMenu.getMenuId())
                 .collect(Collectors.toList());
 
-        List<FoxMenu> foxMenus = foxMenuRepository.findByIdIn(menuIds);
+        List<YYMenu> foxMenus = foxMenuRepository.findByIdIn(menuIds);
 
         roleDetailsItem.setMenus(generateMenuTree(foxMenus));
 
-        FoxRole foxRole = foxRoleRepository.findOne(_roleId);
+        YYRole foxRole = foxRoleRepository.findOne(_roleId);
         roleDetailsItem.setRoleName(foxRole.getRoleName());
 
         return roleDetailsItem;
@@ -126,13 +126,13 @@ public class MenuServiceImpl implements MenuService {
                 .distinct()
                 .collect(Collectors.toList());
 
-        List<FoxRoleMenu> foxRoleMenus = foxRoleMenuRepository.findByRoleIdIn(roleIds);
+        List<YYRoleMenu> foxRoleMenus = foxRoleMenuRepository.findByRoleIdIn(roleIds);
         List<String> menuIds = foxRoleMenus.stream()
                 .map(foxRoleMenu -> foxRoleMenu.getMenuId())
                 .distinct()
                 .collect(Collectors.toList());
 
-        List<FoxMenu> foxMenus = foxMenuRepository.findByIdIn(menuIds);
+        List<YYMenu> foxMenus = foxMenuRepository.findByIdIn(menuIds);
         return generateMenuTree(foxMenus);
     }
 }

@@ -44,7 +44,7 @@ public class SwaggerConfig {
 				.useDefaultResponseMessages(false)
 				.forCodeGeneration(true)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.gemii.lizcloud.core.usermgmt.controller"))
+				.apis(RequestHandlerSelectors.basePackage("com.yy.cloud.core.usermgmt.controller"))
 				.paths(PathSelectors.any()).build();
 	}
 

@@ -43,3 +43,15 @@ spring:
       #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
 encrypt:
   failOnError: false
+  
+---
+spring:
+  profiles: local
+  application:
+    name: local-discovery
+  cloud:
+    config:
+      uri: http://localhost:8888
+      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
+encrypt:
+  failOnError: false

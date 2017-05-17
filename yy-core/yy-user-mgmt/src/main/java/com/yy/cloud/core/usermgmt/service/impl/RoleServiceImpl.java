@@ -19,11 +19,11 @@ import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.core.usermgmt.constant.RoleTypeConstant;
-import com.yy.cloud.core.usermgmt.data.domain.FoxRole;
-import com.yy.cloud.core.usermgmt.data.domain.FoxUser;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxRoleRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.FoxUserRoleRepository;
+import com.yy.cloud.core.usermgmt.data.domain.YYRole;
+import com.yy.cloud.core.usermgmt.data.domain.YYUser;
+import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYUserRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYUserRoleRepository;
 import com.yy.cloud.core.usermgmt.service.RoleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
-    private FoxRoleRepository foxRoleRepository;
+    private YYRoleRepository foxRoleRepository;
 
     @Autowired
-    private FoxUserRoleRepository foxUserRoleRepository;
+    private YYUserRoleRepository foxUserRoleRepository;
 
     @Autowired
-    private FoxUserRepository foxUserRepository;
+    private YYUserRepository foxUserRepository;
 
     @Autowired
     private ModelMapper modelMapp;
@@ -49,7 +49,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public String createRole(RoleProfile _roleProfile) {
-        FoxRole foxRole = modelMapp.map(_roleProfile, FoxRole.class);
+        YYRole foxRole = modelMapp.map(_roleProfile, YYRole.class);
         foxRole.setStatus(CommonConstant.DIC_GLOBAL_STATUS_INITIAL);
         foxRoleRepository.save(foxRole);
         return foxRole.getId();
@@ -61,7 +61,7 @@ public class RoleServiceImpl implements RoleService {
         //UserDetailsItem userDetailsItem = securityService.getCurrentUser();
         //Page<FoxRole> foxRoles = foxRoleRepository.findAll(pageRequest);
         Byte type = isProviderUser()? RoleTypeConstant.ROLE_PROVIDER:RoleTypeConstant.ROLE_BUYER;
-        List<FoxRole> foxRoles = foxRoleRepository.findByType(type);
+        List<YYRole> foxRoles = foxRoleRepository.findByType(type);
 
         List<RoleItem> roleItems = new ArrayList<>();
         foxRoles.forEach(
@@ -96,7 +96,7 @@ public class RoleServiceImpl implements RoleService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "查询企业ID：{}下，所有该：{}角色成员",tenantId, roleNames);
         GeneralContentResult<List<UserItem>> generalContentResult = new GeneralContentResult<List<UserItem>>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        List<FoxUser> foxUsers = foxUserRepository.findMppUserByRoleList(tenantId, roleNames);
+        List<YYUser> foxUsers = foxUserRepository.findMppUserByRoleList(tenantId, roleNames);
         List<UserItem> userItemList = new ArrayList<UserItem>();
         foxUsers.forEach(foxUser -> {
             UserItem userItem = modelMapp.map(foxUser, UserItem.class);
@@ -112,7 +112,7 @@ public class RoleServiceImpl implements RoleService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "查询后台企业，所有该：{}角色成员", roleNames);
         GeneralContentResult<List<UserItem>> generalContentResult = new GeneralContentResult<List<UserItem>>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        List<FoxUser> foxUsers = foxUserRepository.findAdmUserByRoleList(roleNames);
+        List<YYUser> foxUsers = foxUserRepository.findAdmUserByRoleList(roleNames);
         List<UserItem> userItemList = new ArrayList<UserItem>();
         foxUsers.forEach(foxUser -> {
             UserItem userItem = modelMapp.map(foxUser, UserItem.class);

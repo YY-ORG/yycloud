@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.yy.cloud.core.usermgmt.data.domain.FoxUser;
+import com.yy.cloud.core.usermgmt.data.domain.YYUser;
 
 /**
  * ClassName: AcmeUser UserRepository <br/>
@@ -21,42 +21,42 @@ import com.yy.cloud.core.usermgmt.data.domain.FoxUser;
  * @since JDK 1.8
  */
 @Repository
-public interface FoxUserRepository extends JpaRepository<FoxUser, String> {
+public interface YYUserRepository extends JpaRepository<YYUser, String> {
 
-    Page<FoxUser> findByStatusAndTenantId(Byte status, String tenantId, Pageable pageable);
+    Page<YYUser> findByStatusAndTenantId(Byte status, String tenantId, Pageable pageable);
 
-    Page<FoxUser> findByUserNameLike(String userName, Pageable pageable);
+    Page<YYUser> findByUserNameLike(String userName, Pageable pageable);
 
-    Optional<FoxUser> findOneByEmail(String _email);
+    Optional<YYUser> findOneByEmail(String _email);
 
-    Optional<FoxUser> findByLoginName(String _loginName);
+    Optional<YYUser> findByLoginName(String _loginName);
 
-    Optional<FoxUser> findByLoginNameAndTypeAndTenantId(String _loginName, Byte type, String tenantId);
+    Optional<YYUser> findByLoginNameAndTypeAndTenantId(String _loginName, Byte type, String tenantId);
 
-    FoxUser findByLoginNameAndType(String _loginName, Byte type);
+    YYUser findByLoginNameAndType(String _loginName, Byte type);
 
-    List<FoxUser> findByLoginNameOrEmail(String _userName, String _email);
+    List<YYUser> findByLoginNameOrEmail(String _userName, String _email);
 
-    Page<FoxUser> findByTenantId(Pageable pageable, String tenantId);
+    Page<YYUser> findByTenantId(Pageable pageable, String tenantId);
 
-    Page<FoxUser> findByTenantIdAndStatusLessThan(String tenantId, Byte status, Pageable pageable);
+    Page<YYUser> findByTenantIdAndStatusLessThan(String tenantId, Byte status, Pageable pageable);
 
-    Page<FoxUser> findByTenantIdAndStatusLessThanAndUserNameLike(String tenantId, Byte status, String username, Pageable pageable);
+    Page<YYUser> findByTenantIdAndStatusLessThanAndUserNameLike(String tenantId, Byte status, String username, Pageable pageable);
 
-    Page<FoxUser> findByIdInAndStatusLessThan(List<String> ids,Byte status, Pageable pageable);
+    Page<YYUser> findByIdInAndStatusLessThan(List<String> ids,Byte status, Pageable pageable);
 
-    Page<FoxUser> findByIdInAndStatusLessThanAndUserNameLike(List<String> ids,Byte status, String userNmae, Pageable pageable);
+    Page<YYUser> findByIdInAndStatusLessThanAndUserNameLike(List<String> ids,Byte status, String userNmae, Pageable pageable);
 
     //@Query(value = "SELECT U.* FROM FOX_USER_ROLE UR LEFT JOIN FOX_USER U ON UR.USER_ID = U.ID LEFT JOIN FOX_ROLE R ON UR.ROLE_ID = R.ID WHERE U.TENANT_ID = ?1 AND R.ROLE_NAME IN ?2 AND U.STATUS < 4", nativeQuery = true
     //)
 
     @Query(value="SELECT * FROM FOX_USER U WHERE TENANT_ID = ?1 AND STATUS < 4 AND ID IN ( SELECT UR.USER_ID FROM FOX_USER_ROLE UR INNER JOIN FOX_ROLE R ON UR.ROLE_ID = R.ID WHERE R.ROLE_NAME IN ?2)", nativeQuery = true)
         //@Query(value = "SELECT U FROM FoxUserRole UR LEFT JOIN FoxUser U ON UR.userId = U.id LEFT JOIN FoxRole R ON UR.roleId = R.id WHERE U.tenantId = ?1 AND R.roleName IN ?2 AND U.status < 4")
-    List<FoxUser> findMppUserByRoleList(String tenantId, List<String> roleNames);
+    List<YYUser> findMppUserByRoleList(String tenantId, List<String> roleNames);
 
     @Query(value = "SELECT U.* FROM FOX_USER_ROLE UR LEFT JOIN FOX_USER U ON UR.USER_ID = U.ID LEFT JOIN FOX_ROLE R ON UR.ROLE_ID = R.ID WHERE R.ROLE_NAME IN ?1  AND U.STATUS < 4", nativeQuery = true)
         //@Query(value = "SELECT U FROM FoxUserRole UR LEFT JOIN FoxUser U ON UR.userId = U.id LEFT JOIN FoxRole R ON UR.roleId = R.id WHERE R.roleName IN ?1 AND U.status < 4")
-    List<FoxUser> findAdmUserByRoleList(List<String> roleNames);
+    List<YYUser> findAdmUserByRoleList(List<String> roleNames);
 
-    FoxUser findByLoginNameOrId(String _loginName, String _id);
+    YYUser findByLoginNameOrId(String _loginName, String _id);
 }
