@@ -23,40 +23,16 @@ import com.yy.cloud.core.usermgmt.data.domain.YYUser;
 @Repository
 public interface YYUserRepository extends JpaRepository<YYUser, String> {
 
-    Page<YYUser> findByStatusAndTenantId(Byte status, String tenantId, Pageable pageable);
+	Optional<YYUser> findOneByEmail(String _email);
 
-    Page<YYUser> findByUserNameLike(String userName, Pageable pageable);
+	Optional<YYUser> findByLoginName(String _loginName);
 
-    Optional<YYUser> findOneByEmail(String _email);
+	YYUser findByLoginNameAndType(String _loginName, Byte type);
 
-    Optional<YYUser> findByLoginName(String _loginName);
+	Page<YYUser> findByIdInAndStatusLessThan(List<String> ids, Byte status, Pageable pageable);
 
-    Optional<YYUser> findByLoginNameAndTypeAndTenantId(String _loginName, Byte type, String tenantId);
+	@Query(value = "SELECT U.* FROM FOX_USER_ROLE UR LEFT JOIN FOX_USER U ON UR.USER_ID = U.ID LEFT JOIN FOX_ROLE R ON UR.ROLE_ID = R.ID WHERE R.ROLE_NAME IN ?1  AND U.STATUS < 4", nativeQuery = true)
+	List<YYUser> findAdmUserByRoleList(List<String> roleNames);
 
-    YYUser findByLoginNameAndType(String _loginName, Byte type);
-
-    List<YYUser> findByLoginNameOrEmail(String _userName, String _email);
-
-    Page<YYUser> findByTenantId(Pageable pageable, String tenantId);
-
-    Page<YYUser> findByTenantIdAndStatusLessThan(String tenantId, Byte status, Pageable pageable);
-
-    Page<YYUser> findByTenantIdAndStatusLessThanAndUserNameLike(String tenantId, Byte status, String username, Pageable pageable);
-
-    Page<YYUser> findByIdInAndStatusLessThan(List<String> ids,Byte status, Pageable pageable);
-
-    Page<YYUser> findByIdInAndStatusLessThanAndUserNameLike(List<String> ids,Byte status, String userNmae, Pageable pageable);
-
-    //@Query(value = "SELECT U.* FROM FOX_USER_ROLE UR LEFT JOIN FOX_USER U ON UR.USER_ID = U.ID LEFT JOIN FOX_ROLE R ON UR.ROLE_ID = R.ID WHERE U.TENANT_ID = ?1 AND R.ROLE_NAME IN ?2 AND U.STATUS < 4", nativeQuery = true
-    //)
-
-    @Query(value="SELECT * FROM FOX_USER U WHERE TENANT_ID = ?1 AND STATUS < 4 AND ID IN ( SELECT UR.USER_ID FROM FOX_USER_ROLE UR INNER JOIN FOX_ROLE R ON UR.ROLE_ID = R.ID WHERE R.ROLE_NAME IN ?2)", nativeQuery = true)
-        //@Query(value = "SELECT U FROM FoxUserRole UR LEFT JOIN FoxUser U ON UR.userId = U.id LEFT JOIN FoxRole R ON UR.roleId = R.id WHERE U.tenantId = ?1 AND R.roleName IN ?2 AND U.status < 4")
-    List<YYUser> findMppUserByRoleList(String tenantId, List<String> roleNames);
-
-    @Query(value = "SELECT U.* FROM FOX_USER_ROLE UR LEFT JOIN FOX_USER U ON UR.USER_ID = U.ID LEFT JOIN FOX_ROLE R ON UR.ROLE_ID = R.ID WHERE R.ROLE_NAME IN ?1  AND U.STATUS < 4", nativeQuery = true)
-        //@Query(value = "SELECT U FROM FoxUserRole UR LEFT JOIN FoxUser U ON UR.userId = U.id LEFT JOIN FoxRole R ON UR.roleId = R.id WHERE R.roleName IN ?1 AND U.status < 4")
-    List<YYUser> findAdmUserByRoleList(List<String> roleNames);
-
-    YYUser findByLoginNameOrId(String _loginName, String _id);
+	YYUser findByLoginNameOrId(String _loginName, String _id);
 }

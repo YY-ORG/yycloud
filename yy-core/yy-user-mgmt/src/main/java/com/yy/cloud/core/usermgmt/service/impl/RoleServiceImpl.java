@@ -96,7 +96,7 @@ public class RoleServiceImpl implements RoleService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "查询企业ID：{}下，所有该：{}角色成员",tenantId, roleNames);
         GeneralContentResult<List<UserItem>> generalContentResult = new GeneralContentResult<List<UserItem>>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        List<YYUser> foxUsers = foxUserRepository.findMppUserByRoleList(tenantId, roleNames);
+        List<YYUser> foxUsers =  new ArrayList<YYUser>();//ToDO
         List<UserItem> userItemList = new ArrayList<UserItem>();
         foxUsers.forEach(foxUser -> {
             UserItem userItem = modelMapp.map(foxUser, UserItem.class);
