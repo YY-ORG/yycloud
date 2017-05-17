@@ -18,6 +18,7 @@ import lombok.Data;
 
 
 /**
+ * 用户 角色
  * The persistent class for the YY_USER_ROLE database table.
  */
 @Entity

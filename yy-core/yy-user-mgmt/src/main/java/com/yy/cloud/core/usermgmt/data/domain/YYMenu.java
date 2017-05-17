@@ -16,6 +16,7 @@ import lombok.Data;
 
 
 /**
+ * 菜单表
  * The persistent class for the FOX_MENU database table.
  */
 @Entity

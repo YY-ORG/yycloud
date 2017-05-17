@@ -18,6 +18,12 @@ import org.hibernate.annotations.GenericGenerator;
 
 import lombok.Data;
 
+
+/**
+ * 部门
+ * @author luckey
+ *
+ */
 @Entity
 @Table(name = "YY_ORGANIZATION")
 @NamedQuery(name = "YYOrganization.findAll", query = "SELECT f FROM YYOrganization f")
@@ -25,6 +31,11 @@ import lombok.Data;
 @DynamicUpdate
 @Data
 public class YYOrganization implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -164372400859604000L;
 
 	@Id
 	@GeneratedValue(generator = "system-uuid")
@@ -73,34 +84,7 @@ public class YYOrganization implements Serializable {
 	@Column(name = "TYPE")
 	private Byte type;
 
-	@Column(name = "CURRENCY")
-	private String currency;
 
-	@Column(name = "FEE_TYPE")
-	private Byte feeType;
-
-	@Column(name = "FEE_PERIOD")
-	private Byte feePeriod;
-
-	@Column(name = "BILL_GEN_DATE")
-	private Byte billGenDate;
-
-	@Column(name = "BILL_SEND_DATE")
-	private Byte billSendDate;
-
-	@Column(name = "EXIT_FEE_POLICY")
-	private Byte exitFeePolicy;
-
-	@Column(name = "SPECIAL_FEE_POLICY")
-	private Byte specialFeePolicy;
-
-	@Column(name = "FEE_START_POLICY")
-	private Byte feeStartPolicy;
-
-	@Column(name = "FISCAL_MONTH")
-	private Byte fiscalMonth;
-
-	@Column(name = "FISCAL_DATE")
-	private Byte fiscalDate;
+	
 
 }

@@ -57,8 +57,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private YYUserRoleRepository foxUserRoleRepository;
 
-    @Autowired
-    private YYOrganizationRepository foxOrganizationRepository;
 
     @Autowired
     private YYRoleRepository foxRoleRepository;
@@ -157,7 +155,6 @@ public class UserServiceImpl implements UserService {
         foxUser.setLoginName(loginName);
         UserDetailsItem userDetailItem = securityService.getCurrentUser();
         log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem );
-        foxUser.setTenantId(userDetailItem.getEnterpriseId()); //将企业设置为当前用户企业，避免前端未传企业ID
 
         foxUserRepository.save(foxUser);
 
@@ -258,9 +255,9 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setUserId(foxUser.getId());
         userDetailsItem.setLoginName(foxUser.getLoginName());
         userDetailsItem.setPassword(foxUser.getPassword());
-        userDetailsItem.setUserName(foxUser.getUserName());
-        userDetailsItem.setEmail(foxUser.getEmail());
-        userDetailsItem.setPhone(foxUser.getPhone());
+        userDetailsItem.setUserName(foxUser.getUserInfo().getUserName());
+        userDetailsItem.setEmail(foxUser.getUserInfo().getEmail());
+        userDetailsItem.setPhone(foxUser.getUserInfo().getPhone());
         userDetailsItem.setStatus(foxUser.getStatus());
         userDetailsItem.setDescription(foxUser.getDescription());
 
@@ -288,9 +285,9 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setUserId(foxUser.getId());
         userDetailsItem.setLoginName(foxUser.getLoginName());
         userDetailsItem.setPassword(foxUser.getPassword());
-        userDetailsItem.setUserName(foxUser.getUserName());
-        userDetailsItem.setEmail(foxUser.getEmail());
-        userDetailsItem.setPhone(foxUser.getPhone());
+        userDetailsItem.setUserName(foxUser.getUserInfo().getUserName());
+        userDetailsItem.setEmail(foxUser.getUserInfo().getEmail());
+        userDetailsItem.setPhone(foxUser.getUserInfo().getPhone());
         userDetailsItem.setStatus(foxUser.getStatus());
         userDetailsItem.setDescription(foxUser.getDescription());
 
@@ -319,12 +316,10 @@ public class UserServiceImpl implements UserService {
         if (!StringUtils.isBlank(leaderId)) {
             userDetailsItem.setLeaderId(leaderId);
             Optional.ofNullable(foxUserRepository.findOne(leaderId)).ifPresent(
-                    leaderUser -> userDetailsItem.setLeaderName(leaderUser.getUserName())
+                    leaderUser -> userDetailsItem.setLeaderName(leaderUser.getUserInfo().getUserName())
             );
         }
 
-        String tenantId = foxUser.getTenantId();
-        if (!StringUtils.isBlank(tenantId)) {}
 
         userDetailsItem.setIsAD(false);
         if (foxUser.getType() != null && foxUser.getType().byteValue() == AdUserMgmtConstants.USER_TYPE_AD) {
@@ -346,9 +341,9 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setUserId(foxUser.getId());
         userDetailsItem.setLoginName(foxUser.getLoginName());
         userDetailsItem.setPassword(foxUser.getPassword());
-        userDetailsItem.setUserName(foxUser.getUserName());
-        userDetailsItem.setEmail(foxUser.getEmail());
-        userDetailsItem.setPhone(foxUser.getPhone());
+        userDetailsItem.setUserName(foxUser.getUserInfo().getUserName());
+        userDetailsItem.setEmail(foxUser.getUserInfo().getEmail());
+        userDetailsItem.setPhone(foxUser.getUserInfo().getPhone());
         userDetailsItem.setStatus(foxUser.getStatus());
         userDetailsItem.setDescription(foxUser.getDescription());
 
@@ -379,15 +374,10 @@ public class UserServiceImpl implements UserService {
         if (!StringUtils.isBlank(leaderId)) {
             userDetailsItem.setLeaderId(leaderId);
             Optional.ofNullable(foxUserRepository.findOne(leaderId)).ifPresent(
-                    leaderUser -> userDetailsItem.setLeaderName(leaderUser.getUserName())
+                    leaderUser -> userDetailsItem.setLeaderName(leaderUser.getUserInfo().getUserName())
             );
         }
 
-        String tenantId = foxUser.getTenantId();
-        if (!StringUtils.isBlank(tenantId)) {
-        	
-        	
-        }
 
         userDetailsItem.setIsAD(false);     //TODO 这里可能有问题，需要确认
         if (foxUser.getType() != null && foxUser.getType().byteValue() == AdUserMgmtConstants.USER_TYPE_AD) {
@@ -442,13 +432,8 @@ public class UserServiceImpl implements UserService {
             foxUserItem.setUserType(CommonConstant.USER_NOT_FOUND);
         }else{
             YYUser foxUser = optional.get();
-            String tenantId = foxUser.getTenantId();
             foxUserItem.setPassword(foxUser.getPassword());
-            if(StringUtils.isBlank(tenantId)){
-                foxUserItem.setUserType(CommonConstant.USER_TYPE_PROVIDER);
-            }else{
-                foxUserItem.setUserType(CommonConstant.USER_TYPE_BUYER);
-            }
+            foxUserItem.setUserType(CommonConstant.USER_TYPE_BUYER);
         }
         generalContentResult.setResultContent(foxUserItem);
         log.info(CommonConstant.LOG_DEBUG_TAG + "通过登录名判断该用户是前台用户还是后台用户,结果：{}", generalContentResult);

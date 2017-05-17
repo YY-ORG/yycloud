@@ -11,12 +11,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 
 import com.yy.cloud.core.usermgmt.data.domain.YYMenu;
-import com.yy.cloud.core.usermgmt.data.domain.YYPerm;
-import com.yy.cloud.core.usermgmt.data.domain.YYPermRole;
-import com.yy.cloud.core.usermgmt.data.domain.YYPermType;
+import com.yy.cloud.core.usermgmt.data.domain.YYOrganization;
 import com.yy.cloud.core.usermgmt.data.domain.YYRole;
 import com.yy.cloud.core.usermgmt.data.domain.YYRoleMenu;
 import com.yy.cloud.core.usermgmt.data.domain.YYUser;
+import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
+import com.yy.cloud.core.usermgmt.data.domain.YYUserOrganization;
 import com.yy.cloud.core.usermgmt.data.domain.YYUserRole;
 
 /**
@@ -43,15 +43,14 @@ public class Application {
     private RepositoryRestMvcConfiguration repositoryRestConfiguration;
 
     @PostConstruct
-    public void postConstructConfiguration() {
-
-        repositoryRestConfiguration.config().exposeIdsFor(YYUser.class);
-        repositoryRestConfiguration.config().exposeIdsFor(YYUserRole.class);
-        repositoryRestConfiguration.config().exposeIdsFor(YYRole.class);
-        repositoryRestConfiguration.config().exposeIdsFor(YYRoleMenu.class);
-        repositoryRestConfiguration.config().exposeIdsFor(YYPermType.class);
-        repositoryRestConfiguration.config().exposeIdsFor(YYPermRole.class);
-        repositoryRestConfiguration.config().exposeIdsFor(YYPerm.class);
-        repositoryRestConfiguration.config().exposeIdsFor(YYMenu.class);
-    }
+	public void postConstructConfiguration() {
+		repositoryRestConfiguration.config().exposeIdsFor(YYMenu.class);
+		repositoryRestConfiguration.config().exposeIdsFor(YYOrganization.class);
+		repositoryRestConfiguration.config().exposeIdsFor(YYRole.class);
+		repositoryRestConfiguration.config().exposeIdsFor(YYRoleMenu.class);
+		repositoryRestConfiguration.config().exposeIdsFor(YYUser.class);
+		repositoryRestConfiguration.config().exposeIdsFor(YYUserInfo.class);
+		repositoryRestConfiguration.config().exposeIdsFor(YYUserOrganization.class);
+		repositoryRestConfiguration.config().exposeIdsFor(YYUserRole.class);
+	}
 }

@@ -15,6 +15,7 @@ import lombok.Data;
 
 
 /**
+ * 用户--部门
  * The persistent class for the YYUserOrganization database table.
  */
 @Entity

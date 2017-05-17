@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 
+ * 角色表
  * The persistent class for the YYRole database table.
  */
 @Entity
@@ -42,9 +44,23 @@ public class YYRole implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    
+    /**
+     * 内置两大类角色 0：考核类角色  1：查阅类角色
+     */
     @Column(name = "TYPE")
     private Byte type;
 
+    
+    
+    /**
+     * --科研 0、社科 1、图资 2, 
+     */
+    @Column(name = "CATEGORY")
+    private Byte category;
+
+    
+    
     @Column(name = "CREATE_BY")
     private String createBy;
 

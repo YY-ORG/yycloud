@@ -9,6 +9,8 @@ import java.sql.Timestamp;
 
 
 /**
+ * 
+ * 角色--菜单表
  * The persistent class for the YY_ROLE_MENU database table.
  */
 @Entity
@@ -39,9 +41,5 @@ public class YYRoleMenu implements Serializable {
     @Column(name = "UPDATE_DATE")
     private Timestamp updateDate;
 
-    //bi-directional many-to-one association to FoxMenu
-
-
-    //bi-directional many-to-one association to FoxRole
 
 }
