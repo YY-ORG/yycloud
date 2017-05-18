@@ -48,27 +48,16 @@ public class YYOrganization implements Serializable {
 
 	@Column(name = "STATUS")
 	private Byte status;
-
-	@Column(name = "AREA_ID")
-	private String areaId;
-
-	@Column(name = "LEADER_ID")
-	private String leaderId;
+	
+	@Column(name = "PARENT_ID")
+	private String parentId;
+	
+	@Column(name = "CREATE_BY")
+	private String createBy;
+	
 
 	@Column(name = "DESCRIPTION")
 	private String description;
-
-	@Column(name = "TENANT_ID")
-	private String tenantId;
-
-	@Column(name = "PARENT_ID")
-	private String parentId;
-
-	@Column(name = "GRADE")
-	private Byte grade;
-
-	@Column(name = "CREATE_BY")
-	private String createBy;
 
 	@Column(name = "CREATE_DATE", updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -78,11 +67,7 @@ public class YYOrganization implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
 
-	@Column(name = "CODE")
-	private String code;
-
-	@Column(name = "TYPE")
-	private Byte type;
+	
 
 
 	
