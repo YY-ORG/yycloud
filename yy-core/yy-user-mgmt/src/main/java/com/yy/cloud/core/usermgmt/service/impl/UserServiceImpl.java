@@ -22,8 +22,8 @@ import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
-import com.yy.cloud.common.data.otd.tenant.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
+import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
@@ -32,6 +32,7 @@ import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.common.utils.DateUtils;
 import com.yy.cloud.core.usermgmt.constant.AdUserMgmtConstants;
 import com.yy.cloud.core.usermgmt.constant.UserMgmtConstants;
+import com.yy.cloud.core.usermgmt.data.domain.YYOrganization;
 import com.yy.cloud.core.usermgmt.data.domain.YYRole;
 import com.yy.cloud.core.usermgmt.data.domain.YYUser;
 import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
@@ -61,6 +62,10 @@ public class UserServiceImpl implements UserService {
     private YYUserRoleRepository foxUserRoleRepository;
 
 
+    @Autowired
+    private YYOrganizationRepository yyOrganzationRepository;
+
+    
     @Autowired
     private YYRoleRepository foxRoleRepository;
 
@@ -125,6 +130,32 @@ public class UserServiceImpl implements UserService {
             });
         }
         return foxUser.getId();
+    }
+    
+    @Override
+    public GeneralContentResult<List<com.yy.cloud.common.data.otd.usermgmt.OrganizationItem>> findAllorgnazation(){
+    	GeneralContentResult<List<OrganizationItem>> reslut = new GeneralContentResult<List<OrganizationItem>>();
+    	
+    	List<OrganizationItem> orglis= new ArrayList<OrganizationItem>();
+    	
+    	List<YYOrganization> items=yyOrganzationRepository.findAll();
+    	
+    	
+    	if(items!=null && items.size()>0){
+    		for(YYOrganization yyOrganization :items){
+    			OrganizationItem org= new OrganizationItem();
+    			org.setId(yyOrganization.getId());
+    			org.setOrganizitionName(yyOrganization.getName());
+    			org.setDesc(yyOrganization.getDescription());
+    			orglis.add(org);
+    		}
+    	}
+    	
+    	reslut.setResultContent(orglis);
+    	reslut.setDetailDescription(ResultCode.OPERATION_SUCCESS);
+    	reslut.setResultCode(ResultCode.OPERATION_SUCCESS);
+    	
+    	return reslut;
     }
 
     @Override
@@ -296,20 +327,10 @@ public class UserServiceImpl implements UserService {
 
         List<OrganizationItem> organizationItems = new ArrayList<>();
        
-        userDetailsItem.setOrganizations(organizationItems);
 
         OrganizationItem organizationItem = organizationItems.get(0);
 
         userDetailsItem.setOrganizationId(organizationItem.getId());
-        userDetailsItem.setOrganizationName(organizationItem.getName());
-
-        String leaderId = organizationItem.getLeaderId();
-        if (!StringUtils.isBlank(leaderId)) {
-            userDetailsItem.setLeaderId(leaderId);
-            Optional.ofNullable(foxUserRepository.findOne(leaderId)).ifPresent(
-                    leaderUser -> userDetailsItem.setLeaderName(leaderUser.getUserInfo().getUserName())
-            );
-        }
 
 
         userDetailsItem.setIsAD(false);
@@ -354,20 +375,11 @@ public class UserServiceImpl implements UserService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取机构/部门信息：{}", loginNameOrId);
         List<OrganizationItem> organizationItems = new ArrayList<>();
        
-        userDetailsItem.setOrganizations(organizationItems);
 
         OrganizationItem organizationItem = organizationItems.get(0);
 
         userDetailsItem.setOrganizationId(organizationItem.getId());
-        userDetailsItem.setOrganizationName(organizationItem.getName());
 
-        String leaderId = organizationItem.getLeaderId();
-        if (!StringUtils.isBlank(leaderId)) {
-            userDetailsItem.setLeaderId(leaderId);
-            Optional.ofNullable(foxUserRepository.findOne(leaderId)).ifPresent(
-                    leaderUser -> userDetailsItem.setLeaderName(leaderUser.getUserInfo().getUserName())
-            );
-        }
 
 
         userDetailsItem.setIsAD(false);     //TODO 这里可能有问题，需要确认
@@ -430,4 +442,6 @@ public class UserServiceImpl implements UserService {
         log.info(CommonConstant.LOG_DEBUG_TAG + "通过登录名判断该用户是前台用户还是后台用户,结果：{}", generalContentResult);
         return generalContentResult;
     }
+
+    
 }

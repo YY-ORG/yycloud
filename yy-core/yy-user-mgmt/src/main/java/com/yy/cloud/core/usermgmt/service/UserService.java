@@ -7,6 +7,7 @@ import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
+import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 
@@ -41,4 +42,11 @@ public interface UserService {
     GeneralContentResult<String> validateLoginName(String loginName);
 
     GeneralContentResult<FoxUserItem> validateUserType(String loginName);
+    
+    
+    /**
+     * 获取所有部门信息
+     * @return
+     */
+    public GeneralContentResult<List<OrganizationItem>>   findAllorgnazation();
 }

@@ -20,6 +20,7 @@ import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
+import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.service.SecurityService;
@@ -71,6 +72,19 @@ public class UserController {
     }
     
     
+     /**
+      * 获取部门信息
+      * @return
+      */
+    @RequestMapping(value = "/authsec/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-获取部门")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<List<OrganizationItem>> findAllorgnazation() {
+        return userService.findAllorgnazation();
+    }
+
     
     
     
