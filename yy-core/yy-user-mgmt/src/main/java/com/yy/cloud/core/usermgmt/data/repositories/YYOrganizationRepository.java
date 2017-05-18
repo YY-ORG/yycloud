@@ -54,21 +54,15 @@ public interface YYOrganizationRepository extends JpaRepository<YYOrganization, 
 
 	Page<YYOrganization> findByTypeAndStatus(Byte type, Byte status, Pageable pageable);
 
-	@Query(value = "SELECT O.* FROM FOX_USER_ORGANIZATION UO LEFT JOIN FOX_ORGANIZATION O ON UO.ORGANIZATION_ID=O.ID WHERE UO.USER_ID = ?1", nativeQuery = true)
+	@Query(value = "SELECT O.* FROM YY_USER_ORGANIZATION UO LEFT JOIN YY_ORGANIZATION O ON UO.ORGANIZATION_ID=O.ID WHERE UO.USER_ID = ?1", nativeQuery = true)
 	List<YYOrganization> findOrganizationByUserId(String userId);
 
-	@Query("SELECT f FROM FoxOrganization f WHERE f.id IN (SELECT u.organizationId FROM FoxUserOrganization u WHERE u.userId=?1)")
+	@Query("SELECT f FROM YYOrganization f WHERE f.id IN (SELECT u.organizationId FROM YYUserOrganization u WHERE u.userId=?1)")
 	Page<YYOrganization> findByUserId(String userId, Pageable pageable);
 
-	@Query("SELECT f FROM FoxOrganization f WHERE f.id IN (?1)")
+	@Query("SELECT f FROM YYOrganization f WHERE f.id IN (?1)")
 	List<YYOrganization> findByIdIn(List<String> ids);
 
-	@Modifying
-	@Query("update FoxOrganization t set t.currency=?1,t.feeType=?2,t.feePeriod=?3,t.billGenDate=?4,t.billSendDate=?5,t.exitFeePolicy=?6,"
-			+ "t.specialFeePolicy=?7,t.feeStartPolicy=?8,t.fiscalMonth=?9,t.fiscalDate=?10 where t.id=?11")
-	public int setBillSettingFor(String currency, Byte feeType, Byte feePeriod, Byte billGenDate, Byte billSendDate,
-			Byte exitFeePolicy, Byte specialFeePolicy, Byte feeStartPolicy, Byte fiscalMonth, Byte fiscalDate,
-			String id);
 
 
 }

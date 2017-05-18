@@ -28,6 +28,6 @@ public interface YYRoleRepository extends JpaRepository<YYRole, String> {
 
 	List<YYRole> findByType(Byte type);
 
-	@Query(value = "SELECT R.* FROM FOX_USER_ROLE UR LEFT JOIN FOX_ROLE R ON UR.ROLE_ID=R.ID WHERE UR.USER_ID = ?1", nativeQuery = true)
+	@Query(value = "SELECT R.* FROM YY_USER_ROLE UR LEFT JOIN YY_ROLE R ON UR.ROLE_ID=R.ID WHERE UR.USER_ID = ?1", nativeQuery = true)
 	List<YYRole> findRolesByUserId(String userId);
 }

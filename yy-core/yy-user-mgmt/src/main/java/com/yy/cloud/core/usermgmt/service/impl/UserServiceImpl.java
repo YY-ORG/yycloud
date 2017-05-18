@@ -29,9 +29,12 @@ import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.exception.NoRecordFoundException;
 import com.yy.cloud.common.service.SecurityService;
+import com.yy.cloud.common.utils.DateUtils;
 import com.yy.cloud.core.usermgmt.constant.AdUserMgmtConstants;
+import com.yy.cloud.core.usermgmt.constant.UserMgmtConstants;
 import com.yy.cloud.core.usermgmt.data.domain.YYRole;
 import com.yy.cloud.core.usermgmt.data.domain.YYUser;
+import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
 import com.yy.cloud.core.usermgmt.data.domain.YYUserRole;
 import com.yy.cloud.core.usermgmt.data.repositories.YYOrganizationRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
@@ -72,47 +75,46 @@ public class UserServiceImpl implements UserService {
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     /**
-     * MPP 和 ADM创建用户接口都是调用该方法
+     * 创建用户
      * @param _userProfile
      * @return
      */
     @Override
     @Transactional
     public String createUser(UserProfile _userProfile) {
-//        foxUserRepository.findByLoginName(_userProfile.getLoginName()).ifPresent(foxUser -> {
-//            throw new UserExistException();
-//        });
-        //增加唯一性验证: 登录名，类型(本地/AD), 企业ID三者联合唯一
-//        foxUserRepository.findByLoginNameAndTypeAndTenantId(_userProfile.getLoginName(), AdUserMgmtConstants.USER_TYPE_LOCAL, _userProfile.getTenantId()).ifPresent(foxUser -> {
-//            log.info(CommonConstant.LOG_DEBUG_TAG + "该用户名已存在：" + _userProfile.getLoginName());
-//            throw new UserExistException();
-//        });
-
-        // 只校验本地
-//        foxUserRepository.findByLoginNameAndType(_userProfile.getLoginName(), AdUserMgmtConstants.USER_TYPE_LOCAL).ifPresent(foxUser -> {
-//            log.info(CommonConstant.LOG_DEBUG_TAG + "该用户名已存在：" + _userProfile.getLoginName());
-//            throw new UserExistException();
-//        });
-
-        // 只校验本地
-        YYUser foxUserExist = foxUserRepository.findByLoginNameAndType(_userProfile.getLoginName(), AdUserMgmtConstants.USER_TYPE_LOCAL);
+    	
+        YYUser foxUserExist = foxUserRepository.findByLoginNameAndType(_userProfile.getLoginName());
         if(null != foxUserExist){
             log.info(CommonConstant.LOG_DEBUG_TAG + "该用户名已存在：" + _userProfile.getLoginName());
             throw new UserExistException();
         }
-
         YYUser foxUser = modelMapper.map(_userProfile, YYUser.class);
         foxUser.setStatus(CommonConstant.DIC_GLOBAL_STATUS_INITIAL);
-        if (_userProfile.getAuthMode() != null && _userProfile.getAuthMode().equals(AdUserMgmtConstants.USER_TYPE_AD) ) {
-            foxUser.setType(AdUserMgmtConstants.USER_TYPE_AD);
-        } else {
-            foxUser.setType(AdUserMgmtConstants.USER_TYPE_LOCAL);
-        }
-        // foxUser.setType(AdUserMgmtConstants.USER_TYPE_LOCAL);
-        String encodedPassword = encoder.encode("12345");
+        foxUser.setType(UserMgmtConstants.ACCOUNT_TYPE_PERSONAL);
+        String encodedPassword = encoder.encode(_userProfile.getPassword());
         foxUser.setPassword(encodedPassword);
+        
+        /**
+         * 基本信息
+         */
+        YYUserInfo userInfo = new YYUserInfo();
+        userInfo.setBirthiday(DateUtils.formatDate(_userProfile.getBirthday(), "YYYY-MM-DD"));
+        userInfo.setUserName(_userProfile.getUserName());
+        userInfo.setAdministrativePost(_userProfile.getAdministrativePost());
+        userInfo.setAdministrativeRank(_userProfile.getAdministrativeRank());
+        userInfo.setOccupationType(_userProfile.getOccupationType());
+        userInfo.setProfessionalTitle(_userProfile.getProfessionalTitle());
+        userInfo.setPhone(_userProfile.getPhone());
+        userInfo.setEmail(_userProfile.getEmail());
+        
+        
+        /**
+         * 部门信息
+         */
+        userInfo.setDeptId(_userProfile.getOrgId());
+        
+        foxUser.setUserInfo(userInfo);
         foxUserRepository.save(foxUser);
-
         // 绑定角色
         if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
             _userProfile.getRoles().forEach(roleProfile -> {
@@ -122,17 +124,6 @@ public class UserServiceImpl implements UserService {
                 foxUserRoleRepository.save(foxUserRole);
             });
         }
-
-        // 绑定机构
-  /*      if (_userProfile.getOrganizations() != null && !_userProfile.getOrganizations().isEmpty()) {
-            _userProfile.getOrganizations().forEach(organizationProfile -> {
-                FoxUserOrganization foxUserOrganization = new FoxUserOrganization();
-                foxUserOrganization.setUserId(foxUser.getId());
-                foxUserOrganization.setOrganizationId(organizationProfile.getId());
-                foxUserOrganizationRepository.save(foxUserOrganization);
-            });
-        }*/
-
         return foxUser.getId();
     }
 
@@ -409,7 +400,7 @@ public class UserServiceImpl implements UserService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "验证登录名是否存在：{}", loginName);
         GeneralContentResult<String> generalContentResult = new GeneralContentResult<String>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        YYUser foxUser = foxUserRepository.findByLoginNameAndType(loginName, AdUserMgmtConstants.USER_TYPE_LOCAL);
+        YYUser foxUser = foxUserRepository.findByLoginNameAndType(loginName);
         if(null != foxUser){
             log.debug(CommonConstant.LOG_DEBUG_TAG + "登录名已存在：{}", loginName);
             generalContentResult.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);

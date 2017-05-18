@@ -23,15 +23,14 @@ import com.yy.cloud.core.usermgmt.data.domain.YYUser;
 @Repository
 public interface YYUserRepository extends JpaRepository<YYUser, String> {
 
-	Optional<YYUser> findOneByEmail(String _email);
 
 	Optional<YYUser> findByLoginName(String _loginName);
 
-	YYUser findByLoginNameAndType(String _loginName, Byte type);
+	YYUser findByLoginNameAndType(String _loginName);
 
 	Page<YYUser> findByIdInAndStatusLessThan(List<String> ids, Byte status, Pageable pageable);
 
-	@Query(value = "SELECT U.* FROM FOX_USER_ROLE UR LEFT JOIN FOX_USER U ON UR.USER_ID = U.ID LEFT JOIN FOX_ROLE R ON UR.ROLE_ID = R.ID WHERE R.ROLE_NAME IN ?1  AND U.STATUS < 4", nativeQuery = true)
+	@Query(value = "SELECT U.* FROM YY_USER_ROLE UR LEFT JOIN YY_USER U ON UR.USER_ID = U.ID LEFT JOIN YY_ROLE R ON UR.ROLE_ID = R.ID WHERE R.ROLE_NAME IN ?1  AND U.STATUS < 4", nativeQuery = true)
 	List<YYUser> findAdmUserByRoleList(List<String> roleNames);
 
 	YYUser findByLoginNameOrId(String _loginName, String _id);

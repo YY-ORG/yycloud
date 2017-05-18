@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,47 +42,14 @@ public class UserController {
     @Autowired
     private SecurityService securityService;
 
-    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
 
     /**
-     * MPP企业创建账号，分开为了测试，等学进的鉴权
+     * 创建账号
      * @param _userProfile
      * @return
      */
-    @RequestMapping(value = "/authsec/user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "用户中心-账户管理，MPP创建账号，本地")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
-    })
-    public GeneralContentResult<String> createUser(
-            @RequestBody UserProfile _userProfile) {
-        GeneralContentResult<String> result = new GeneralContentResult<>();
-        result.setResultCode(ResultCode.OPERATION_SUCCESS);
-
-        // 学进， 获取当前用户企业ID，--WXDOK
-        //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
-        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
-        String tenantId = userDetailsItem.getEnterpriseId();
-        _userProfile.setTenantId(tenantId);
-        String userId = null;
-        try {
-            userId = userService.createUser(_userProfile);
-        } catch (UserExistException e) {
-            result.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
-            result.setDetailDescription(String.format("用户名 %s 已存在.", _userProfile.getLoginName()));
-            return result;
-        }
-        result.setResultContent(userId);
-        return result;
-    }
-
-    /**
-     * ADM企业创建账号
-     * @param _userProfile
-     * @return
-     */
-    @RequestMapping(value = "/authsec/admuser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/authsec/user/account", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户中心-账户管理，ADM创建账号，本地")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
@@ -91,14 +57,6 @@ public class UserController {
     public GeneralContentResult<String> createAdmUser(
             @RequestBody UserProfile _userProfile) {
         GeneralContentResult<String> result = new GeneralContentResult<>();
-        result.setResultCode(ResultCode.OPERATION_SUCCESS);
-
-        // 学进， 获取当前用户企业ID，--WXDOK
-        //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
-        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
-        String tenantId = userDetailsItem.getEnterpriseId();
-        _userProfile.setTenantId(tenantId);
         String userId = null;
         try {
             userId = userService.createUser(_userProfile);
@@ -108,8 +66,15 @@ public class UserController {
             return result;
         }
         result.setResultContent(userId);
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
         return result;
     }
+    
+    
+    
+    
+    
+    
 
     @RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户中心-账户管理，查询单个账户")
@@ -134,70 +99,13 @@ public class UserController {
         GeneralContentResult<UserDetailsItem> result = new GeneralContentResult<>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
-        // String userId = "6dc92ceb-af37-4010-a1e0-d33a526ee66b";
-        // 先写死一个用户，等学进完成      --WXDOK
-        //临时禁用权限系统
-//        String loginName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //String userId = UserConstant.MPP_USER_ID;
-        //String userId = securityService.getCurrentUser().getUserId();
         UserDetailsItem userDetailsItem = securityService.getCurrentUser();
         log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" + userDetailsItem);
-        //UserItem userItem = userService.findUserById(userId);
         result.setResultContent(userDetailsItem);
         return result;
     }
 
-    /**
-     * MPP企业: 获取当前企业ID
-     * @return
-     */
-    @RequestMapping(value = "/authsec/currentEnterpriseId", method = RequestMethod.GET)
-    @ApiOperation(value = "用户中心-账户管理，获得当前用户企业（MPP）ID")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
-    })
-    public GeneralContentResult<String> getCurrentEnterpriseId() {
-        GeneralContentResult<String> result = new GeneralContentResult<>();
-        result.setResultCode(ResultCode.OPERATION_SUCCESS);
-
-        // 先写死一个用户，等学进完成      --WXDOK
-        //临时禁用权限系统
-//        String loginName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //String USER_ID = UserConstant.MPP_USER_ID;
-        //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
-        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
-
-        result.setResultContent(userDetailsItem.getEnterpriseId());
-
-        return result;
-    }
-
-    /**
-     * ADM企业：获取后台企业ID
-     * @return
-     */
-    @RequestMapping(value = "/authsec/currentAdmEnterpriseId", method = RequestMethod.GET)
-    @ApiOperation(value = "用户中心-账户管理，获得当前用户企业（ADM）ID")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
-    })
-    public GeneralContentResult<String> getCurrentADMEnterpriseId() {
-        GeneralContentResult<String> result = new GeneralContentResult<>();
-        result.setResultCode(ResultCode.OPERATION_SUCCESS);
-
-        // 先写死一个用户，等学进完成      --WXDOK
-        //临时禁用权限系统
-//        String loginName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //String USER_ID = UserConstant.ADM_USER_ID;
-        //UserDetailsItem userDetailsItem = userService.loadUserByUserId(USER_ID);
-        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户：{}" +userDetailsItem);
-
-        result.setResultContent(userDetailsItem.getEnterpriseId());
-
-        return result;
-    }
+    
 
     @RequestMapping(value = "/authsec/user/password/modify", method = RequestMethod.PUT)
     @ApiOperation(value = "用户中心-账户管理，修改当前密码")
@@ -209,9 +117,6 @@ public class UserController {
         GeneralResult result = new GeneralResult();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
-        // 先写死一个用户，等学进完成      --WXDOK
-        //String userId = UserConstant.MPP_USER_ID;
-        //String userId = "6dc92ceb-af37-4010-a1e0-d33a526ee66b";
         String userId = securityService.getCurrentUser().getUserId();
         log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户ID：{}" + userId);
         _passwordProfile.setId(userId);
@@ -227,38 +132,7 @@ public class UserController {
         return result;
     }
 
-    /**
-     * TODO 等学进完成后，可以删除该方法
-     * @param _passwordProfile
-     * @return
-     */
-    @RequestMapping(value = "/authsec/admuser/password/modify", method = RequestMethod.PUT)
-    @ApiOperation(value = "用户中心-账户管理，修改当前密码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
-    })
-    public GeneralResult modifyAdmPassword(
-            @RequestBody PasswordProfile _passwordProfile) {
-        GeneralResult result = new GeneralResult();
-        result.setResultCode(ResultCode.OPERATION_SUCCESS);
-
-        // 先写死一个用户，等学进完成      --WXDOK
-        //String USER_ID = UserConstant.ADM_USER_ID;
-        //String userId = "6dc92ceb-af37-4010-a1e0-d33a526ee66b";
-        String userId = securityService.getCurrentUser().getUserId();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前登录用户ID：{}" + userId);
-        _passwordProfile.setId(userId);
-
-        try {
-            userService.modifyPassword(_passwordProfile);
-        } catch (PasswordNotMatchException e) {
-            result.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
-            result.setDetailDescription("password not match.");
-            return result;
-        }
-
-        return result;
-    }
+   
 
     @RequestMapping(value = "/authsec/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户中心-账户管理，获取所有账户")

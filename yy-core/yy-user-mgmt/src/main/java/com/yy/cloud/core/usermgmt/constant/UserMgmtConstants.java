@@ -28,5 +28,14 @@ public class UserMgmtConstants {
 	public final static String CODE_DEFAULT_NORMAL_DEPARTMENT_OF_ENTERPRISE = "NORMAL_DEPARTMENT";
 	public final static String OWNER_ORGANIZATION = "ORGANIZATION";
 	public final static String FIELD_DEFAULT_CODE_ORGANIZATION = "DEFAULT_CODE";
+	
+	
+	
+	// 0：系统管理员账号  1：系统账号 2：个人账号	 
+	 public final static byte ACCOUNT_TYPE_SYSTEMADMIN = 0;
+	 public final static byte ACCOUNT_TYPE_INTERNAL_SYSTEM = 1;
+	 public final static byte ACCOUNT_TYPE_PERSONAL = 2;
+		
+	 
 
 }

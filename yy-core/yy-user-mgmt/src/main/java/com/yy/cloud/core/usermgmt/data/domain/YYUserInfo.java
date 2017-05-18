@@ -71,7 +71,7 @@ public class YYUserInfo implements Serializable {
 	
 	
 	@Column(name = "BIRTHDAY")
-	private Date birthiday;
+	private String birthiday;
 	
 	
 	@Column(name = "ADDRESS")
@@ -81,26 +81,26 @@ public class YYUserInfo implements Serializable {
 	 * 岗位类型:参考数据字典
 	 */
 	@Column(name = "OCCUPATION_TYPE")
-	private String occupationType;
+	private byte occupationType;
 	
 	
 	/**
 	 * 职称:参考数据字典
 	 */
 	@Column(name = "PROFESSIONAL_TITLE")
-	private String professionalTitle;
+	private byte professionalTitle;
 	
 	/**
 	 * 行政级别:参考数据字典
 	 */
 	@Column(name = "ADMINISTRATIVE_RANK")
-	private String administrativeRank;
+	private byte administrativeRank;
 	
 	/**
 	 * 行政职务: 参考数据字典
 	 */
 	@Column(name = "ADMINISTRATIVE_POST")
-	private String administrativePost;
+	private byte administrativePost;
 	
 	
 	/**

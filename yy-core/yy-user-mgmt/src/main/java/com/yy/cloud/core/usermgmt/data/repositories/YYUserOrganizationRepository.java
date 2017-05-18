@@ -17,17 +17,17 @@ import com.yy.cloud.core.usermgmt.data.domain.YYUserOrganization;
 @Repository
 public interface YYUserOrganizationRepository extends JpaRepository<YYUserOrganization, String> {
 
-	@Query("SELECT f FROM FoxUserOrganization f WHERE f.organizationId=?1 and f.userId in (SELECT u.id FROM FoxUser u WHERE u.status<"
+	@Query("SELECT f FROM YYUserOrganization f WHERE f.organizationId=?1 and f.userId in (SELECT u.id FROM YYUser u WHERE u.status<"
 			+ UserMgmtConstants.STATUS_GLOBAL_DELETED + ")")
 	List<YYUserOrganization> findByOrganizationId(String organizationId);
 
-	@Query("SELECT f FROM FoxUserOrganization f WHERE f.organizationId in (SELECT o.id FROM FoxOrganization o WHERE o.tenantId is null and o.status<"
+	@Query("SELECT f FROM YYUserOrganization f WHERE f.organizationId in (SELECT o.id FROM YYOrganization o WHERE o.tenantId is null and o.status<"
 			+ UserMgmtConstants.STATUS_GLOBAL_DELETED + ")")
 	List<YYUserOrganization> findByOrganizationTenantIdIsNull();
 
 	List<YYUserOrganization> findByUserId(String userId);
 
-	@Query("select user.id from FoxUser user where user.id not in (select org.userId from FoxUserOrganization org) and user.status < 4")
+	@Query("select user.id from YYUser user where user.id not in (select org.userId from YYUserOrganization org) and user.status < 4")
 	Page<String> findNonOrganizationUserIds(Pageable pageable);
 
 }
