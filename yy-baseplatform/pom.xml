@@ -53,6 +53,6 @@
 		<module>yy-edge-server</module>
 		<module>yy-config-server</module>
 		<module>yy-hystrix-dashboard</module>
- 		<module>yy-auth-server</module> 
+ 		<module>yy-auth-server</module>
 	</modules>
 </project>

@@ -25,7 +25,7 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
     serviceUrl:
-      defaultZone: http://${PRODISCOVERY_SERVICE_HOST}:${PRODISCOVERY_SERVICE_PORT}/eureka/
+      defaultZone: http://${DISCOVERY_SERVICE_HOST}:${DISCOVERY_SERVICE_PORT}/eureka/
 
 ---
 spring:
@@ -37,7 +37,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://${DEVDISCOVERY_SERVICE_HOST}:${DEVDISCOVERY_SERVICE_PORT}/eureka/
+      defaultZone: http://${DISCOVERY_SERVICE_HOST}:${DISCOVERY_SERVICE_PORT}/eureka/
   server:
     waitTimeInMsWhenSyncEmpty: 0
     

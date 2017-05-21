@@ -2,56 +2,5 @@
 spring:
   application:
     name: discovery
-  cloud:
-    config:
-      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
-      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
-encrypt:
-  failOnError: false
-
----
-spring:
-  profiles: cloud
-  application:
-    name: discovery
-  #cloud:
-    #config:
-      #uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
-encrypt:
-  failOnError: false
-  
----
-spring:
-  profiles: development
-  application:
-    name: dev-discovery
-  cloud:
-    config:
-      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
-      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
-encrypt:
-  failOnError: false
-
----
-spring:
-  profiles: test
-  application:
-    name: test-discovery
-  cloud:
-    config:
-      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
-      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
-encrypt:
-  failOnError: false
-  
----
-spring:
-  profiles: local
-  application:
-    name: local-discovery
-  cloud:
-    config:
-      uri: http://localhost:8888
-      #uri: http://${CONFIGSERVER_PORT_8888_TCP_ADDR}:8888
 encrypt:
   failOnError: false

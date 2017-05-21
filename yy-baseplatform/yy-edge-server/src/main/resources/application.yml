@@ -9,15 +9,65 @@ server:
 #    key-password: password
 
 spring:
-  session:
-    store-type: redis
   aop:
     proxy-target-class: true
 logging:
   path: /yy/logs/yy_micro/baseplatform/
   level:
     org.springframework.security: DEBUG
+zuul:
+  sensitive-headers: '' #Distribute headers cookies to children
+  add-proxy-headers: true
+  routes:
+    authserver:
+      path: /uaa/**
+      stripPrefix: true
+      url: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa
+#      serviceId: authserver
+    user:
+      path: /user/**
+      url: https://192.168.99.100:9000/authserver/uaa/authsec/userinfo
+    adminui:
+      path: /adminui/**
+      serviceId: adminui
+ #     stripPrefix: false
+    market:
+      path: /marketplace/**
+      serviceId: marketplace-api
+    basis:
+      path: /basis/**
+      serviceId: basis-api
+#      url: http://localhost:9303
+    productmgmt:
+      path: /productmgmt/**
+      serviceId: productmgmt
+    submgmt:
+      path: /submgmt/**
+      serviceId: submgmt
+    usermgmt:
+      path: /usermgmt/**
+      serviceId: usermgmt
+    workflow:
+      path: /workflow/**
+      serviceId: workflow
+    ordermgmt:
+      path: /ordermgmt/**
+      serviceId: ordermgmt
+    sysbase:
+      path: /sysbase/**
+      serviceId: sysbase
+    dashboard:
+      path: /dashboard/**
+      serviceId: dashboard
+    
 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${DISCOVERY_SERVICE_HOST}:${DISCOVERY_SERVICE_PORT}/eureka/
+  instance:
+    preferIpAddress: true
+    
 #management:
 #  security:
 #    enabled: false

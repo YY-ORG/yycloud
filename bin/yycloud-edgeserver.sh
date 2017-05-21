@@ -5,10 +5,10 @@
 # chkconfig: 345 99 10
 
 
-SERVER_NAME="fox-discovery"
-JAR_PATH="/root/foxcloud/lib/"$SERVER_NAME"-0.1.0.jar"
+SERVER_NAME="yy-edge-server"
+JAR_PATH="/root/yycloud/lib/"$SERVER_NAME"-0.1.0.jar"
 
-PARAMS="--spring.profiles.active=${FOXCLOUD_PROFILES}" 
+PARAMS="spring.profiles.active=${YYCLOUD_PROFILES}" 
 EXEC="java -jar $JAR_PATH $PARAMS"
 COMMAND=$EXEC
 SERVER_TAG="$SERVER_NAME"
