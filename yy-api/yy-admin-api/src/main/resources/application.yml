@@ -40,83 +40,23 @@ security:
       token-info-uri: http://authserver:9001/uaa/oauth/check_token
 
 
-#
-#
-#
-#
-#---
-#spring:
-#  profiles: cloud
-#  redis:
-#    database: 0
-#    host: 15.114.102.10
-#    port: 6379
-#    pool:
-#      max-active: 10
-#      max-idle: 10
-#      max-wait: -1
-#      min-idle: 0
-#eureka:
-#  client:
-#    serviceUrl:
-#      defaultZone: http://pro-discovery:8761/eureka/
-#  instance:
-#    preferIpAddress: true
-#
-#
-#---
-#spring:
-#  profiles: development
-#  redis:
-#    database: 6
-#    host: 15.114.102.10
-#    port: 6379
-#    pool:
-#      max-active: 10
-#      max-idle: 10
-#      max-wait: -1
-#      min-idle: 0
-#eureka:
-#  client:
-#    serviceUrl:
-#      defaultZone: http://dev-discovery:8761/eureka/
-#  instance:
-#    preferIpAddress: true
-#
-#---
-#spring:
-#  profiles: test
-#  redis:
-#    database: 11
-#    host: 15.114.102.10
-#    port: 6379
-#    pool:
-#      max-active: 10
-#      max-idle: 10
-#      max-wait: -1
-#      min-idle: 0
-#eureka:
-#  client:
-#    serviceUrl:
-#      defaultZone: http://test-discovery:8761/eureka/
-#  instance:
-#    preferIpAddress: true
-#
-#---
-#spring:
-#  profiles: demo
-#  redis:
-#    database: 11
-#    host: 10.80.25.178
-#    port: 6379
-#    pool:
-#      max-active: 10
-#      max-idle: 10
-#      max-wait: -1
-#      min-idle: 0
-#eureka:
-#  client:
-#    serviceUrl:
-#      defaultZone: http://demo-discovery:8761/eureka/
-#  instance:
-#    preferIpAddress: true
+---
+spring:
+  profiles: development
+  redis:
+    database: 6
+    host: 15.114.102.10
+    port: 6379
+    pool:
+      max-active: 10
+      max-idle: 10
+      max-wait: -1
+      min-idle: 0
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.16.112.91:8761/eureka/
+  instance:
+    preferIpAddress: true
+
+
