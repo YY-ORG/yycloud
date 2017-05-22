@@ -30,6 +30,9 @@ public class SystemDictionary implements Serializable {
 	private String displayValue;
 	
 	private String tenantId;
+	
+	
+	private String text;
 
 	private Timestamp createDate;
 

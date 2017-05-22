@@ -1,7 +1,7 @@
 /**
- * Project Name:liz-admin
+ * Project Name:fox-admin
  * File Name:SysBaseController.java
- * Package Name:com.gemii.lizcloud.api.admin.controller
+ * Package Name:com.hpe.foxcloud.api.admin.controller
  * Date:Sep 28, 20164:07:04 PM
  * Copyright (c) 2016, chenxj All Rights Reserved.
  *
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yy.cloud.api.admin.service.SysBaseService;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.otd.sysbase.SysDic;

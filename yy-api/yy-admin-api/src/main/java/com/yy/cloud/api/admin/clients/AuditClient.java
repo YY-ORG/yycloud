@@ -1,7 +1,5 @@
 package com.yy.cloud.api.admin.clients;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.yy.cloud.common.data.GeneralContentResult;
 
-/**
- * Created by chenluo on 11/3/2016.
- */
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 @FeignClient("audit")
 public interface AuditClient {
 

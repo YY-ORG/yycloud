@@ -9,9 +9,15 @@ import com.yy.cloud.api.admin.clients.UserMgmtClient;
 import com.yy.cloud.api.admin.service.UserMgmtService;
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Created by chenluo on 11/7/2016.
+ */
 @Slf4j
 @Service
 public class UserMgmtServiceImpl implements UserMgmtService {
@@ -32,4 +38,6 @@ public class UserMgmtServiceImpl implements UserMgmtService {
         log.debug(CommonConstant.LOG_DEBUG_TAG+"获取审批人列表，返回结果 {}",result);
         return result;
     }
+
+    
 }
