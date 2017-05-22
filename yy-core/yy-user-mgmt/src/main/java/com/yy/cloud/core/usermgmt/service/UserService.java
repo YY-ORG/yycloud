@@ -49,4 +49,5 @@ public interface UserService {
      * @return
      */
     public GeneralContentResult<List<OrganizationItem>>   findAllorgnazation();
+    
 }
