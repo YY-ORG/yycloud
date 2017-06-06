@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public String createUser(UserProfile _userProfile) {
     	
-        YYUser foxUserExist = foxUserRepository.findByLoginNameAndType(_userProfile.getLoginName());
+        YYUser foxUserExist = foxUserRepository.findByLoginName(_userProfile.getLoginName());
         if(null != foxUserExist){
             log.info(CommonConstant.LOG_DEBUG_TAG + "该用户名已存在：" + _userProfile.getLoginName());
             throw new UserExistException();
@@ -271,8 +271,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailsItem loadUserByLoginName(String _loginName) {
         UserDetailsItem userDetailsItem = new UserDetailsItem();
-        YYUser foxUser = foxUserRepository.findByLoginName(_loginName).orElseThrow(
-                () -> new NoRecordFoundException(String.format("user with login name %s not exist.", _loginName)));
+        YYUser foxUser = foxUserRepository.findByLoginName(_loginName);
+        
+        if(foxUser==null){
+        	throw new NoRecordFoundException(String.format("user with login name %s not exist.", _loginName));
+        }
 
         userDetailsItem.setUserId(foxUser.getId());
         userDetailsItem.setLoginName(foxUser.getLoginName());
@@ -412,7 +415,7 @@ public class UserServiceImpl implements UserService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "验证登录名是否存在：{}", loginName);
         GeneralContentResult<String> generalContentResult = new GeneralContentResult<String>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        YYUser foxUser = foxUserRepository.findByLoginNameAndType(loginName);
+        YYUser foxUser = foxUserRepository.findByLoginName(loginName);
         if(null != foxUser){
             log.debug(CommonConstant.LOG_DEBUG_TAG + "登录名已存在：{}", loginName);
             generalContentResult.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
@@ -429,15 +432,6 @@ public class UserServiceImpl implements UserService {
         FoxUserItem foxUserItem = new FoxUserItem();
         foxUserItem.setLoginName(loginName);//设置返回值的的登录名为当前登录名
         // 首先取当前用户进行判断，如果不能取到当前用户，再通过loginName判断
-        Optional<YYUser> optional = foxUserRepository.findByLoginName(loginName);
-        if(!optional.isPresent()){
-            log.warn(CommonConstant.LOG_DEBUG_TAG + "当前用户不存在：{}", loginName);
-            foxUserItem.setUserType(CommonConstant.USER_NOT_FOUND);
-        }else{
-            YYUser foxUser = optional.get();
-            foxUserItem.setPassword(foxUser.getPassword());
-            foxUserItem.setUserType(CommonConstant.USER_TYPE_BUYER);
-        }
         generalContentResult.setResultContent(foxUserItem);
         log.info(CommonConstant.LOG_DEBUG_TAG + "通过登录名判断该用户是前台用户还是后台用户,结果：{}", generalContentResult);
         return generalContentResult;

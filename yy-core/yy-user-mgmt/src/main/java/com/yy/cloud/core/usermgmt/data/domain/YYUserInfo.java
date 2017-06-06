@@ -41,8 +41,10 @@ public class YYUserInfo implements Serializable {
 	@Column(name = "ID")
 	private String id;
 
-	@Column(name = "USER_ID")
-	private String userId ;
+	
+	@OneToOne
+	@JoinColumn(name="USER_ID")
+	private YYUser user;
 
 	@Column(name = "USER_NAME")
 	private String userName;

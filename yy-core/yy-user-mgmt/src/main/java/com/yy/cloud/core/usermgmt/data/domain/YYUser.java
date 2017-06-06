@@ -90,6 +90,7 @@ public class YYUser implements Serializable {
 	
 	
 	
+	@OneToOne(optional = true, cascade = CascadeType.ALL, mappedBy = "user")
 	private YYUserInfo userInfo;
 	
 	@Column(name = "LASTLOGINDATA", updatable = false)

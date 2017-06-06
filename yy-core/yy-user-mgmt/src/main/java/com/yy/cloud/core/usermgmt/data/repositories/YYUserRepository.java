@@ -24,9 +24,10 @@ import com.yy.cloud.core.usermgmt.data.domain.YYUser;
 public interface YYUserRepository extends JpaRepository<YYUser, String> {
 
 
-	Optional<YYUser> findByLoginName(String _loginName);
 
-	YYUser findByLoginNameAndType(String _loginName);
+
+	YYUser findByLoginName(String _loginName);
+
 
 	Page<YYUser> findByIdInAndStatusLessThan(List<String> ids, Byte status, Pageable pageable);
 
