@@ -39,7 +39,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    @Autowired
+  /*  @Autowired
     private RepositoryRestMvcConfiguration repositoryRestConfiguration;
 
     @PostConstruct
@@ -52,5 +52,5 @@ public class Application {
 		repositoryRestConfiguration.config().exposeIdsFor(YYUserInfo.class);
 		repositoryRestConfiguration.config().exposeIdsFor(YYUserOrganization.class);
 		repositoryRestConfiguration.config().exposeIdsFor(YYUserRole.class);
-	}
+	}*/
 }
