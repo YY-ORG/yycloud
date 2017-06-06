@@ -47,7 +47,8 @@ spring:
     database: MYSQL
     hibernate:
       ddl-auto: none
-      naming-strategy: org.hibernate.cfg.DefaultNamingStrategy
+      naming:
+        strategy: org.hibernate.cfg.DefaultNamingStrategy
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
@@ -88,14 +89,15 @@ spring:
     database: MYSQL
     hibernate:
       ddl-auto: none
-      naming-strategy: org.hibernate.cfg.DefaultNamingStrategy
+      naming:
+        strategy: org.hibernate.cfg.DefaultNamingStrategy
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
   datasource:
-    url: jdbc:mysql://61.178.80.85:3306/foxbase?useUnicode=true&amp;characterEncoding=utf8
+    url: jdbc:mysql://61.178.80.85:3306/yy?useUnicode=true&amp;characterEncoding=utf8
     username: admin
-    password: p@ssw0rd123
+    password: 1qaz!QAZ
     driver-class-name: com.mysql.jdbc.Driver
     testWhileIdle: true
     validationQuery: SELECT 1
