@@ -12,7 +12,7 @@ import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 
-@ControllerAdvice("com.gemii.lizcloud.core.usermgmt.controller")
+@ControllerAdvice("com.yy.cloud.core.usermgmt.controller")
 @Slf4j
 public class ExceptionHandlerAdvice {
 
