@@ -24,36 +24,7 @@ public interface YYOrganizationRepository extends JpaRepository<YYOrganization, 
 
 	Page<YYOrganization> findByStatus(Byte status, Pageable pageable);
 
-	Page<YYOrganization> findByTenantIdAndStatus(String tenantId, Byte status, Pageable pageable);
-
-	List<YYOrganization> findByTenantId(String tenantId);
-
-	/**
-	 * 过滤已删除部门
-	 * 
-	 * @param tenantId
-	 * @param status
-	 * @return
-	 */
-	List<YYOrganization> findByTenantIdAndStatusLessThan(String tenantId, Byte status);
-
-	Page<YYOrganization> findByTenantIdAndStatusLessThan(String tenantId, Byte status, Pageable pageable);
-
-	YYOrganization findByTenantIdAndStatusAndCode(String tenantId, Byte status, String code);
-
-	/**
-	 * 查询后台机构
-	 * 
-	 * @param type
-	 * @param status
-	 * @return
-	 */
-	Page<YYOrganization> findByTypeAndStatusLessThan(Byte type, Byte status, Pageable pageable);
-
-	List<YYOrganization> findByTypeAndStatusLessThan(Byte type, Byte status);
-
-	Page<YYOrganization> findByTypeAndStatus(Byte type, Byte status, Pageable pageable);
-
+	
 	@Query(value = "SELECT O.* FROM YY_USER_ORGANIZATION UO LEFT JOIN YY_ORGANIZATION O ON UO.ORGANIZATION_ID=O.ID WHERE UO.USER_ID = ?1", nativeQuery = true)
 	List<YYOrganization> findOrganizationByUserId(String userId);
 
