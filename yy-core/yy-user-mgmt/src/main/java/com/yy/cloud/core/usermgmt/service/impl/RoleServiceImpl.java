@@ -33,13 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
-    private YYRoleRepository foxRoleRepository;
+    private YYRoleRepository yyRoleRepository;
 
     @Autowired
-    private YYUserRoleRepository foxUserRoleRepository;
+    private YYUserRoleRepository yyUserRoleRepository;
 
     @Autowired
-    private YYUserRepository foxUserRepository;
+    private YYUserRepository yyUserRepository;
 
     @Autowired
     private ModelMapper modelMapp;
@@ -51,7 +51,7 @@ public class RoleServiceImpl implements RoleService {
     public String createRole(RoleProfile _roleProfile) {
         YYRole foxRole = modelMapp.map(_roleProfile, YYRole.class);
         foxRole.setStatus(CommonConstant.DIC_GLOBAL_STATUS_INITIAL);
-        foxRoleRepository.save(foxRole);
+        yyRoleRepository.save(foxRole);
         return foxRole.getId();
     }
 
@@ -61,7 +61,7 @@ public class RoleServiceImpl implements RoleService {
         //UserDetailsItem userDetailsItem = securityService.getCurrentUser();
         //Page<FoxRole> foxRoles = foxRoleRepository.findAll(pageRequest);
         Byte type = isProviderUser()? RoleTypeConstant.ROLE_PROVIDER:RoleTypeConstant.ROLE_BUYER;
-        List<YYRole> foxRoles = foxRoleRepository.findByType(type);
+        List<YYRole> foxRoles = yyRoleRepository.findByType(type);
 
         List<RoleItem> roleItems = new ArrayList<>();
         foxRoles.forEach(
@@ -112,7 +112,7 @@ public class RoleServiceImpl implements RoleService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "查询后台企业，所有该：{}角色成员", roleNames);
         GeneralContentResult<List<UserItem>> generalContentResult = new GeneralContentResult<List<UserItem>>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        List<YYUser> foxUsers = foxUserRepository.findAdmUserByRoleList(roleNames);
+        List<YYUser> foxUsers = yyUserRepository.findAdmUserByRoleList(roleNames);
         List<UserItem> userItemList = new ArrayList<UserItem>();
         foxUsers.forEach(foxUser -> {
             UserItem userItem = modelMapp.map(foxUser, UserItem.class);
