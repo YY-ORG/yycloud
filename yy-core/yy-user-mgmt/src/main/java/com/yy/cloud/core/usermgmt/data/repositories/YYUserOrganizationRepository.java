@@ -21,9 +21,9 @@ public interface YYUserOrganizationRepository extends JpaRepository<YYUserOrgani
 			+ UserMgmtConstants.STATUS_GLOBAL_DELETED + ")")
 	List<YYUserOrganization> findByOrganizationId(String organizationId);
 
-	@Query("SELECT f FROM YYUserOrganization f WHERE f.organizationId in (SELECT o.id FROM YYOrganization o WHERE o.tenantId is null and o.status<"
+	@Query("SELECT f FROM YYUserOrganization f WHERE f.organizationId in (SELECT o.id FROM YYOrganization o WHERE o.status<"
 			+ UserMgmtConstants.STATUS_GLOBAL_DELETED + ")")
-	List<YYUserOrganization> findByOrganizationTenantIdIsNull();
+	List<YYUserOrganization> findByOrganization();
 
 	List<YYUserOrganization> findByUserId(String userId);
 
