@@ -22,9 +22,13 @@ import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
-import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * ClassName:UserMgmtClient <br/>
@@ -126,9 +130,34 @@ public interface UserMgmtClient {
 	GeneralContentResult<List<OrganizationItem>> getOrganizationsByEnterpriseId(
 			@PathVariable("enterprise_id") String enterprise_id);
 
-	// 费用设置begin
 
 	@RequestMapping(value = "/authsec/user/{user_id}/password", method = RequestMethod.PUT)
 	public GeneralResult resetPassword(@PathVariable("user_id") String _userId);
+	
+	
+	
+	/**
+	 * 获取所有部门信息
+	 * @return
+	 */
+  @RequestMapping(value = "/authsec/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-获取部门")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<List<OrganizationItem>> findAllorgnazation();
+  
+  
+  /**
+   * 创建账号
+   * @param _userProfile
+   * @return
+   */
+  @RequestMapping(value = "/authsec/user/account", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiOperation(value = "用户中心-账户管理，ADM创建账号，本地")
+  @ApiImplicitParams({
+          @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+  })
+  public GeneralContentResult<String> createAdmUser(@RequestBody UserProfile _userProfile);  
 
 }

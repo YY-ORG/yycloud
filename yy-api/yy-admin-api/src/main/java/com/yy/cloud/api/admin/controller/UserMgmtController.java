@@ -3,6 +3,7 @@ package com.yy.cloud.api.admin.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,16 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yy.cloud.api.admin.service.UserMgmtService;
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.data.GeneralContentResult;
-import com.yy.cloud.common.data.GeneralPagingResult;
-import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
+import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.service.SecurityService;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -73,6 +73,37 @@ public class UserMgmtController {
         return current;
     }
 
+    
+    
+    /**
+     * 获取部门信息
+     * @return
+     */
+   @RequestMapping(value = "/authsec/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+   @ApiOperation(value = "用户中心-获取部门")
+   @ApiImplicitParams({
+           @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+   })
+   public GeneralContentResult<List<OrganizationItem>> findAllorgnazation() {
+       return userMgmtService.findAllorgnazation();
+   }
+
+   
+   /**
+    * 创建账号
+    * @param _userProfile
+    * @return
+    */
+   @RequestMapping(value = "/authsec/user/account", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+   @ApiOperation(value = "用户中心-账户管理，创建账号")
+   @ApiImplicitParams({
+           @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+   })
+   public GeneralContentResult<String> createAdmUser(
+           @RequestBody UserProfile _userProfile) {
+	   log.debug("The value of _userProfile is \' "+_userProfile+"\'");
+       return  userMgmtService.createAdmUser(_userProfile);
+   }
 
     // 费用中心 end
 
