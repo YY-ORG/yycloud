@@ -17,7 +17,7 @@ import lombok.Data;
 
 /**
  * 菜单表
- * The persistent class for the FOX_MENU database table.
+ * The persistent class for the YY_MENU database table.
  */
 @Entity
 @Table(name = "YY_MENU")

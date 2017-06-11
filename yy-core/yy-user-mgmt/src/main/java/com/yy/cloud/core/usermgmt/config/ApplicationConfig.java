@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(basePackages = "com.yy.cloud.core.usermgmt.data.repositories")
 @EnableTransactionManagement
 @EnableConfigurationProperties
-public class ApplicationConfig {
+public class ApplicationConfig {/*
 
     @Bean
     public EntityManagerFactory entityManagerFactory(DataSource dataSource) {
@@ -49,4 +49,4 @@ public class ApplicationConfig {
         txManager.setEntityManagerFactory(entityManagerFactory(dataSource));
         return txManager;
     }
-}
+*/}

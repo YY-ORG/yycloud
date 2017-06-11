@@ -25,7 +25,7 @@ import com.yy.cloud.core.usermgmt.service.MenuService;
 public class MenuServiceImpl implements MenuService {
 
     @Autowired
-    private YYMenuRepository foxMenuRepository;
+    private YYMenuRepository yyMenuRepository;
 
     @Autowired
     private YYRoleMenuRepository foxRoleMenuRepository;
@@ -44,7 +44,7 @@ public class MenuServiceImpl implements MenuService {
         foxMenu.setRouting(_menuProfile.getRouting());
         foxMenu.setParentId(_menuProfile.getParentId());
         foxMenu.setStatus(CommonConstant.DIC_GLOBAL_STATUS_INITIAL);
-        foxMenuRepository.save(foxMenu);
+        yyMenuRepository.save(foxMenu);
         return foxMenu.getId();
     }
 
@@ -96,7 +96,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuItem> getAllMenuTree() {
-        List<YYMenu> foxMenus = foxMenuRepository.findAll();
+        List<YYMenu> foxMenus = yyMenuRepository.findAll();
         return generateMenuTree(foxMenus);
     }
 
@@ -109,7 +109,7 @@ public class MenuServiceImpl implements MenuService {
                 .map(foxRoleMenu -> foxRoleMenu.getMenuId())
                 .collect(Collectors.toList());
 
-        List<YYMenu> foxMenus = foxMenuRepository.findByIdIn(menuIds);
+        List<YYMenu> foxMenus = yyMenuRepository.findByIdIn(menuIds);
 
         roleDetailsItem.setMenus(generateMenuTree(foxMenus));
 
@@ -132,7 +132,7 @@ public class MenuServiceImpl implements MenuService {
                 .distinct()
                 .collect(Collectors.toList());
 
-        List<YYMenu> foxMenus = foxMenuRepository.findByIdIn(menuIds);
+        List<YYMenu> foxMenus = yyMenuRepository.findByIdIn(menuIds);
         return generateMenuTree(foxMenus);
     }
 }
