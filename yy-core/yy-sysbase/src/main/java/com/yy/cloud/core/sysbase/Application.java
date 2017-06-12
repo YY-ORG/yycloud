@@ -9,7 +9,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 
-import com.yy.cloud.core.sysbase.data.domain.SSysDictionary;
+import com.yy.cloud.core.sysbase.data.domain.YYSystemdictionary;
 
 /**
  * ClassName: Application <br/>
@@ -40,7 +40,7 @@ public class Application {
 		// repositoryRestConfiguration.objectMapper().registerModule(new
 		// Jackson2HalModule());
 
-		repositoryRestConfiguration.config().exposeIdsFor(SSysDictionary.class);
+		repositoryRestConfiguration.config().exposeIdsFor(YYSystemdictionary.class);
 	}
 	
 }

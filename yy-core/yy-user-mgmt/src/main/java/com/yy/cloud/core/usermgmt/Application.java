@@ -1,23 +1,10 @@
 package com.yy.cloud.core.usermgmt;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
-
-import com.yy.cloud.core.usermgmt.data.domain.YYMenu;
-import com.yy.cloud.core.usermgmt.data.domain.YYOrganization;
-import com.yy.cloud.core.usermgmt.data.domain.YYRole;
-import com.yy.cloud.core.usermgmt.data.domain.YYRoleMenu;
-import com.yy.cloud.core.usermgmt.data.domain.YYUser;
-import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
-import com.yy.cloud.core.usermgmt.data.domain.YYUserOrganization;
-import com.yy.cloud.core.usermgmt.data.domain.YYUserRole;
 
 /**
  * ClassName: Application <br/>

@@ -24,7 +24,7 @@ import javax.sql.DataSource;
  * @since JDK 1.8
  */
 @Configuration
-@EnableJpaRepositories(basePackages = "com.gemii.lizcloud.core.sysbase.data.repositories")
+@EnableJpaRepositories(basePackages = "com.yy.cloud.core.sysbase.data.repositories")
 @EnableTransactionManagement
 @EnableConfigurationProperties
 public class ApplicationConfig {
@@ -36,7 +36,7 @@ public class ApplicationConfig {
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("com.gemii.lizcloud.core.sysbase.data.domain");
+        factory.setPackagesToScan("com.yy.cloud.core.sysbase.data.domain");
         factory.setDataSource(dataSource);
         factory.afterPropertiesSet();
 

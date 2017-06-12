@@ -61,7 +61,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		<plugin>
+		<!-- <plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.4.5</version>
@@ -72,8 +72,8 @@
 						<goals>
 							<goal>build</goal>
 						</goals>
-					</execution><!-- <execution> <id>push-image</id> <phase>deploy</phase> 
-						<goals> <goal>push</goal> </goals> </execution> -->
+					</execution><execution> <id>push-image</id> <phase>deploy</phase> 
+						<goals> <goal>push</goal> </goals> </execution>
 
 					<execution>
 						<id>tag-image</id>
@@ -81,7 +81,7 @@
 						<goals>
 							<goal>tag</goal>
 						</goals>
-						<configuration><!-- :${project.version} -->
+						<configuration>:${project.version}
 							<image>${docker.image.prefix}/${project.artifactId}:${project.version}</image>
 							<newName>${docker.registry}${docker.image.prefix}/${project.artifactId}:${kubeimage.version}</newName>
 						</configuration>
@@ -100,7 +100,7 @@
 				<configuration>
 					<serverId>${docker.mvnhup}</serverId>
 					<registryUrl>${docker.registry.url}</registryUrl>
-					<baseImage>java</baseImage><!-- :${project.version} -->
+					<baseImage>java</baseImage>:${project.version}
 					<imageName>${docker.image.prefix}/${project.artifactId}:${project.version}</imageName>
 					<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
 					<forceTags>true</forceTags>
@@ -110,10 +110,10 @@
 							<directory>${project.build.directory}</directory>
 							<include>${project.build.finalName}.jar</include>
 						</resource>
-					</resources><!-- <imageTags> <imageTag>${project.version}</imageTag> 
-						<imageTag>latest</imageTag> </imageTags> -->
+					</resources><imageTags> <imageTag>${project.version}</imageTag> 
+						<imageTag>latest</imageTag> </imageTags>
 				</configuration>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
 </project>

@@ -9,13 +9,13 @@
 
 package com.yy.cloud.core.sysbase.data.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import com.yy.cloud.core.sysbase.data.domain.SSysDictionary;
-
-import java.util.List;
+import com.yy.cloud.core.sysbase.data.domain.YYSystemdictionary;
 
 /**
  * ClassName:SystemDictionaryRepository <br/>
@@ -29,14 +29,14 @@ import java.util.List;
  * @see
  */
 @RepositoryRestResource(collectionResourceRel = "sysdic", path = "sysdic")
-public interface SystemDictionaryRepository extends JpaRepository<SSysDictionary, Long> {
+public interface SystemDictionaryRepository extends JpaRepository<YYSystemdictionary, Long> {
 //	@Cacheable(value = "sysdicownercache", keyGenerator = "wiselyKeyGenerator")
-	List<SSysDictionary> findByOwner(@Param("_owner") String _owner);
+	List<YYSystemdictionary> findByOwner(@Param("_owner") String _owner);
 
 //	@Cacheable(value = "sysdicownerfieldcache", keyGenerator = "wiselyKeyGenerator")
-	List<SSysDictionary> findByOwnerAndField(@Param("_owner") String _owner, @Param("_field") String _field);
+	List<YYSystemdictionary> findByOwnerAndField(@Param("_owner") String _owner, @Param("_field") String _field);
 
 //	@Cacheable(value = "sysdicidcache", keyGenerator = "wiselyKeyGenerator")
-	List<SSysDictionary> findByOwnerAndFieldAndCode(@Param("_owner") String _owner, @Param("_field") String _field, @Param("_code") String _code);
+	List<YYSystemdictionary> findByOwnerAndFieldAndCode(@Param("_owner") String _owner, @Param("_field") String _field, @Param("_code") String _code);
 	
 }
