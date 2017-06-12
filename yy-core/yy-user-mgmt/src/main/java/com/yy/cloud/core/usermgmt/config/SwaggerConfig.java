@@ -50,9 +50,9 @@ public class SwaggerConfig {
 
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
-				.title("foxcloud usermgmt management")
-				.description("fox usermgmt core API")
-				.contact(new Contact("Fred Cai", "http://www.google.com", "huanfeng@hpe.com"))
+				.title("YY usermgmt management")
+				.description("YY usermgmt core API")
+				.contact(new Contact("GHL", "http://www.google.com", "GHL"))
 				.version("0.1")
 				.build();
 	}

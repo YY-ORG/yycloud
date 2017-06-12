@@ -36,25 +36,25 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-	
 	@Bean
 	public Docket swaggerSpringMvcPlugin() {
-		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec")
+		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec").apiInfo(apiInfo())
 				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
-				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.hpe.foxcloud.core.admin.controller"))
-				.paths(PathSelectors.any()).build();
+				.select().apis(RequestHandlerSelectors.basePackage("com.yy.foxcloud.core.admin.controller"))
+				.paths(PathSelectors.any()).build().apiInfo(apiInfo());
 	}
-/*	@Bean
-	public Docket swaggerSpringMvcPlugin() {
-		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec")
-				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
-				.pathMapping("/").select().paths(PathSelectors.regex("/authsec/.*")).build()
-				.apiInfo(apiInfo());
-	}*/
+
+	/*
+	 * @Bean public Docket swaggerSpringMvcPlugin() { return new
+	 * Docket(DocumentationType.SWAGGER_2).groupName("authsec")
+	 * .genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages
+	 * (false).forCodeGeneration(true)
+	 * .pathMapping("/").select().paths(PathSelectors.regex("/authsec/.*")).
+	 * build() .apiInfo(apiInfo()); }
+	 */
 
 	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("Paltform Management").description("Foxcloud Platform Management core API")
-				.contact(new Contact("XJ CHEN", "http://www.google.com", "xue-jin.chen@hpe.com")).version("0.1").build();
+		return new ApiInfoBuilder().title("AdminUI Management").description("YYcloud Adminui Management  API")
+				.contact(new Contact("GHL", "http://www.google.com", "GHL")).version("0.1").build();
 	}
 }
