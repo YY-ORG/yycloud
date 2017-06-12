@@ -4,38 +4,43 @@ import java.io.Serializable;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-
 /**
  * The persistent class for the YY_SYSTEMDICTIONARY database table.
  * 
  */
 @Entity
-@Table(name="YY_SYSTEMDICTIONARY")
-@NamedQuery(name="YYSystemdictionary.findAll", query="SELECT y FROM YYSystemdictionary y")
+@Table(name = "YY_SYSTEMDICTIONARY")
+@NamedQuery(name = "YYSystemdictionary.findAll", query = "SELECT y FROM YYSystemdictionary y")
 public class YYSystemdictionary implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	private String code;
-
-	@Column(name="CREATE_DATE")
-	private Timestamp createDate;
-
-	private String description;
-
+	@Column(name = "OWNER")
+	private String owner;
+	
+	@Column(name = "FIELD")
 	private String field;
 
-	private String owner;
+	@Column(name = "CODE")
+	private String code;
 
+	@Column(name = "VALUE")
+	private String value;
+
+	@Column(name = "TEXT")
 	private String text;
 
-	@Column(name="UPDATE_DATE")
-	private Timestamp updateDate;
+	@Column(name = "DESCRIPTION")
+	private String description;
 
-	private String value;
+	@Column(name = "CREATE_DATE")
+	private Timestamp createDate;
+
+	@Column(name = "UPDATE_DATE")
+	private Timestamp updateDate;
 
 	public YYSystemdictionary() {
 	}

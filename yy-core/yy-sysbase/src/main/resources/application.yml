@@ -59,7 +59,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
   datasource:
-    url: jdbc:mysql://172.16.112.96:3306/yy?useUnicode=true&amp;characterEncoding=utf8
+    url: jdbc:mysql://172.16.112.96:3306/yy-base?useUnicode=true&amp;characterEncoding=utf8
     username: admin
     password: 1qaz!QAZ
     driver-class-name: com.mysql.jdbc.Driver
@@ -123,3 +123,44 @@ eureka:
       defaultZone: http://test-discovery:8761/eureka/
   instance:
     preferIpAddress: true
+
+    
+---
+spring:
+  profiles: local
+  jpa:
+    show-sql: false
+    database: MYSQL
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.DefaultNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/yy-base?useUnicode=true&amp;characterEncoding=utf8
+    username: root
+    password: 123
+    driver-class-name: com.mysql.jdbc.Driver
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  redis:
+    database: 6
+    host: 15.114.102.10
+    port: 6379
+    pool:
+      max-active: 10
+      max-idle: 10
+      max-wait: -1
+      min-idle: 0
+  data:
+    rest:
+      default-page-size: 1000
+      
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.16.112.91:8761/eureka/
+  instance:
+    preferIpAddress: true
+    
