@@ -36,25 +36,25 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-	@Bean
+	/*@Bean
 	public Docket swaggerSpringMvcPlugin() {
 		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec").apiInfo(apiInfo())
 				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
 				.select().apis(RequestHandlerSelectors.basePackage("com.yy.cloud.api.admin.controller"))
-				.paths(PathSelectors.any()).build().apiInfo(apiInfo());
-	}
+				.paths(PathSelectors.any()).build();
+	}*/
 
-	/*
-	 * @Bean public Docket swaggerSpringMvcPlugin() { return new
-	 * Docket(DocumentationType.SWAGGER_2).groupName("authsec")
-	 * .genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages
-	 * (false).forCodeGeneration(true)
-	 * .pathMapping("/").select().paths(PathSelectors.regex("/authsec/.*")).
-	 * build() .apiInfo(apiInfo()); }
-	 */
+	
+	@Bean
+	public Docket swaggerSpringMvcPlugin() {
+		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec")
+				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
+				.pathMapping("/").select().paths(PathSelectors.any()).build().apiInfo(apiInfo());
+	}
+	 
 
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("AdminUI Management").description("YYcloud Adminui Management  API")
-				.contact(new Contact("GHL", "http://www.google.com", "GHL")).version("0.1").build();
+				.contact(new Contact("GHL", "http://www.google.com", "ghlnmm@126.com")).version("0.1").build();
 	}
 }

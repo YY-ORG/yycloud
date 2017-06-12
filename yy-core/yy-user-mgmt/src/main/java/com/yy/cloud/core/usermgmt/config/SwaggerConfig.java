@@ -37,14 +37,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
 	@Bean
 	public Docket swaggerSpringMvcPlugin() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("usermgmt")
-				.apiInfo(apiInfo())
-				.genericModelSubstitutes(DeferredResult.class)
-				.useDefaultResponseMessages(false)
-				.forCodeGeneration(true)
-				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.yy.cloud.core.usermgmt.controller"))
+		return new Docket(DocumentationType.SWAGGER_2).groupName("usermgmt").apiInfo(apiInfo())
+				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
+				.select().apis(RequestHandlerSelectors.basePackage("com.yy.cloud.core.usermgmt.controller"))
 				.paths(PathSelectors.any()).build();
 	}
 
@@ -52,7 +47,7 @@ public class SwaggerConfig {
 		return new ApiInfoBuilder()
 				.title("YY usermgmt management")
 				.description("YY usermgmt core API")
-				.contact(new Contact("GHL", "http://www.google.com", "GHL"))
+				.contact(new Contact("GHL", "http://www.google.com", "ghlnmm@126.com"))
 				.version("0.1")
 				.build();
 	}
