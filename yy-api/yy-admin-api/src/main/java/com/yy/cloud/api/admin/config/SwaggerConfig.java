@@ -35,13 +35,21 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+	
 	@Bean
+	public Docket swaggerSpringMvcPlugin() {
+		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec")
+				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
+				.pathMapping("/").select().paths(PathSelectors.any()).build()
+				.apiInfo(apiInfo());
+	}
+/*	@Bean
 	public Docket swaggerSpringMvcPlugin() {
 		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec")
 				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
 				.pathMapping("/").select().paths(PathSelectors.regex("/authsec/.*")).build()
 				.apiInfo(apiInfo());
-	}
+	}*/
 
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("Paltform Management").description("Foxcloud Platform Management core API")
