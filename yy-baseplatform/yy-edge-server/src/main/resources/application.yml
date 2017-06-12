@@ -46,7 +46,7 @@ zuul:
       serviceId: submgmt
     usermgmt:
       path: /usermgmt/**
-      serviceId: user-mgmt
+      serviceId: usermgmt
     workflow:
       path: /workflow/**
       serviceId: workflow
