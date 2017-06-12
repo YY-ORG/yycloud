@@ -16,8 +16,6 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-
 /**
  * ClassName:Application <br/>
  * Function: TODO ADD FUNCTION. <br/>
@@ -29,13 +27,12 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
  * @see
  */
 @SpringBootApplication
-@EnableFeignClients(basePackages = {"com.gemii.lizcloud.api.admin.clients", "com.gemii.lizcloud.common.clients"})
-//@EnableHystrix
-@ComponentScan({"com.gemii.lizcloud"})
+@EnableFeignClients(basePackages = {"com.yy.cloud.api.admin.clients","com.yy.cloud.common.clients"})
+@ComponentScan({"com.yy.cloud"})
 @EnableDiscoveryClient
 @EnableHystrix
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-@EnableResourceServer
+//@EnableResourceServer
 public class Application {
 
     public static void main(String[] args) {
