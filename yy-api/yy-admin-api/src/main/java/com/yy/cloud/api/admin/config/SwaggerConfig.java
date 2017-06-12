@@ -40,7 +40,7 @@ public class SwaggerConfig {
 	public Docket swaggerSpringMvcPlugin() {
 		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec").apiInfo(apiInfo())
 				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
-				.select().apis(RequestHandlerSelectors.basePackage("com.yy.foxcloud.core.admin.controller"))
+				.select().apis(RequestHandlerSelectors.basePackage("com.yy.cloud.api.admin.controller"))
 				.paths(PathSelectors.any()).build().apiInfo(apiInfo());
 	}
 
