@@ -15,6 +15,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
@@ -40,8 +41,9 @@ public class SwaggerConfig {
 	public Docket swaggerSpringMvcPlugin() {
 		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec")
 				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
-				.pathMapping("/").select().paths(PathSelectors.any()).build()
-				.apiInfo(apiInfo());
+				.select()
+				.apis(RequestHandlerSelectors.basePackage("com.hpe.foxcloud.core.admin.controller"))
+				.paths(PathSelectors.any()).build();
 	}
 /*	@Bean
 	public Docket swaggerSpringMvcPlugin() {
