@@ -48,8 +48,9 @@ public class SwaggerConfig {
 	@Bean
 	public Docket swaggerSpringMvcPlugin() {
 		return new Docket(DocumentationType.SWAGGER_2).groupName("authsec")
-				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true)
-				.pathMapping("/").select().paths(PathSelectors.any()).build().apiInfo(apiInfo());
+				.genericModelSubstitutes(DeferredResult.class).useDefaultResponseMessages(false).forCodeGeneration(true).select().apis(RequestHandlerSelectors.basePackage("com.yy.cloud.api.admin.controller"))
+				.paths(PathSelectors.any()).build()
+				.apiInfo(apiInfo());
 	}
 	 
 
