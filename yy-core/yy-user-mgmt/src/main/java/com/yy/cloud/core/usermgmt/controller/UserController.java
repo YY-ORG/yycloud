@@ -149,6 +149,15 @@ public class UserController {
 
    
 
+    
+    
+    /**
+     * 获取
+     * @param _status
+     * @param _page
+     * @param _size
+     * @return
+     */
     @RequestMapping(value = "/authsec/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户中心-账户管理，获取所有账户")
     @ApiImplicitParams({
