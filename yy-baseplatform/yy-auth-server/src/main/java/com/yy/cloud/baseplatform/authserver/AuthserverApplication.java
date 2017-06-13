@@ -19,8 +19,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @SpringBootApplication
 @EnableDiscoveryClient
 //@EnableResourceServer
-@ComponentScan(basePackages = {"com.gemii.lizcloud.baseplatform", "com.gemii.lizcloud.common.service"})
-@EnableFeignClients(basePackages = "com.gemii.lizcloud.common.clients")
+@ComponentScan(basePackages = {"com.yy.cloud.baseplatform", "com.yy.cloud.common.service"})
+@EnableFeignClients(basePackages = "com.yy.cloud.common.clients")
 public class AuthserverApplication {
 
     public static void main(String[] args) {

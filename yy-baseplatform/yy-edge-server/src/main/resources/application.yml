@@ -22,8 +22,8 @@ zuul:
     authserver:
       path: /uaa/**
       stripPrefix: true
-      url: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa
-#      serviceId: authserver
+  #    url: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa
+      serviceId: authserver
     user:
       path: /user/**
       url: https://192.168.99.100:9000/authserver/uaa/authsec/userinfo

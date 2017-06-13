@@ -1,43 +1,4 @@
 
 spring:
   application:
-    name: auth-server
-  cloud:
-    config:
-      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
-encrypt:
-  failOnError: false
-
----
-spring:
-  profiles: cloud
-  application:
-    name: auth-server
-  cloud:
-    config:
-      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
-  #    uri: ${vcap.services.${PREFIX:}configserver.credentials.uri:http://user:password@localhost:8888}
-encrypt:
-  failOnError: false
-  
----
-spring:
-  profiles: development
-  application:
-    name: auth-server
-  cloud:
-    config:
-      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
-encrypt:
-  failOnError: false
-
----
-spring:
-  profiles: test
-  application:
-    name: auth-server
-  cloud:
-    config:
-      uri: http://${CONFIGSERVER_SERVICE_HOST}:${CONFIGSERVER_SERVICE_PORT}
-encrypt:
-  failOnError: false
+    name: authserver 
