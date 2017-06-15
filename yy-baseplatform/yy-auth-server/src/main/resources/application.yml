@@ -1,0 +1,59 @@
+server:
+  port: 10001
+  context-path: /uaa
+  use-forward-headers: true
+
+feign:
+  hystrix:
+    enabled: false
+
+ribbon:
+  ConnectTimeout: 600000
+  ReadTimeout: 600000
+  eureka:
+    enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+---
+spring:
+  profiles: development
+  aop:
+    proxy-target-class: true
+  jpa:
+    show-sql: false
+    database: MYSQL
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.DefaultNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  datasource:
+    url: jdbc:mysql://172.16.112.96:3306/yyauth?useUnicode=true&amp;characterEncoding=utf8
+    username: admin
+    password: 1qaz!QAZ
+    driver-class-name: com.mysql.jdbc.Driver
+    testWhileIdle: true
+    validationQuery: SELECT 1
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${DISCOVERY_SERVICE_HOST}:${DISCOVERY_SERVICE_PORT}/eureka/
+  instance:
+    preferIpAddress: true
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+  path: /yy/logs/yy_micro/baseplatform/
+
+
+
