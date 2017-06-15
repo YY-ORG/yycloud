@@ -155,6 +155,7 @@ public class UserServiceImpl implements UserService {
     	
     	List<YYOrganization> items=yyOrganzationRepository.findAll();
     	
+    	log.debug("The value of items is \'"+items+"\'");
     	
     	if(items!=null && items.size()>0){
     		for(YYOrganization yyOrganization :items){
