@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
          * 基本信息
          */
         YYUserInfo userInfo = new YYUserInfo();
-        userInfo.setBirthiday(DateUtils.formatDate(_userProfile.getBirthday(), "YYYY-MM-DD"));
+        userInfo.setBirthiday(DateUtils.formatDate(_userProfile.getBirthday(), "yyyy-MM-dd"));
         userInfo.setUserName(_userProfile.getUserName());
         userInfo.setAdministrativePost(_userProfile.getAdministrativePost());
         userInfo.setAdministrativeRank(_userProfile.getAdministrativeRank());
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
         userInfo.setDeptId(_userProfile.getOrgId());
         
         foxUser.setUserInfo(userInfo);
-        foxUserRepository.save(foxUser);
+        foxUser=   foxUserRepository.save(foxUser);
         // 绑定角色
       /*  if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
             _userProfile.getRoles().forEach(roleProfile -> {
@@ -140,10 +140,6 @@ public class UserServiceImpl implements UserService {
         foxUserRole.setRoleId(yyrole.getId());
         foxUserRole.setUserId(foxUser.getId());
         foxUserRoleRepository.save(foxUserRole);
-        
-        
-        
-        
         return foxUser.getId();
     }
     
