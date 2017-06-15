@@ -111,13 +111,15 @@ public class UserServiceImpl implements UserService {
         userInfo.setProfessionalTitle(_userProfile.getProfessionalTitle());
         userInfo.setPhone(_userProfile.getPhone());
         userInfo.setEmail(_userProfile.getEmail());
-        
+        userInfo.setGender(_userProfile.getGender());
+        userInfo.setAddress(_userProfile.getAddress());
         
         /**
          * 部门信息
          */
         userInfo.setDeptId(_userProfile.getOrgId());
         
+        userInfo.setUser(foxUser);
         foxUser.setUserInfo(userInfo);
         foxUser=   foxUserRepository.save(foxUser);
         // 绑定角色

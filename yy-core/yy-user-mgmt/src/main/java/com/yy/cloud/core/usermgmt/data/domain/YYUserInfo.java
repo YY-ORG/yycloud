@@ -59,7 +59,7 @@ public class YYUserInfo implements Serializable {
 	 * 1：女
 	 */
 	@Column(name = "GENDER")
-	private String gender;
+	private byte gender;
 
 	@Column(name = "PHONE")
 	private String phone;

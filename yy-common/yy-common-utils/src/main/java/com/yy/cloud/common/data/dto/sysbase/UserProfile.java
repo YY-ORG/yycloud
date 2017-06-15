@@ -30,6 +30,8 @@ public class UserProfile implements Serializable {
 	private String email;
 
 	private String phone;
+	
+	private String address;
 
 	/**
 	 * 0:男 1:女
