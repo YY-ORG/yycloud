@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.yy.cloud.core.usermgmt.data.domain.YYRole;
 
 import java.util.List;
+import java.lang.String;
 
 /**
  * ClassName: FoxRoleRepository <br/>
@@ -23,8 +24,8 @@ import java.util.List;
 public interface YYRoleRepository extends JpaRepository<YYRole, String> {
 
 	YYRole findOneByName(@Param("name") String name);
-	//根据角色名查询
 	YYRole findOneByRoleName(@Param("roleName") String roleName);
+	
 
 	List<YYRole> findByType(Byte type);
 

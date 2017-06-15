@@ -36,6 +36,10 @@ public class UserMgmtConstants {
 	 public final static byte ACCOUNT_TYPE_INTERNAL_SYSTEM = 1;
 	 public final static byte ACCOUNT_TYPE_PERSONAL = 2;
 		
+	 /**
+	  * 默认角色
+	  */
+	 public final static String ACCOUNT_DEFALUT_ROLE = "DEFAULTROLE";
 	 
 
 }

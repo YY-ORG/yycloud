@@ -93,11 +93,11 @@ public class UserServiceImpl implements UserService {
             log.info(CommonConstant.LOG_DEBUG_TAG + "该用户名已存在：" + _userProfile.getLoginName());
             throw new UserExistException();
         }
-        YYUser foxUser = modelMapper.map(_userProfile, YYUser.class);
-        foxUser.setStatus(CommonConstant.DIC_GLOBAL_STATUS_INITIAL);
-        foxUser.setType(UserMgmtConstants.ACCOUNT_TYPE_PERSONAL);
+        YYUser yyUser = modelMapper.map(_userProfile, YYUser.class);
+        yyUser.setStatus(CommonConstant.DIC_GLOBAL_STATUS_INITIAL);
+        yyUser.setType(UserMgmtConstants.ACCOUNT_TYPE_PERSONAL);
         String encodedPassword = encoder.encode(_userProfile.getPassword());
-        foxUser.setPassword(encodedPassword);
+        yyUser.setPassword(encodedPassword);
         
         /**
          * 基本信息
@@ -118,18 +118,28 @@ public class UserServiceImpl implements UserService {
          */
         userInfo.setDeptId(_userProfile.getOrgId());
         
-        foxUser.setUserInfo(userInfo);
-        foxUserRepository.save(foxUser);
+        yyUser.setUserInfo(userInfo);
+        foxUserRepository.save(yyUser);
         // 绑定角色
-        if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
+      /*  if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
             _userProfile.getRoles().forEach(roleProfile -> {
                 YYUserRole foxUserRole = new YYUserRole();
                 foxUserRole.setRoleId(roleProfile.getId());
-                foxUserRole.setUserId(foxUser.getId());
+                foxUserRole.setUserId(yyUser.getId());
                 foxUserRoleRepository.save(foxUserRole);
             });
-        }
-        return foxUser.getId();
+        }*/
+        
+        /**
+         * 设置默认角色
+         */
+        YYRole role= foxRoleRepository.findOneByName(UserMgmtConstants.ACCOUNT_DEFALUT_ROLE);
+        YYUserRole foxUserRole = new YYUserRole();
+        foxUserRole.setRoleId(role.getId());
+        foxUserRole.setUserId(yyUser.getId());
+        foxUserRoleRepository.save(foxUserRole);
+        
+        return yyUser.getId();
     }
     
     @Override
