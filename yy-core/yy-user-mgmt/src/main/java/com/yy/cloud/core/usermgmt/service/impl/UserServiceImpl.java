@@ -121,14 +121,29 @@ public class UserServiceImpl implements UserService {
         foxUser.setUserInfo(userInfo);
         foxUserRepository.save(foxUser);
         // 绑定角色
-        if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
+      /*  if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
             _userProfile.getRoles().forEach(roleProfile -> {
                 YYUserRole foxUserRole = new YYUserRole();
                 foxUserRole.setRoleId(roleProfile.getId());
                 foxUserRole.setUserId(foxUser.getId());
                 foxUserRoleRepository.save(foxUserRole);
             });
-        }
+        }*/
+        
+
+        
+        /**
+         * 设置默认角色
+         */
+        YYRole yyrole=foxRoleRepository.findOneByRoleName(UserMgmtConstants.ACCOUNT_DEFAULTROLE);
+        YYUserRole foxUserRole = new YYUserRole();
+        foxUserRole.setRoleId(yyrole.getId());
+        foxUserRole.setUserId(foxUser.getId());
+        foxUserRoleRepository.save(foxUserRole);
+        
+        
+        
+        
         return foxUser.getId();
     }
     

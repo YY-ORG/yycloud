@@ -37,5 +37,6 @@ public class UserMgmtConstants {
 	 public final static byte ACCOUNT_TYPE_PERSONAL = 2;
 		
 	 
+	 public final static String ACCOUNT_DEFAULTROLE = "DEFAULTROLE";
 
 }

@@ -33,10 +33,10 @@ security:
     client:
       client-id: fox-service
       client-secret: secret
-      access-token-uri: http://authserver:9001/uaa/oauth/token
+      access-token-uri:  http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/token
       grant-type: client_credentials
     resource:
-      token-info-uri: http://authserver:9001/uaa/oauth/check_token
+      token-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/check_token
 
 
 ---
@@ -88,7 +88,7 @@ spring:
     show-sql: false
     database: MYSQL
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       naming:
         strategy: org.hibernate.cfg.DefaultNamingStrategy
     properties:
