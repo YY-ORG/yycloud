@@ -47,7 +47,7 @@ public class SysBaseController {
 	private SysBaseService sysBaseService;
 
 	@ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")})
-	@RequestMapping(value = "/authsec/sysdic", method = RequestMethod.GET)
+	@RequestMapping(value = "/noauth/sysdic", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "获取所有字典信息（已完成）", notes = "Get All of the dictionaries.")
 	public GeneralPagingResult<List<SysDic>> getAllDics() {
@@ -60,7 +60,7 @@ public class SysBaseController {
 	}
 
 	@ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")})
-	@RequestMapping(value = "/authsec/sysdic/{_owner}", method = RequestMethod.GET)
+	@RequestMapping(value = "/noauth/sysdic/{_owner}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "根据owner 获取字典信息（已完成）", notes = "Get some Owner's dictionaries.")
 	public GeneralPagingResult<List<SysDic>> getDicsByOwner(
@@ -74,7 +74,7 @@ public class SysBaseController {
 	}
 
 	@ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")})
-	@RequestMapping(value = "/authsec/sysdic/{_owner}/{_field}", method = RequestMethod.GET)
+	@RequestMapping(value = "/noauth/sysdic/{_owner}/{_field}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "根据owner和field 获取字典信息（已完成）", notes = "Get the dictionaries of some owner's some field.")
 	public GeneralPagingResult<List<SysDic>> getDicsByOwnerAndField(
@@ -90,7 +90,7 @@ public class SysBaseController {
 	}
 
 	@ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")})
-	@RequestMapping(value = "/authsec/sysdic/{_owner}/{_field}/{_code}", method = RequestMethod.GET)
+	@RequestMapping(value = "/noauth/sysdic/{_owner}/{_field}/{_code}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "根据owner和field 和code 获取字典信息（已完成）", notes = "Get the dictionaries of some owner's some field.")
 	public GeneralPagingResult<SysDic> getSomeDics(
