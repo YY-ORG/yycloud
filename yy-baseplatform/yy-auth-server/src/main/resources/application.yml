@@ -58,6 +58,44 @@ eureka:
     preferIpAddress: true
 
 
+
+---
+spring:
+  profiles: local
+  aop:
+    proxy-target-class: true
+  jpa:
+    show-sql: false
+    database: MYSQL
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.DefaultNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://61.178.80.85:3306/yyauth?useUnicode=true&amp;characterEncoding=utf8
+    username: admin
+    password: 1qaz!QAZ
+  redis:
+    database: 0
+    host: 15.114.102.10
+    port: 6379
+    pool:
+      max-active: 10
+      max-idle: 10
+      max-wait: -1
+      min-idle: 0
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.16.112.91:8761/eureka/
+  instance:
+    preferIpAddress: true
+
+
+
 foxauth:
   token:
     validity_seconds: 1000000000

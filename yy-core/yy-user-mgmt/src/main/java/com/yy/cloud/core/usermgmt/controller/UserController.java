@@ -50,7 +50,7 @@ public class UserController {
      * @param _userProfile
      * @return
      */
-    @RequestMapping(value = "/authsec/user/account", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/noauth/user/account", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户中心-账户管理，ADM创建账号，本地")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
@@ -76,7 +76,7 @@ public class UserController {
       * 获取部门信息
       * @return
       */
-    @RequestMapping(value = "/authsec/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/noauth/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户中心-获取部门")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
