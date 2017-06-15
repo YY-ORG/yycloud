@@ -4,15 +4,22 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.security.Principal;
 import java.util.List;
 
 import com.yy.cloud.common.data.otd.tenant.OrganizationItem;
 
 @Data
 @ApiModel
-public class UserDetailsItem {
+public class UserDetailsItem implements Serializable, Principal {
 
-    private String userId;
+    /**
+	 * serialVersionUID:TODO Description.
+	 */
+	private static final long serialVersionUID = -7387488235467593996L;
+
+	private String userId;
 
     private String loginName;
 
@@ -54,5 +61,10 @@ public class UserDetailsItem {
     private List<OrganizationItem> organizations;
 
     private List<RoleItem> roles;
+
+	@Override
+	public String getName() {
+		return this.loginName;
+	}
 
 }

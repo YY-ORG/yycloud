@@ -36,45 +36,24 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
   datasource:
-    type: org.apache.commons.dbcp2.BasicDataSource
-    driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://172.16.112.96:3306/yyauth?useUnicode=true&amp;characterEncoding=utf8
     username: admin
     password: 1qaz!QAZ
-  redis:
-    database: 0
-    host: 15.114.102.10
-    port: 6379
-    pool:
-      max-active: 10
-      max-idle: 10
-      max-wait: -1
-      min-idle: 0
+    driver-class-name: com.mysql.jdbc.Driver
+    testWhileIdle: true
+    validationQuery: SELECT 1
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://172.16.112.91:8761/eureka/
+      defaultZone: http://${DISCOVERY_SERVICE_HOST}:${DISCOVERY_SERVICE_PORT}/eureka/
   instance:
     preferIpAddress: true
 
-
-foxauth:
-  token:
-    validity_seconds: 1000000000
-    
-#security:
-#  basic:
- #   enabled: false
- # sessions: if_required
 
 logging:
   level:
     org.springframework.security: DEBUG
   path: /yy/logs/yy_micro/baseplatform/
-
-foxcloud:
-  security:
-    ldap_salt: a6dd4ac4-c1d1-11e6-80e4-0050568a49fd
 
 
 
