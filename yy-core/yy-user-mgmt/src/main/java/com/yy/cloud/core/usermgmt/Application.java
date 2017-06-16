@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 /**
  * ClassName: Application <br/>
@@ -19,7 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"com.yy.cloud.core.usermgmt.clients","com.yy.cloud.common.clients"})
 @ComponentScan({"com.yy.cloud"})
-//@EnableResourceServer
+@EnableResourceServer
 public class Application {
 
     public static void main(String[] args) {

@@ -113,7 +113,7 @@ eureka:
 
 security:
   basic:
-    enabled: false
+    enabled: false 
   ignored: /noauth/**, /swagger**,/swagger**/**,/webjars/**,/v2/**, /js/**, /css/**, /authsec/users/loadByLoginName, /authsec/users/loadById, /tenant/*/organization/quota
   oauth2:
     client:

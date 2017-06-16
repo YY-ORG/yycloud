@@ -275,7 +275,7 @@ public class UserController {
     })
     public GeneralContentResult<UserDetailsItem> loadUserByLoginName(
             @RequestParam("login_name") String _loginName) {
-        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult();
+        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult<UserDetailsItem>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
         UserDetailsItem userDetailsItem = null;
         try {
