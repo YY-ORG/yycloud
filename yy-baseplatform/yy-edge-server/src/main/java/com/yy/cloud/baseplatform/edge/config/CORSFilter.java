@@ -16,7 +16,7 @@ import java.io.IOException;
  * Created by chenxj on 12/10/16.
  */
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE)//值越小，越先被加载
 @Slf4j
 public class CORSFilter implements Filter {
     private AntPathRequestMatcher tempMatcher =  new AntPathRequestMatcher("/uaa/**");

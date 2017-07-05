@@ -73,10 +73,7 @@ public class UserMgmtController {
     public GeneralContentResult<UserDetailsItem> getCurrentUserInfo(){
         UserDetailsItem userDetailsItem = securityService.getCurrentUser();
         log.debug("当前用户的信息为 {}",userDetailsItem);
-        GeneralContentResult<UserDetailsItem> current= new GeneralContentResult<>();
-        current.setResultContent(userDetailsItem);
-        current.setResultCode("100");
-        return current;
+        return userMgmtService.findCurrentUser();
     }
 
     

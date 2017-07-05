@@ -12,6 +12,7 @@ import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,6 +50,16 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 	        log.debug(CommonConstant.LOG_DEBUG_TAG+"创建账号，返回结果 {}",result);
 			return result;
 	}
+
+	@Override
+	public GeneralContentResult<UserDetailsItem> findCurrentUser() {
+		// TODO Auto-generated method stub
+		return userMgmtClient.findCurrentUser();
+	}
+	
+	
+	
+	
 
     
 }

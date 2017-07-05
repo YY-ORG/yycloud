@@ -39,6 +39,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		
+		log.debug("The value of http is \'"+http+"\'");
+		
 		http.logout().and().exceptionHandling()
 				.authenticationEntryPoint(new Http401AuthenticationEntryPoint("Session realm=\"SESSION\""))//
 				.and()//

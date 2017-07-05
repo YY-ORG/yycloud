@@ -4,6 +4,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by chenxj on 12/10/16.
  */
+@Slf4j
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CORSFilter implements Filter {
@@ -34,6 +37,7 @@ public class CORSFilter implements Filter {
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with, authorization");
 
+        log.debug("doFilter begin and method is \'"+request.getMethod()+"\'");
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {

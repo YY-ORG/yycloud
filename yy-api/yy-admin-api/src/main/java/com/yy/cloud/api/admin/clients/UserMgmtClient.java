@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.yy.cloud.common.constant.CommonConstant;
+import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
@@ -25,6 +27,7 @@ import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -160,4 +163,15 @@ public interface UserMgmtClient {
   })
   public GeneralContentResult<String> createAdmUser(@RequestBody UserProfile _userProfile);  
 
+  
+  
+  
+  @RequestMapping(value = "/authsec/user/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiOperation(value = "用户中心-账户管理，查询当前账户")
+  @ApiImplicitParams({
+          @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+  })
+  public GeneralContentResult<UserDetailsItem> findCurrentUser();
+
+  
 }

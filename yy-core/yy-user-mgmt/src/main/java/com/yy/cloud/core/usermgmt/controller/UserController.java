@@ -3,6 +3,7 @@ package com.yy.cloud.core.usermgmt.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +44,7 @@ public class UserController {
     @Autowired
     private SecurityService securityService;
 
-
+	
 
     /**
      * 创建账号
@@ -82,6 +83,7 @@ public class UserController {
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
     })
     public GeneralContentResult<List<OrganizationItem>> findAllorgnazation() {
+    	
         return userService.findAllorgnazation();
     }
 
