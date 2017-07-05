@@ -361,7 +361,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailsItem loadUserByLoginNameOrId(String loginNameOrId){
         UserDetailsItem userDetailsItem = new UserDetailsItem();
-        log.info(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息：{}", loginNameOrId);
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息：{}", loginNameOrId);
         YYUser foxUser = foxUserRepository.findByLoginNameOrId(loginNameOrId.trim(), loginNameOrId.trim());
         if(null == foxUser){
             throw new NoRecordFoundException(String.format("user %s not exist.", loginNameOrId));
@@ -390,19 +390,14 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setRoles(roleItems);
 
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取机构/部门信息：{}", loginNameOrId);
-        List<OrganizationItem> organizationItems = new ArrayList<>();
+        List<YYOrganization> organizationItems = yyOrganzationRepository.findOrganizationByUserId(foxUser.getId());
        
-
-        OrganizationItem organizationItem = organizationItems.get(0);
-
-        userDetailsItem.setOrganizationId(organizationItem.getId());
-
-
-
+        if(organizationItems!=null && organizationItems.size()>0){
+        	YYOrganization yyOrganization = organizationItems.get(0);
+        	userDetailsItem.setOrganizationId(yyOrganization.getId());
+        }
         userDetailsItem.setIsAD(false);     //TODO 这里可能有问题，需要确认
         if (foxUser.getType() != null && foxUser.getType().byteValue() == AdUserMgmtConstants.USER_TYPE_AD) {
-        	
-        	
         }
 
         log.info(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息结果：{}", userDetailsItem);

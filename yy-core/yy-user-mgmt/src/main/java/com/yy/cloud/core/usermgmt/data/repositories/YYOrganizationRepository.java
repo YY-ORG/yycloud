@@ -22,10 +22,13 @@ import com.yy.cloud.core.usermgmt.data.domain.YYOrganization;
 public interface YYOrganizationRepository extends JpaRepository<YYOrganization, String> {
 
 	Page<YYOrganization> findByStatus(Byte status, Pageable pageable);
-
 	
-	@Query(value = "SELECT O.* FROM YY_USER_ORGANIZATION UO LEFT JOIN YY_ORGANIZATION O ON UO.ORGANIZATION_ID=O.ID WHERE UO.USER_ID = ?1", nativeQuery = true)
+	@Query(value = "SELECT O.* FROM yy_user_organization UO LEFT JOIN yy_organization O ON UO.ORGANIZATION_ID=O.ID WHERE UO.USER_ID = ?1", nativeQuery = true)
 	List<YYOrganization> findOrganizationByUserId(String userId);
+	
+	
+	
+	
 
 	@Query("SELECT f FROM YYOrganization f WHERE f.id IN (SELECT u.organizationId FROM YYUserOrganization u WHERE u.userId=?1)")
 	Page<YYOrganization> findByUserId(String userId, Pageable pageable);

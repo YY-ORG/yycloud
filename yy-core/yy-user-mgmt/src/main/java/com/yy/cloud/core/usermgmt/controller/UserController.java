@@ -311,7 +311,7 @@ public class UserController {
     @RequestMapping(value = "/noauth/user/loginnameorid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public GeneralContentResult<UserDetailsItem> loadUserByLoginNameOrId(
             @RequestParam("_loginNameOrId") String _loginNameOrId) {
-        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult();
+        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult<UserDetailsItem>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
         UserDetailsItem userDetailsItem = userService.loadUserByLoginNameOrId(_loginNameOrId);
         result.setResultContent(userDetailsItem);
