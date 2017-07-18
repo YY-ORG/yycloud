@@ -1,6 +1,5 @@
 package com.yy.cloud.core.usermgmt;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -21,7 +20,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"com.yy.cloud.core.usermgmt.clients","com.yy.cloud.common.clients"})
 @ComponentScan({"com.yy.cloud"})
-//@EnableResourceServer
+@EnableResourceServer
 public class Application {
 
 	

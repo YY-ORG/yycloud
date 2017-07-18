@@ -22,13 +22,13 @@ public class OAuth2FeignConfiguration {
      * @param resource
      * @return
      */
-//    @Bean
-//    public RequestInterceptor oauth2FeignRequestInterceptor(OAuth2ClientContext oAuth2ClientContext,
-//                                                            OAuth2ProtectedResourceDetails resource) {
-//        return new OAuth2FeignRequestInterceptor(oAuth2ClientContext, resource);
-//    }
     @Bean
+    public RequestInterceptor oauth2FeignRequestInterceptor(OAuth2ClientContext oAuth2ClientContext,
+                                                            OAuth2ProtectedResourceDetails resource) {
+        return new OAuth2FeignRequestInterceptor(oAuth2ClientContext, resource);
+    }
+   /* @Bean
     public RequestInterceptor oauth2FeignRequestInterceptor(OAuth2ClientContext oAuth2ClientContext) {
         return new OAuth2FeignRequestInterceptor(oAuth2ClientContext);
-    }
+    }*/
 }

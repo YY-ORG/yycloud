@@ -36,7 +36,7 @@ zuul:
       serviceId: marketplace-api
     basis:
       path: /basis/**
-      serviceId: basis-api
+      serviceId: sysbase
 #      url: http://localhost:9303
     productmgmt:
       path: /productmgmt/**

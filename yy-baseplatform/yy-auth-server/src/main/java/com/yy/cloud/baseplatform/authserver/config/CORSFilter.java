@@ -40,7 +40,7 @@ public class CORSFilter implements Filter {
         log.debug("doFilter begin and method is \'"+request.getMethod()+"\'");
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
-        } else {
+        } else { 
             chain.doFilter(req, res);
         }
     }

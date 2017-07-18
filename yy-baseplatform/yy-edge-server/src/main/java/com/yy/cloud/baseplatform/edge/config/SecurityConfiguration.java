@@ -56,9 +56,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/*/swagger-ui.html/**").permitAll()//
 //				.antMatchers("/*/swagger-ui.html#").permitAll()//
 				.antMatchers("/*/swagger-ui.html#/**").permitAll()//
+				.antMatchers("/swagger**/**").permitAll()
 				.antMatchers("/*/*/noauth/**").permitAll()//
 				.antMatchers("/*/authsec/**").permitAll()//
 				.antMatchers("/*/*/authsec/**").permitAll()//
+				.antMatchers("/*/*/favicon.ico/**").permitAll()
+				
+				
+				
+				
 				.antMatchers("/*/platforms/**").permitAll()//
 				.antMatchers("/*/*/platforms/**").permitAll()//
 				.antMatchers("/*/platform/**").permitAll()//
@@ -75,7 +81,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.clearAuthentication(true).deleteCookies("JSESSIONID")//
 				.invalidateHttpSession(true).permitAll()
 				.and()
-				.csrf().disable();
+				.csrf().disable(); 
 //				.csrf().requireCsrfProtectionMatcher(csrfRequestMatcher()).csrfTokenRepository(this.getCSRFTokenRepository())
 //				.and()
 //				.addFilterAfter(this.createCSRFHeaderFilter(), CsrfFilter.class);

@@ -69,7 +69,6 @@ public class OAuth2SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 //		http.anonymous().disable().authorizeRequests().antMatchers("/oauth/token/**").permitAll();
-
 		http.anonymous().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().requestMatchers()
 				.antMatchers("/", "/login", "/logout", "/oauth/authorize", "/oauth/confirm_access").and()

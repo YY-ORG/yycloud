@@ -71,12 +71,8 @@ public class UserMgmtController {
     @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")})
     @RequestMapping(method = RequestMethod.GET, value = "/authsec/user/currentuser")
     public GeneralContentResult<UserDetailsItem> getCurrentUserInfo(){
-        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        log.debug("当前用户的信息为 {}",userDetailsItem);
         return userMgmtService.findCurrentUser();
     }
-
-    
     
     /**
      * 获取部门信息
