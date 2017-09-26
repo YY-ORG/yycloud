@@ -51,5 +51,6 @@
 	<modules>
 		<module>yy-sysbase</module>
 		<module>yy-user-mgmt</module>
+		<module>yy-assess</module>
 	</modules>
 </project>
