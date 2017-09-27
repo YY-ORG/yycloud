@@ -36,14 +36,18 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="STATUS")
 	private byte status;
 
-	@Column(name="TEMPLATE_ID")
-	private String templateId;
-
-	@Column(name="TEMPLATE_ITEM_ID")
-	private String templateItemId;
-
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
+
+	//bi-directional many-to-one association to PerTemplate
+	@ManyToOne
+	@JoinColumn(name="TEMPLATE_ID")
+	private PerTemplate perTemplate;
+
+	//bi-directional many-to-one association to PerTemplateItem
+	@ManyToOne
+	@JoinColumn(name="TEMPLATE_ITEM_ID")
+	private PerTemplateItem perTemplateItem;
 
 	public PerTemplateTiMap() {
 	}
@@ -88,28 +92,28 @@ public class PerTemplateTiMap implements Serializable {
 		this.status = status;
 	}
 
-	public String getTemplateId() {
-		return this.templateId;
-	}
-
-	public void setTemplateId(String templateId) {
-		this.templateId = templateId;
-	}
-
-	public String getTemplateItemId() {
-		return this.templateItemId;
-	}
-
-	public void setTemplateItemId(String templateItemId) {
-		this.templateItemId = templateItemId;
-	}
-
 	public Timestamp getUpdateDate() {
 		return this.updateDate;
 	}
 
 	public void setUpdateDate(Timestamp updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	public PerTemplate getPerTemplate() {
+		return this.perTemplate;
+	}
+
+	public void setPerTemplate(PerTemplate perTemplate) {
+		this.perTemplate = perTemplate;
+	}
+
+	public PerTemplateItem getPerTemplateItem() {
+		return this.perTemplateItem;
+	}
+
+	public void setPerTemplateItem(PerTemplateItem perTemplateItem) {
+		this.perTemplateItem = perTemplateItem;
 	}
 
 }

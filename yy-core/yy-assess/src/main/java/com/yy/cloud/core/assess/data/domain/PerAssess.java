@@ -37,6 +37,9 @@ public class PerAssess implements Serializable {
 	@Column(name="STATUS")
 	private byte status;
 
+	@Column(name="TYPE")
+	private byte type;
+
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
@@ -97,6 +100,14 @@ public class PerAssess implements Serializable {
 
 	public void setStatus(byte status) {
 		this.status = status;
+	}
+
+	public byte getType() {
+		return type;
+	}
+
+	public void setType(byte type) {
+		this.type = type;
 	}
 
 	public Timestamp getUpdateDate() {

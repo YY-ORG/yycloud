@@ -48,6 +48,36 @@
 			<timezone>+8</timezone>
 		</developer>
 	</developers>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yy.cloud</groupId>
+            <artifactId>yy-common-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yy.cloud</groupId>
+            <artifactId>yy-common-utils</artifactId>
+        </dependency>
+	</dependencies>
 	<modules>
 		<module>yy-sysbase</module>
 		<module>yy-user-mgmt</module>

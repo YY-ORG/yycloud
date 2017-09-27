@@ -75,4 +75,6 @@ public class ResultCode {
 	public final static String ORGANIZATION_QUOTA_VALIDATE_FAILED = "10007002";
 
 	public final static String USERMGMT_ORGAN_CREATE_FAILED = "10008001";
+	
+	public final static String ASSESS_GET_FAILED = "";
 }

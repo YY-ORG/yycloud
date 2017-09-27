@@ -24,7 +24,7 @@ import com.yy.cloud.core.assess.data.domain.PerTemplateTiMap;
  * @since    JDK 1.8
  * @see 	 
  */
-@RepositoryRestResource(collectionResourceRel = "sysdic", path = "sysdic")
+@RepositoryRestResource(collectionResourceRel = "perTemplateTiMap", path = "perTemplateTiMap")
 public interface PerTemplateTiMapRepository extends JpaRepository<PerTemplateTiMap, String> {
 
 }

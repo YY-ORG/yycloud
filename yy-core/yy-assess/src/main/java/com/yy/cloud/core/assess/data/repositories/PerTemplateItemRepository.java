@@ -10,6 +10,7 @@
 package com.yy.cloud.core.assess.data.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerTemplateItem;
 
@@ -23,6 +24,7 @@ import com.yy.cloud.core.assess.data.domain.PerTemplateItem;
  * @since    JDK 1.8
  * @see 	 
  */
+@RepositoryRestResource(collectionResourceRel = "perTemplateItem", path = "perTemplateItem")
 public interface PerTemplateItemRepository extends JpaRepository<PerTemplateItem, String> {
 
 }

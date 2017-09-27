@@ -18,6 +18,7 @@
 package com.yy.cloud.core.assess.data.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessAnswerGroup;
 
@@ -31,6 +32,7 @@ import com.yy.cloud.core.assess.data.domain.PerAssessAnswerGroup;
  * @since    JDK 1.8
  * @see 	 
  */
+@RepositoryRestResource(collectionResourceRel = "perAssessAnswerGroup", path = "perAssessAnswerGroup")
 public interface PerAssessAnswerGroupRepository extends JpaRepository<PerAssessAnswerGroup, String> {
 
 }

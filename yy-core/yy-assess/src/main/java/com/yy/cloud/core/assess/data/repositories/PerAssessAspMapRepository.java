@@ -10,6 +10,7 @@
 package com.yy.cloud.core.assess.data.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessAspMap;
 
@@ -23,6 +24,7 @@ import com.yy.cloud.core.assess.data.domain.PerAssessAspMap;
  * @since    JDK 1.8
  * @see 	 
  */
+@RepositoryRestResource(collectionResourceRel = "perAssessAspMap", path = "perAssessAspMap")
 public interface PerAssessAspMapRepository extends JpaRepository<PerAssessAspMap, String> {
 
 }

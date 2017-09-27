@@ -6,6 +6,7 @@ import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -47,6 +48,10 @@ public class PerTemplate implements Serializable {
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
+
+	//bi-directional many-to-one association to PerTemplateTiMap
+	@OneToMany(mappedBy="perTemplate")
+	private List<PerTemplateTiMap> perTemplateTiMaps;
 
 	public PerTemplate() {
 	}
@@ -121,6 +126,28 @@ public class PerTemplate implements Serializable {
 
 	public void setUpdateDate(Timestamp updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	public List<PerTemplateTiMap> getPerTemplateTiMaps() {
+		return this.perTemplateTiMaps;
+	}
+
+	public void setPerTemplateTiMaps(List<PerTemplateTiMap> perTemplateTiMaps) {
+		this.perTemplateTiMaps = perTemplateTiMaps;
+	}
+
+	public PerTemplateTiMap addPerTemplateTiMap(PerTemplateTiMap perTemplateTiMap) {
+		getPerTemplateTiMaps().add(perTemplateTiMap);
+		perTemplateTiMap.setPerTemplate(this);
+
+		return perTemplateTiMap;
+	}
+
+	public PerTemplateTiMap removePerTemplateTiMap(PerTemplateTiMap perTemplateTiMap) {
+		getPerTemplateTiMaps().remove(perTemplateTiMap);
+		perTemplateTiMap.setPerTemplate(null);
+
+		return perTemplateTiMap;
 	}
 
 }
