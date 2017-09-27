@@ -9,27 +9,22 @@
 
 package com.yy.cloud.core.assess.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.assess.AssessItem;
 import com.yy.cloud.common.data.metadata.TemplateItem;
-import com.yy.cloud.core.assess.data.domain.PerAssess;
-import com.yy.cloud.core.assess.data.domain.PerAssessTemplateMap;
-import com.yy.cloud.core.assess.data.domain.PerTemplate;
-import com.yy.cloud.core.assess.data.domain.PerTemplateItem;
-import com.yy.cloud.core.assess.data.domain.PerTemplateTiMap;
+import com.yy.cloud.common.data.metadata.TemplateItemItem;
+import com.yy.cloud.core.assess.data.domain.*;
 import com.yy.cloud.core.assess.data.repositories.PerAssessRepository;
 import com.yy.cloud.core.assess.data.repositories.PerTemplateRepository;
 import com.yy.cloud.core.assess.service.AssessMgmtService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ClassName:AssessMgmtServiceImpl <br/>
@@ -52,15 +47,21 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	public GeneralContentResult<AssessItem> getAssessItemById(String _id) {
 		PerAssess tempAssess = this.perAssessRepository.getOne(_id);
 		
-		AssessItem tempItem = this.convertToOTD(tempAssess);
-		
+		AssessItem tempItem = this.convertToPAOTD(tempAssess);
+		tempItem.setTemplateItemList(this.getRelatedTemplateItem(tempAssess));
 		GeneralContentResult<AssessItem> tempResult = new GeneralContentResult<AssessItem>();
 		tempResult.setResultContent(tempItem);
 		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 		return tempResult;
 	}
-	
-	private AssessItem convertToOTD(PerAssess _assess) {
+
+	/**
+	 * 转换题所对应的OTD
+	 *
+	 * @param _assess
+	 * @return
+	 */
+	private AssessItem convertToPAOTD(PerAssess _assess) {
 		AssessItem tempItem = new AssessItem();
 		
 		tempItem.setId(_assess.getId());
@@ -71,7 +72,13 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		
 		return tempItem;
 	}
-	
+
+	/**
+	 * 获取某个题所对应的元数据模板
+	 *
+	 * @param _assess
+	 * @return
+	 */
 	private List<TemplateItem> getRelatedTemplateItem(PerAssess _assess){
 		log.info("Going to retrieve assess [{}]'s template items...", _assess.getId());
 		List<TemplateItem> tempList = new ArrayList<TemplateItem>();
@@ -85,14 +92,64 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 			String temId = tempItem.getTemplateId();
 			PerTemplate tempTemplate = this.perTemplateRepository.getOne(temId);
 			List<PerTemplateTiMap> tempPTTM = tempTemplate.getPerTemplateTiMaps();
-			
+
+			List<TemplateItemItem> tempTIIList = new ArrayList<TemplateItemItem>();
 			for(PerTemplateTiMap pttmItem : tempPTTM) {
 				PerTemplateItem tempPTI = pttmItem.getPerTemplateItem();
+				TemplateItemItem tempTII = this.convertToTIIOTD(tempPTI);
+				tempTIIList.add(tempTII);
 			}
-			
+
+			TemplateItem tempTemplateItem = this.convertToTIOTD(tempTemplate);
+			tempTemplateItem.setTemplateItemItemList(tempTIIList);
+
+			tempList.add(tempTemplateItem);
 		}
 		
 		return tempList;
+	}
+
+	/**
+	 * 转换获取元数据模板元素
+	 *
+	 * @param _tempPTI
+	 * @return
+	 */
+	private TemplateItemItem convertToTIIOTD(PerTemplateItem _tempPTI){
+		TemplateItemItem tempItem = new TemplateItemItem();
+		tempItem.setId(_tempPTI.getId());
+		tempItem.setCode(_tempPTI.getCode());
+		tempItem.setName(_tempPTI.getName());
+		tempItem.setLabel(_tempPTI.getLabel());
+		tempItem.setOptionType(_tempPTI.getOptionType());
+		tempItem.setPlaceholderTip(_tempPTI.getPlaceholderTip());
+		tempItem.setRegExp(_tempPTI.getRegExp());
+		tempItem.setRegExpExc(_tempPTI.getRegExpExc());
+		tempItem.setStatus(_tempPTI.getStatus());
+		tempItem.setTip(_tempPTI.getTip());
+		tempItem.setType(_tempPTI.getType());
+		tempItem.setValueSource(_tempPTI.getValueSource());
+		tempItem.setCreateDate(_tempPTI.getCreateDate());
+		tempItem.setUpdateDate(_tempPTI.getUpdateDate());
+		return tempItem;
+	}
+
+	/**
+	 * 增加元数据模板的转换方法
+	 *
+	 * @param _template
+	 * @return
+	 */
+	private TemplateItem convertToTIOTD(PerTemplate _template){
+		TemplateItem tempItem = new TemplateItem();
+		tempItem.setId(_template.getId());
+		tempItem.setCode(_template.getCode());
+		tempItem.setName(_template.getName());
+		tempItem.setStatus(_template.getStatus());
+		tempItem.setType(_template.getType());
+		tempItem.setCreateDate(_template.getCreateDate());
+		tempItem.setUpdateDate(_template.getUpdateDate());
+		return tempItem;
 	}
 }
 

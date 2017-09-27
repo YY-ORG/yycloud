@@ -9,9 +9,12 @@
 
 package com.yy.cloud.common.data.assess;
 
-import java.io.Serializable;
-
+import com.yy.cloud.common.data.metadata.TemplateItem;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * ClassName:AssessItem <br/>
@@ -36,4 +39,7 @@ public class AssessItem implements Serializable {
 	private String code;
 	private byte status;
 	private byte type;
+	private List<TemplateItem> templateItemList;
+	private Timestamp createDate;
+	private Timestamp updateDate;
 }

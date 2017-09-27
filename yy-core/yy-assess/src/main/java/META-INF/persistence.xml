@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="yy">
-		<class>com.yy.cloud.core.assess.data.domain.PerAaThesi</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerAssess</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerAssessAnswer</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerAssessAnswerGroup</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerAssessAspMap</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerAssessPaper</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerAssessTemplateMap</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerContent</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerTemplate</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerTemplateItem</class>
-		<class>com.yy.cloud.core.assess.data.domain.PerTemplateTiMap</class>
-	
-	</persistence-unit>
+    <persistence-unit name="yy">
+        <class>com.yy.cloud.core.assess.data.domain.PerAaThesi</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssess</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswer</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswerGroup</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssessAspMap</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssessPaper</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssessTemplateMap</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerContent</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerTemplate</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerTemplateItem</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerTemplateTiMap</class>
+
+    </persistence-unit>
 </persistence>

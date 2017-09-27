@@ -9,10 +9,10 @@
 
 package com.yy.cloud.common.data.assess;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
-
-import lombok.Data;
 
 /**
  * ClassName:AssessAspMapItem <br/>
@@ -32,7 +32,7 @@ public class AssessAspMapItem implements Serializable {
 	 */
 	private static final long serialVersionUID = -6720228966326718122L;
 	private String id;
-	private Timestamp createDate;
 	private byte status;
+	private Timestamp createDate;
 	private Timestamp updateDate;
 }
