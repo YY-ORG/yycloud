@@ -36,6 +36,18 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="STATUS")
 	private Byte status;
 
+	@Column(name="ORDER_SEQ")
+	private Integer seqNo;
+
+	@Column(name="MANDATORY")
+	private Boolean mandatory;
+
+	@Column(name="EDITABLE")
+	private Boolean editable;
+
+	@Column(name="VISIBLE")
+	private Boolean visible;
+
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
@@ -90,6 +102,38 @@ public class PerTemplateTiMap implements Serializable {
 
 	public void setStatus(Byte status) {
 		this.status = status;
+	}
+
+	public Integer getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(Integer seqNo) {
+		this.seqNo = seqNo;
+	}
+
+	public Boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(Boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+	public Boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(Boolean editable) {
+		this.editable = editable;
+	}
+
+	public Boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(Boolean visible) {
+		this.visible = visible;
 	}
 
 	public Timestamp getUpdateDate() {

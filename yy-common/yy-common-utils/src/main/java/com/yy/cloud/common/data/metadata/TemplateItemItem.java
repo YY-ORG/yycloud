@@ -45,6 +45,10 @@ public class TemplateItemItem implements Serializable {
 	private Byte type;
 	private String tip;
 	private String valueSource;
+	private Integer seqNo;
+	private Boolean mandatory;
+	private Boolean editable;
+	private Boolean visible;
 
 	private Timestamp createDate;
 	private Timestamp updateDate;

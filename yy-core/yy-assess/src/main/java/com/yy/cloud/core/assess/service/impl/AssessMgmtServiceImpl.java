@@ -100,6 +100,10 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 			for(PerTemplateTiMap pttmItem : tempPTTM) {
 				PerTemplateItem tempPTI = pttmItem.getPerTemplateItem();
 				TemplateItemItem tempTII = this.convertToTIIOTD(tempPTI);
+				tempTII.setVisible(pttmItem.isVisible());//将模板元素在某个模板里面的特有属性给更新上来
+				tempTII.setEditable(pttmItem.isEditable());
+				tempTII.setMandatory(pttmItem.isMandatory());
+				tempTII.setSeqNo(pttmItem.getSeqNo());
 				tempTIIList.add(tempTII);
 			}
 
