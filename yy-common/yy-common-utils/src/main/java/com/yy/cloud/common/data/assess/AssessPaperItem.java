@@ -37,5 +37,5 @@ public class AssessPaperItem implements Serializable {
 	private String creatorId;
 	private String name;
 	private String orgId;
-	private byte status;
+	private Byte status;
 }

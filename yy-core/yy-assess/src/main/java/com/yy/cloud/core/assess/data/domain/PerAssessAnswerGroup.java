@@ -34,7 +34,7 @@ public class PerAssessAnswerGroup implements Serializable {
 	private String groupNo;
 
 	@Column(name="STATUS")
-	private byte status;
+	private Byte status;
 
 	@Column(name="TEMPLATE_ID")
 	private String templateId;
@@ -92,11 +92,11 @@ public class PerAssessAnswerGroup implements Serializable {
 		this.groupNo = groupNo;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 

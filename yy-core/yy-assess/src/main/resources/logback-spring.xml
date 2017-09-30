@@ -12,12 +12,12 @@
 
 	<appender name="LOGSTASH"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_PATH}/sysbase.log/</file>
+		<file>${LOG_PATH}/assess.log/</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<pattern>${default_pattern}</pattern>
 		</encoder>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${LOG_PATH}/logstash-sysbase-%d{yyyy-MM-dd}.log
+			<fileNamePattern>${LOG_PATH}/logstash-assess-%d{yyyy-MM-dd}.log
 			</fileNamePattern>
 			<!-- keep 30 days' worth of history -->
 			<maxHistory>30</maxHistory>
@@ -50,7 +50,7 @@
 
 	<springProfile name="cloud">
 		<logger name="com.yy.cloud">
-			<level value="DEBUG" />
+			<level value="INFO" />
 			<appender-ref ref="LOGSTASH" />
 		</logger>
 

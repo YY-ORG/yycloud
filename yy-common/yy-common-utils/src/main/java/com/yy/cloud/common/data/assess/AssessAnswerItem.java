@@ -36,10 +36,10 @@ public class AssessAnswerItem implements Serializable {
 	private Timestamp createDate;
 	private String creatorId;
 	private String displayValue;
-	private byte seqNo;
-	private byte status;
+	private Byte seqNo;
+	private Byte status;
 	private String templateCode;
 	private Timestamp updateDate;
 	private String value;
-	private byte valueType;
+	private Byte valueType;
 }

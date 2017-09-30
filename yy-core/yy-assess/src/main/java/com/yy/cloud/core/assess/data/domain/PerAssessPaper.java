@@ -41,7 +41,7 @@ public class PerAssessPaper implements Serializable {
 	private String orgId;
 
 	@Column(name="STATUS")
-	private byte status;
+	private Byte status;
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
@@ -105,11 +105,11 @@ public class PerAssessPaper implements Serializable {
 		this.orgId = orgId;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 

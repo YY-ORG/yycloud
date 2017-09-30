@@ -31,10 +31,10 @@ public class PerTemplateTiMap implements Serializable {
 	private String reliedId;
 
 	@Column(name="RWM_TYPE")
-	private byte rwmType;
+	private Byte rwmType;
 
 	@Column(name="STATUS")
-	private byte status;
+	private Byte status;
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
@@ -76,19 +76,19 @@ public class PerTemplateTiMap implements Serializable {
 		this.reliedId = reliedId;
 	}
 
-	public byte getRwmType() {
+	public Byte getRwmType() {
 		return this.rwmType;
 	}
 
-	public void setRwmType(byte rwmType) {
+	public void setRwmType(Byte rwmType) {
 		this.rwmType = rwmType;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 

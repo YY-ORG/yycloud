@@ -35,10 +35,10 @@ public class AaThesiItem implements Serializable {
 	private Timestamp createDate;
 	private String creatorId;
 	private String issue;
-	private int issueYear;
+	private Integer issueYear;
 	private String journalId;
 	private String name;
 	private String reprintJournalId;
-	private byte reprintType;
+	private Byte reprintType;
 	private Timestamp updateDate;
 }

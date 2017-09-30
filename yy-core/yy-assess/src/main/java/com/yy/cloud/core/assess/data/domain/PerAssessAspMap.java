@@ -28,7 +28,7 @@ public class PerAssessAspMap implements Serializable {
 	private Timestamp createDate;
 
 	@Column(name="STATUS")
-	private byte status;
+	private Byte status;
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
@@ -62,11 +62,11 @@ public class PerAssessAspMap implements Serializable {
 		this.createDate = createDate;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 

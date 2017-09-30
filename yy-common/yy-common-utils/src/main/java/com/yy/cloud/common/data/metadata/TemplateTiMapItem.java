@@ -33,7 +33,7 @@ public class TemplateTiMapItem implements Serializable {
 	
 	private String id;
 	private String reliedId;
-	private byte status;
+	private Byte status;
 	private String templateId;
 	private String templateItemId;
 }

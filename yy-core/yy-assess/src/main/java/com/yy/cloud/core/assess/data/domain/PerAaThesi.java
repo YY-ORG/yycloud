@@ -46,7 +46,7 @@ public class PerAaThesi implements Serializable {
 	private String reprintJournalId;
 
 	@Column(name="REPRINT_TYPE")
-	private byte reprintType;
+	private Byte reprintType;
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
@@ -118,11 +118,11 @@ public class PerAaThesi implements Serializable {
 		this.reprintJournalId = reprintJournalId;
 	}
 
-	public byte getReprintType() {
+	public Byte getReprintType() {
 		return this.reprintType;
 	}
 
-	public void setReprintType(byte reprintType) {
+	public void setReprintType(Byte reprintType) {
 		this.reprintType = reprintType;
 	}
 

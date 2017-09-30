@@ -35,10 +35,10 @@ public class PerAssessAnswer implements Serializable {
 	private String displayValue;
 
 	@Column(name="SEQ_NO")
-	private byte seqNo;
+	private Byte seqNo;
 
 	@Column(name="STATUS")
-	private byte status;
+	private Byte status;
 
 	@Column(name="TEMPLATE_CODE")
 	private String templateCode;
@@ -50,7 +50,7 @@ public class PerAssessAnswer implements Serializable {
 	private String value;
 
 	@Column(name="VALUE_TYPE")
-	private byte valueType;
+	private Byte valueType;
 
 	//bi-directional many-to-one association to PerAssess
 	@ManyToOne
@@ -96,19 +96,19 @@ public class PerAssessAnswer implements Serializable {
 		this.displayValue = displayValue;
 	}
 
-	public byte getSeqNo() {
+	public Byte getSeqNo() {
 		return this.seqNo;
 	}
 
-	public void setSeqNo(byte seqNo) {
+	public void setSeqNo(Byte seqNo) {
 		this.seqNo = seqNo;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 
@@ -136,11 +136,11 @@ public class PerAssessAnswer implements Serializable {
 		this.value = value;
 	}
 
-	public byte getValueType() {
+	public Byte getValueType() {
 		return this.valueType;
 	}
 
-	public void setValueType(byte valueType) {
+	public void setValueType(Byte valueType) {
 		this.valueType = valueType;
 	}
 

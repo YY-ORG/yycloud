@@ -40,9 +40,9 @@ public class TemplateItemItem implements Serializable {
 	private String placeholderTip;
 	private String regExp;
 	private String regExpExc;
-	private byte optionType;
-	private byte status;
-	private byte type;
+	private Byte optionType;
+	private Byte status;
+	private Byte type;
 	private String tip;
 	private String valueSource;
 

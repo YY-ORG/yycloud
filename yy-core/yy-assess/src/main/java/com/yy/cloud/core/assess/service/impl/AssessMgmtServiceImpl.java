@@ -69,7 +69,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setName(_assess.getName());
 		tempItem.setStatus(_assess.getStatus());
 		tempItem.setType(_assess.getType());
-		
+		tempItem.setCreateDate(_assess.getCreateDate());
+		tempItem.setUpdateDate(_assess.getUpdateDate());
 		return tempItem;
 	}
 
@@ -84,15 +85,17 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		List<TemplateItem> tempList = new ArrayList<TemplateItem>();
 		
 		List<PerAssessTemplateMap> tempTempMapList = _assess.getPerAssessTemplateMaps();
-		
+		log.info("Get Assess[{}]'s template list count [{}].", _assess.getId(), tempTempMapList.size());
 		for(PerAssessTemplateMap tempItem : tempTempMapList) {
 			if(tempItem.getStatus() != CommonConstant.DIC_GLOBAL_STATUS_ENABLE) {
 				continue;
 			}
 			String temId = tempItem.getTemplateId();
+			log.info("This time is going to load template [{}]...", temId);
 			PerTemplate tempTemplate = this.perTemplateRepository.getOne(temId);
+			log.info("This time is going to load template [{}]'s Item List.", temId);
 			List<PerTemplateTiMap> tempPTTM = tempTemplate.getPerTemplateTiMaps();
-
+			log.info("Template [{}] has [{}] templateitem.", tempTemplate.getId(), tempPTTM.size());
 			List<TemplateItemItem> tempTIIList = new ArrayList<TemplateItemItem>();
 			for(PerTemplateTiMap pttmItem : tempPTTM) {
 				PerTemplateItem tempPTI = pttmItem.getPerTemplateItem();

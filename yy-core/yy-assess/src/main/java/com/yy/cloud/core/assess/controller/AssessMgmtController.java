@@ -9,11 +9,9 @@
 
 package com.yy.cloud.core.assess.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
@@ -34,12 +32,13 @@ import io.swagger.annotations.ApiOperation;
  * @since JDK 1.8
  * @see
  */
+@Slf4j
 @RestController
 public class AssessMgmtController {
 	@Autowired
 	private AssessMgmtService assessService;
 
-	@PostMapping(value = "/authsec/assess/{_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/authsec/assess/{_id}", method = RequestMethod.GET)
 	@ApiOperation(value = "依据考题ID，获取考题")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
@@ -49,6 +48,7 @@ public class AssessMgmtController {
 			result = this.assessService.getAssessItemById(_assessId);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
 			result.setDetailDescription("Unexpected Error occured...");
 			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
 		}

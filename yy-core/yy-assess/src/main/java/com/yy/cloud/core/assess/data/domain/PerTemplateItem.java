@@ -44,7 +44,7 @@ public class PerTemplateItem implements Serializable {
 	private String name;
 
 	@Column(name="OPTION_TYPE")
-	private byte optionType;
+	private Byte optionType;
 
 	@Column(name="PLACEHOLDER_TIP")
 	private String placeholderTip;
@@ -56,7 +56,7 @@ public class PerTemplateItem implements Serializable {
 	private String regExpExc;
 
 	@Column(name="STATUS")
-	private byte status;
+	private Byte status;
 
 	@Column(name="TENANT_ID")
 	private String tenantId;
@@ -65,13 +65,13 @@ public class PerTemplateItem implements Serializable {
 	private String tip;
 
 	@Column(name="TYPE")
-	private byte type;
+	private Byte type;
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
 	@Column(name="VALUE_DOMAIN")
-	private byte valueDomain;
+	private Byte valueDomain;
 
 	@Column(name="VALUE_SOURCE")
 	private String valueSource;
@@ -139,11 +139,11 @@ public class PerTemplateItem implements Serializable {
 		this.name = name;
 	}
 
-	public byte getOptionType() {
+	public Byte getOptionType() {
 		return this.optionType;
 	}
 
-	public void setOptionType(byte optionType) {
+	public void setOptionType(Byte optionType) {
 		this.optionType = optionType;
 	}
 
@@ -171,11 +171,11 @@ public class PerTemplateItem implements Serializable {
 		this.regExpExc = regExpExc;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 
@@ -195,11 +195,11 @@ public class PerTemplateItem implements Serializable {
 		this.tip = tip;
 	}
 
-	public byte getType() {
+	public Byte getType() {
 		return this.type;
 	}
 
-	public void setType(byte type) {
+	public void setType(Byte type) {
 		this.type = type;
 	}
 
@@ -211,11 +211,11 @@ public class PerTemplateItem implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public byte getValueDomain() {
+	public Byte getValueDomain() {
 		return this.valueDomain;
 	}
 
-	public void setValueDomain(byte valueDomain) {
+	public void setValueDomain(Byte valueDomain) {
 		this.valueDomain = valueDomain;
 	}
 

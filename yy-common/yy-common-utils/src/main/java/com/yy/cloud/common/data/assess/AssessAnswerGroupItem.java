@@ -35,7 +35,7 @@ public class AssessAnswerGroupItem implements Serializable {
 	private Timestamp createDate;
 	private String creatorId;
 	private String groupNo;
-	private byte status;
+	private Byte status;
 	private String templateId;
 	private Timestamp updateDate;
 }

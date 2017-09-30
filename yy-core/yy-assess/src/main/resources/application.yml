@@ -1,13 +1,27 @@
 
 server:
-  port: 9021
+  port: 9022
 logging:
   path: /yy/logs/yy_micro/core/
   
 ribbon:
   eureka:
     enabled: true
-    
+
+security:
+  basic:
+    enabled: false
+  ignored: /noauth/**, /swagger**,/swagger**/**,/webjars/**,/v2/**, /js/**, /css/**
+  oauth2:
+    client:
+      client-id: fox-service
+      client-secret: secret
+      access-token-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/token
+      grant-type: client_credentials
+    resource:
+      token-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/check_token
+      user-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/user
+
 ---
 spring:
   profiles: cloud
@@ -21,7 +35,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
   datasource:
-    url: jdbc:mysql://192.168.1.252:3307/foxbase?useUnicode=true&amp;characterEncoding=utf8
+    url: jdbc:mysql://61.178.80.86:3306/yy?useUnicode=true&amp;characterEncoding=utf8
     username: vaadin
     password: abcd1234
     driver-class-name: com.mysql.jdbc.Driver
@@ -50,7 +64,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
   datasource:
-    url: jdbc:mysql://172.16.112.95:3306/yy?useUnicode=true&amp;characterEncoding=utf8
+    url: jdbc:mysql://61.178.80.86:3306/yy?useUnicode=true&amp;characterEncoding=utf8
     username: admin
     password: 1qaz!QAZ
     driver-class-name: com.mysql.jdbc.Driver

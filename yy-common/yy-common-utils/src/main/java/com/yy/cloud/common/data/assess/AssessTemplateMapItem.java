@@ -33,7 +33,7 @@ public class AssessTemplateMapItem implements Serializable {
 	private static final long serialVersionUID = -1669747057102031658L;
 	private String id;
 	private Timestamp createDate;
-	private byte status;
+	private Byte status;
 	private String templateId;
 	private Timestamp updateDate;
 }

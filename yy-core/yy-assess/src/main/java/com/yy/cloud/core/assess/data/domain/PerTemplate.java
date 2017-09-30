@@ -38,13 +38,13 @@ public class PerTemplate implements Serializable {
 	private String name;
 
 	@Column(name="STATUS")
-	private byte status;
+	private Byte status;
 
 	@Column(name="TENANT_ID")
 	private String tenantId;
 
 	@Column(name="TYPE")
-	private byte type;
+	private Byte type;
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
@@ -96,11 +96,11 @@ public class PerTemplate implements Serializable {
 		this.name = name;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 
@@ -112,11 +112,11 @@ public class PerTemplate implements Serializable {
 		this.tenantId = tenantId;
 	}
 
-	public byte getType() {
+	public Byte getType() {
 		return this.type;
 	}
 
-	public void setType(byte type) {
+	public void setType(Byte type) {
 		this.type = type;
 	}
 

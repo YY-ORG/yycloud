@@ -34,6 +34,6 @@ public class ContentItem implements Serializable {
 	private String id;
 	private String content;
 	private Timestamp createDate;
-	private byte status;
+	private Byte status;
 	private Timestamp updateDate;
 }

@@ -37,8 +37,8 @@ public class AssessItem implements Serializable {
 	private String id;
 	private String name;
 	private String code;
-	private byte status;
-	private byte type;
+	private Byte status;
+	private Byte type;
 	private List<TemplateItem> templateItemList;
 	private Timestamp createDate;
 	private Timestamp updateDate;
