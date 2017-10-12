@@ -36,6 +36,12 @@ public class PerAssessAspMap implements Serializable {
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
+	@Column(name="ASSESS_ID", insertable = false, updatable = false)
+	private String assessId;
+
+	@Column(name="ASSESS_PAPER_ID", insertable = false, updatable = false)
+	private String assessPaperId;
+
 	//bi-directional many-to-one association to PerAssess
 	@ManyToOne
 	@JoinColumn(name="ASSESS_ID")
@@ -87,6 +93,22 @@ public class PerAssessAspMap implements Serializable {
 
 	public void setUpdateDate(Timestamp updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	public String getAssessId() {
+		return assessId;
+	}
+
+	public void setAssessId(String assessId) {
+		this.assessId = assessId;
+	}
+
+	public String getAssessPaperId() {
+		return assessPaperId;
+	}
+
+	public void setAssessPaperId(String assessPaperId) {
+		this.assessPaperId = assessPaperId;
 	}
 
 	public PerAssess getPerAssess() {

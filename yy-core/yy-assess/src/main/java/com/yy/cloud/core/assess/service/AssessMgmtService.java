@@ -12,6 +12,7 @@ package com.yy.cloud.core.assess.service;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.assess.AssessItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
+import com.yy.cloud.common.data.assess.AssessPaperItem;
 
 import java.util.List;
 
@@ -30,5 +31,10 @@ public interface AssessMgmtService {
 	public GeneralContentResult<AssessItem> getAssessItemById(String _id);
 
 	public GeneralContentResult<List<AssessMenuItem>> getAssessMenu(String _userId, String _orgId);
+
+	public GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperId(String _assessPaperId);
+
+	public GeneralContentResult<List<AssessPaperItem>> getAssessPaperList(String _userId, String _orgId);
+
 }
 

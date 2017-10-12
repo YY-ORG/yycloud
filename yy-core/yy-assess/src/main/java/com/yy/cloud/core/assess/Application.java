@@ -3,7 +3,9 @@ package com.yy.cloud.core.assess;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 /**
  * ClassName: Application <br/>
@@ -16,8 +18,10 @@ import org.springframework.context.annotation.ComponentScan;
  * @since JDK 1.8
  */
 @SpringBootApplication
-@ComponentScan
+@ComponentScan({"com.yy.cloud"})
 @EnableDiscoveryClient
+@EnableFeignClients(basePackages = {"com.yy.cloud.core.usermgmt.clients","com.yy.cloud.common.clients"})
+@EnableResourceServer
 //@EnableZuulProxy
 //@EnableHystrix
 public class Application {

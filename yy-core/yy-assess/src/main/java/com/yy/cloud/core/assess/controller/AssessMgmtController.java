@@ -10,7 +10,9 @@
 package com.yy.cloud.core.assess.controller;
 
 import com.yy.cloud.common.data.assess.AssessMenuItem;
+import com.yy.cloud.common.data.assess.AssessPaperItem;
 import com.yy.cloud.common.service.SecurityService;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +63,50 @@ public class AssessMgmtController {
 		return result;
 	}
 
+	@RequestMapping(value = "/authsec/assesspaperlist/orgnization", method = RequestMethod.GET)
+	@ApiOperation(value = "依据登录用户所属部门/组织机构来检索该部门下的考卷")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<List<AssessPaperItem>> getAssessPaperByOrg(){
+		GeneralContentResult<List<AssessPaperItem>> result = new GeneralContentResult<List<AssessPaperItem>>();
+		try {
+			String tempUserId = this.securityService.getCurrentUser().getUserId();
+			String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
+			log.info("Is going to retrieve the assess menu list for [{}] -> [{}]", tempOrgId, tempUserId);
+			result = this.assessService.getAssessPaperList(tempUserId, tempOrgId);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/authsec/assesspaper/{_id}/assesslist", method = RequestMethod.GET)
+	@ApiOperation(value = "依据考卷ID来检索该考卷下的试题列表")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<List<AssessMenuItem>> getAssessByAssessPaperId(@ApiParam(value = "Assess Paper ID")
+																				   @PathVariable(value = "_id", required = true) String _assessPaperId){
+		GeneralContentResult<List<AssessMenuItem>> result = new GeneralContentResult<List<AssessMenuItem>>();
+		try {
+			log.info("Is going to retrieve the assess menu list for Assess Paper [{}]", _assessPaperId);
+			result = this.assessService.getAssessMenuByAssessPaperId(_assessPaperId);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+
+	@RequestMapping(value = "/authsec/assesslist/orgnization", method = RequestMethod.GET)
+	@ApiOperation(value = "依据登录用户所属部门/组织机构来检索该部门下的考题")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
 	public GeneralContentResult<List<AssessMenuItem>> getAssessListByOrg(){
 		GeneralContentResult<List<AssessMenuItem>> result = new GeneralContentResult<List<AssessMenuItem>>();
 		try {

@@ -14,9 +14,11 @@ import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.assess.AssessItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
+import com.yy.cloud.common.data.assess.AssessPaperItem;
 import com.yy.cloud.common.data.metadata.TemplateItem;
 import com.yy.cloud.common.data.metadata.TemplateItemItem;
 import com.yy.cloud.core.assess.data.domain.*;
+import com.yy.cloud.core.assess.data.repositories.PerAssessAspMapRepository;
 import com.yy.cloud.core.assess.data.repositories.PerAssessPaperRepository;
 import com.yy.cloud.core.assess.data.repositories.PerAssessRepository;
 import com.yy.cloud.core.assess.data.repositories.PerTemplateRepository;
@@ -45,9 +47,10 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	private PerAssessRepository perAssessRepository;
 	@Autowired
 	private PerTemplateRepository perTemplateRepository;
-
 	@Autowired
 	private PerAssessPaperRepository perAssessPaperRepository;
+	@Autowired
+	private PerAssessAspMapRepository perAssessAspMapRepository;
 
 	@Override
 	public GeneralContentResult<AssessItem> getAssessItemById(String _id) {
@@ -63,17 +66,26 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
 	@Override
 	public GeneralContentResult<List<AssessMenuItem>> getAssessMenu(String _userId, String _orgId) {
-		PerAssessPaper tempAssessPaper = this.perAssessPaperRepository.findByOrgId(_orgId);
-		List<PerAssessAspMap> tempAssessAspMapList = tempAssessPaper.getPerAssessAspMaps();
+		List<PerAssessPaper> tempAssessPaperList = this.perAssessPaperRepository.findByOrgIdAndStatus(_orgId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 
 		List<AssessMenuItem> tempAssessMenuItemList = new ArrayList<>();
-		for(PerAssessAspMap tempAspMap : tempAssessAspMapList){
-			PerAssess tempAssess = tempAspMap.getPerAssess();
+		if(tempAssessPaperList == null || tempAssessPaperList.size() == 0){
+			GeneralContentResult<List<AssessMenuItem>> tempResult = new GeneralContentResult<List<AssessMenuItem>>();
+			tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+			tempResult.setResultContent(tempAssessMenuItemList);
+			return tempResult;
+		}
+
+		PerAssessPaper tempAssessPaper = tempAssessPaperList.get(0);//默认获取第一个
+		List<PerAssessAspMap> tempAssessAspMapList = tempAssessPaper.getPerAssessAspMaps();
+
+		for(PerAssessAspMap tempAssessAspMapItem : tempAssessAspMapList){
+			PerAssess tempAssess = tempAssessAspMapItem.getPerAssess();
 			AssessMenuItem tempAssessMenuItem = new AssessMenuItem();
 			tempAssessMenuItem.setAssessId(tempAssess.getId());
 			tempAssessMenuItem.setAssessCode(tempAssess.getCode());
 			tempAssessMenuItem.setAssessName(tempAssess.getName());
-			tempAssessMenuItem.setSeqNo(tempAspMap.getSeqNo());
+			tempAssessMenuItem.setSeqNo(tempAssessAspMapItem.getSeqNo());
 			tempAssessMenuItemList.add(tempAssessMenuItem);
 		}
 		GeneralContentResult<List<AssessMenuItem>> tempResult = new GeneralContentResult<List<AssessMenuItem>>();
@@ -82,6 +94,45 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		return tempResult;
 	}
 
+	@Override
+	public GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperId(String _assessPaperId) {
+		List<PerAssessAspMap> tempAssessAspMapList = this.perAssessAspMapRepository.findByAssessPaperIdAndStatus(_assessPaperId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+
+		List<AssessMenuItem> tempAssessMenuItemList = new ArrayList<>();
+		for(PerAssessAspMap tempAssessAspMapItem : tempAssessAspMapList){
+			PerAssess tempAssess = tempAssessAspMapItem.getPerAssess();
+			AssessMenuItem tempAssessMenuItem = new AssessMenuItem();
+			tempAssessMenuItem.setAssessId(tempAssess.getId());
+			tempAssessMenuItem.setAssessCode(tempAssess.getCode());
+			tempAssessMenuItem.setAssessName(tempAssess.getName());
+			tempAssessMenuItem.setSeqNo(tempAssessAspMapItem.getSeqNo());
+			tempAssessMenuItemList.add(tempAssessMenuItem);
+		}
+		GeneralContentResult<List<AssessMenuItem>> tempResult = new GeneralContentResult<List<AssessMenuItem>>();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		tempResult.setResultContent(tempAssessMenuItemList);
+		return tempResult;
+	}
+
+	@Override
+	public GeneralContentResult<List<AssessPaperItem>> getAssessPaperList(String _userId, String _orgId) {
+		List<PerAssessPaper> tempAssessPaper = this.perAssessPaperRepository.findByOrgIdAndStatus(_orgId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		List<AssessPaperItem> tempAssessPaperItemList = new ArrayList<>();
+		for(PerAssessPaper tempItem : tempAssessPaper){
+			AssessPaperItem tempAssessPaperItem = new AssessPaperItem();
+			tempAssessPaperItem.setId(tempItem.getId());
+			tempAssessPaperItem.setCode(tempItem.getCode());
+			tempAssessPaperItem.setName(tempItem.getName());
+			tempAssessPaperItem.setOrgId(tempItem.getOrgId());
+			tempAssessPaperItem.setStatus(tempItem.getStatus());
+			tempAssessPaperItemList.add(tempAssessPaperItem);
+		}
+
+		GeneralContentResult<List<AssessPaperItem>> tempResult = new GeneralContentResult<List<AssessPaperItem>>();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		tempResult.setResultContent(tempAssessPaperItemList);
+		return tempResult;
+	}
 
 	/**
 	 * 转换题所对应的OTD

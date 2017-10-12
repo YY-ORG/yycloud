@@ -14,6 +14,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessAspMap;
 
+import java.util.List;
+
 /**
  * ClassName:PerAssessAspMapRepository <br/>
  * Function: TODO ADD FUNCTION. <br/>
@@ -26,6 +28,6 @@ import com.yy.cloud.core.assess.data.domain.PerAssessAspMap;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssessAspMap", path = "perAssessAspMap")
 public interface PerAssessAspMapRepository extends JpaRepository<PerAssessAspMap, String> {
-
+    List<PerAssessAspMap> findByAssessPaperIdAndStatus(String _assessPaperId, Byte _status);
 }
 

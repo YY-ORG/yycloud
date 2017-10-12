@@ -14,6 +14,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessPaper;
 
+import java.util.List;
+
 /**
  * ClassName:PerAssessPaperRepository <br/>
  * Function: TODO ADD FUNCTION. <br/>
@@ -26,6 +28,6 @@ import com.yy.cloud.core.assess.data.domain.PerAssessPaper;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssessPaper", path = "perAssessPaper")
 public interface PerAssessPaperRepository extends JpaRepository<PerAssessPaper, String> {
-    PerAssessPaper findByOrgId(String _orgId);
+    List<PerAssessPaper> findByOrgIdAndStatus(String _orgId, Byte _status);
 }
 
