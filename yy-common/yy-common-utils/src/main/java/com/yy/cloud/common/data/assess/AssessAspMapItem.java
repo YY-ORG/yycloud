@@ -33,6 +33,7 @@ public class AssessAspMapItem implements Serializable {
 	private static final long serialVersionUID = -6720228966326718122L;
 	private String id;
 	private Byte status;
+	private Integer seqNo;
 	private Timestamp createDate;
 	private Timestamp updateDate;
 }

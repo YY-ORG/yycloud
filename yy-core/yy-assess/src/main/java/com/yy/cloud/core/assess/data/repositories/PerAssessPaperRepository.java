@@ -26,6 +26,6 @@ import com.yy.cloud.core.assess.data.domain.PerAssessPaper;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssessPaper", path = "perAssessPaper")
 public interface PerAssessPaperRepository extends JpaRepository<PerAssessPaper, String> {
-
+    PerAssessPaper findByOrgId(String _orgId);
 }
 

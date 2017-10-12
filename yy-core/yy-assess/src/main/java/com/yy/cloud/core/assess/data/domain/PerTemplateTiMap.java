@@ -36,7 +36,7 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="STATUS")
 	private Byte status;
 
-	@Column(name="ORDER_SEQ")
+	@Column(name="SEQ_NO")
 	private Integer seqNo;
 
 	@Column(name="MANDATORY")

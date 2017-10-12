@@ -30,6 +30,9 @@ public class PerAssessAspMap implements Serializable {
 	@Column(name="STATUS")
 	private Byte status;
 
+	@Column(name="SEQ_NO")
+	private Integer seqNo;
+
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
@@ -68,6 +71,14 @@ public class PerAssessAspMap implements Serializable {
 
 	public void setStatus(Byte status) {
 		this.status = status;
+	}
+
+	public Integer getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(Integer seqNo) {
+		this.seqNo = seqNo;
 	}
 
 	public Timestamp getUpdateDate() {

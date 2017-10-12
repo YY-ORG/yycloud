@@ -13,9 +13,11 @@ import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.assess.AssessItem;
+import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.metadata.TemplateItem;
 import com.yy.cloud.common.data.metadata.TemplateItemItem;
 import com.yy.cloud.core.assess.data.domain.*;
+import com.yy.cloud.core.assess.data.repositories.PerAssessPaperRepository;
 import com.yy.cloud.core.assess.data.repositories.PerAssessRepository;
 import com.yy.cloud.core.assess.data.repositories.PerTemplateRepository;
 import com.yy.cloud.core.assess.service.AssessMgmtService;
@@ -43,6 +45,10 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	private PerAssessRepository perAssessRepository;
 	@Autowired
 	private PerTemplateRepository perTemplateRepository;
+
+	@Autowired
+	private PerAssessPaperRepository perAssessPaperRepository;
+
 	@Override
 	public GeneralContentResult<AssessItem> getAssessItemById(String _id) {
 		PerAssess tempAssess = this.perAssessRepository.getOne(_id);
@@ -54,6 +60,28 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 		return tempResult;
 	}
+
+	@Override
+	public GeneralContentResult<List<AssessMenuItem>> getAssessMenu(String _userId, String _orgId) {
+		PerAssessPaper tempAssessPaper = this.perAssessPaperRepository.findByOrgId(_orgId);
+		List<PerAssessAspMap> tempAssessAspMapList = tempAssessPaper.getPerAssessAspMaps();
+
+		List<AssessMenuItem> tempAssessMenuItemList = new ArrayList<>();
+		for(PerAssessAspMap tempAspMap : tempAssessAspMapList){
+			PerAssess tempAssess = tempAspMap.getPerAssess();
+			AssessMenuItem tempAssessMenuItem = new AssessMenuItem();
+			tempAssessMenuItem.setAssessId(tempAssess.getId());
+			tempAssessMenuItem.setAssessCode(tempAssess.getCode());
+			tempAssessMenuItem.setAssessName(tempAssess.getName());
+			tempAssessMenuItem.setSeqNo(tempAspMap.getSeqNo());
+			tempAssessMenuItemList.add(tempAssessMenuItem);
+		}
+		GeneralContentResult<List<AssessMenuItem>> tempResult = new GeneralContentResult<List<AssessMenuItem>>();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		tempResult.setResultContent(tempAssessMenuItemList);
+		return tempResult;
+	}
+
 
 	/**
 	 * 转换题所对应的OTD

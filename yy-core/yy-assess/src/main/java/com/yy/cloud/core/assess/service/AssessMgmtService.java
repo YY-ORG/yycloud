@@ -11,6 +11,9 @@ package com.yy.cloud.core.assess.service;
 
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.assess.AssessItem;
+import com.yy.cloud.common.data.assess.AssessMenuItem;
+
+import java.util.List;
 
 /**
  * ClassName:AssessMgmtService <br/>
@@ -25,5 +28,7 @@ import com.yy.cloud.common.data.assess.AssessItem;
 public interface AssessMgmtService {
 
 	public GeneralContentResult<AssessItem> getAssessItemById(String _id);
+
+	public GeneralContentResult<List<AssessMenuItem>> getAssessMenu(String _userId, String _orgId);
 }
 
