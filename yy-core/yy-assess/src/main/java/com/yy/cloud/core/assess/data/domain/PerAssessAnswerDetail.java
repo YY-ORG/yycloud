@@ -13,13 +13,12 @@ import java.sql.Timestamp;
  * @since JDK 1.8
  */
 @Entity
-@Table(name = "PER_ASSESS_ANSWER", schema = "yy", catalog = "")
-public class PerAssessAnswer {
+@Table(name = "PER_ASSESS_ANSWER_DETAIL", schema = "yy", catalog = "")
+public class PerAssessAnswerDetail {
     private String id;
-    private String assessPaperId;
-    private String assessId;
-    private Byte status;
-    private String creatorId;
+    private String itemId;
+    private String itemCode;
+    private String itemValue;
     private Timestamp createDate;
     private Timestamp updateDate;
 
@@ -34,43 +33,33 @@ public class PerAssessAnswer {
     }
 
     @Basic
-    @Column(name = "ASSESS_PAPER_ID", nullable = true, length = 36)
-    public String getAssessPaperId() {
-        return assessPaperId;
+    @Column(name = "ITEM_ID", nullable = true, length = 36)
+    public String getItemId() {
+        return itemId;
     }
 
-    public void setAssessPaperId(String assessPaperId) {
-        this.assessPaperId = assessPaperId;
-    }
-
-    @Basic
-    @Column(name = "ASSESS_ID", nullable = true, length = 36)
-    public String getAssessId() {
-        return assessId;
-    }
-
-    public void setAssessId(String assessId) {
-        this.assessId = assessId;
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     @Basic
-    @Column(name = "STATUS", nullable = true)
-    public Byte getStatus() {
-        return status;
+    @Column(name = "ITEM_CODE", nullable = true, length = 255)
+    public String getItemCode() {
+        return itemCode;
     }
 
-    public void setStatus(Byte status) {
-        this.status = status;
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
     }
 
     @Basic
-    @Column(name = "CREATOR_ID", nullable = true, length = 36)
-    public String getCreatorId() {
-        return creatorId;
+    @Column(name = "ITEM_VALUE", nullable = true, length = 500)
+    public String getItemValue() {
+        return itemValue;
     }
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
+    public void setItemValue(String itemValue) {
+        this.itemValue = itemValue;
     }
 
     @Basic
@@ -98,14 +87,12 @@ public class PerAssessAnswer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PerAssessAnswer that = (PerAssessAnswer) o;
+        PerAssessAnswerDetail that = (PerAssessAnswerDetail) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (assessPaperId != null ? !assessPaperId.equals(that.assessPaperId) : that.assessPaperId != null)
-            return false;
-        if (assessId != null ? !assessId.equals(that.assessId) : that.assessId != null) return false;
-        if (status != null ? !status.equals(that.status) : that.status != null) return false;
-        if (creatorId != null ? !creatorId.equals(that.creatorId) : that.creatorId != null) return false;
+        if (itemId != null ? !itemId.equals(that.itemId) : that.itemId != null) return false;
+        if (itemCode != null ? !itemCode.equals(that.itemCode) : that.itemCode != null) return false;
+        if (itemValue != null ? !itemValue.equals(that.itemValue) : that.itemValue != null) return false;
         if (createDate != null ? !createDate.equals(that.createDate) : that.createDate != null) return false;
         if (updateDate != null ? !updateDate.equals(that.updateDate) : that.updateDate != null) return false;
 
@@ -115,10 +102,9 @@ public class PerAssessAnswer {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (assessPaperId != null ? assessPaperId.hashCode() : 0);
-        result = 31 * result + (assessId != null ? assessId.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0);
+        result = 31 * result + (itemId != null ? itemId.hashCode() : 0);
+        result = 31 * result + (itemCode != null ? itemCode.hashCode() : 0);
+        result = 31 * result + (itemValue != null ? itemValue.hashCode() : 0);
         result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
         result = 31 * result + (updateDate != null ? updateDate.hashCode() : 0);
         return result;

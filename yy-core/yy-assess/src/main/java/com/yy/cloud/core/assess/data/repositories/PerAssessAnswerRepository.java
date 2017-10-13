@@ -12,8 +12,6 @@ package com.yy.cloud.core.assess.data.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import com.yy.cloud.core.assess.data.domain.PerAssessAnswer;
-
 /**
  * ClassName:PerAssessAnswerRepository <br/>
  * Function: TODO ADD FUNCTION. <br/>

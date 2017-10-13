@@ -12,6 +12,13 @@
         <class>com.yy.cloud.core.assess.data.domain.PerTemplate</class>
         <class>com.yy.cloud.core.assess.data.domain.PerTemplateItem</class>
         <class>com.yy.cloud.core.assess.data.domain.PerTemplateTiMap</class>
+        <class>com.yy.cloud.core.assess.data.PerAssessAnswer</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswerDetail</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswerItem</class>
+        <properties>
+            <property name="hibernate.connection.url" value="jdbc:mysql://61.178.80.86:3306/yy"/>
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+        </properties>
 
     </persistence-unit>
 </persistence>
