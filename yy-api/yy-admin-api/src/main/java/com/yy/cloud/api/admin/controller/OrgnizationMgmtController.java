@@ -23,6 +23,9 @@ public class OrgnizationMgmtController {
     public GeneralContentResult<OrganizationItem> updateOrganizations(@PathVariable(value = "orgId") String orgId,@ApiParam(value = "传数字，不要传成字符类型了") @PathVariable("status") Byte status){
         return null;
     }
+    
+    
+    
 
 
 }

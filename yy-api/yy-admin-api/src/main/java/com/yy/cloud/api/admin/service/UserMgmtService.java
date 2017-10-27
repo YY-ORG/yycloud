@@ -2,21 +2,15 @@ package com.yy.cloud.api.admin.service;
 
 import java.util.List;
 
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import com.yy.cloud.common.constant.CommonConstant;
-import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
-
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 
 public interface UserMgmtService {
 
@@ -52,6 +46,47 @@ public interface UserMgmtService {
     
   
     public GeneralContentResult<UserDetailsItem> findCurrentUser();
+    
+    
+
+
+    GeneralContentResult<String> createUser(UserProfile _userProfile);
+
+
+    GeneralContentResult<UserDetailsItem> findUserById(String _userId);
+
+    GeneralPagingResult<List<UserItem>> findUsers(Byte _status, Integer _page, Integer _size);
+
+    GeneralContentResult<String> getCurrentEnterpriseId();
+
+    public GeneralContentResult<String> getCurrentAdmEnterpriseId();
+
+    GeneralResult modifyUser(String _userId, UserProfile _userProfile);
+
+    GeneralResult deleteUser(String _userId);
+
+    GeneralResult enableUser(String _userId);
+
+    GeneralResult disableUser(String _userId);
+
+
+    GeneralResult modifyPassword(PasswordProfile _passwordProfile);
+
+    GeneralResult modifyAdmPassword(PasswordProfile _passwordProfile);
+
+    GeneralContentResult<List<UserItem>> getMembersInOrganization(String _organizationId);
+
+    GeneralPagingResult<List<UserItem>> getNonOrganizationMembers(Integer _page, Integer _size);
+
+    GeneralContentResult<UserDetailsItem> loadUserById(String _userId);
+
+    GeneralPagingResult<List<UserItem>> findUsersByUserName(String _userName, Integer _page, Integer _size);
+
+    GeneralContentResult<String> validateLoginName(String _loginName);
+
+	GeneralResult resetPassword(String _userId);
+
+
 
     
 }
