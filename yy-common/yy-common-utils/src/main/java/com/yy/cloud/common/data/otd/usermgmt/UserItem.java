@@ -3,9 +3,6 @@ package com.yy.cloud.common.data.otd.usermgmt;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/**
- * Created by guof on 2016/11/9.
- */
 @Data
 public class UserItem {
 

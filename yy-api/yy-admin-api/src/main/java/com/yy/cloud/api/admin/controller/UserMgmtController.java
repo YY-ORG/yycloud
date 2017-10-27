@@ -21,7 +21,6 @@ import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
-import com.yy.cloud.common.service.SecurityService;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -102,7 +101,7 @@ public class UserMgmtController {
    
    
    @RequestMapping(value = "/authsec/adm/user/{user_id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-   @ApiOperation(value = "ADM用户中心-账户管理，编辑账号，本地")
+   @ApiOperation(value = "用户中心-账户管理，编辑账号，本地")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -113,7 +112,7 @@ public class UserMgmtController {
    }
 
    @RequestMapping(value = "/authsec/adm/user/{user_id}/resetPassword", method = RequestMethod.PUT)
-   @ApiOperation(value = "ADM用户中心-账户管理，重置密码 MOCK")
+   @ApiOperation(value = "用户中心-账户管理，重置密码 MOCK")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -124,7 +123,7 @@ public class UserMgmtController {
    }
 
    @RequestMapping(value = "/authsec/adm/user/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-   @ApiOperation(value = "ADM用户中心-账户管理，查询单个账户")
+   @ApiOperation(value = "用户中心-账户管理，查询单个账户")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -134,7 +133,7 @@ public class UserMgmtController {
    }
 
    @RequestMapping(value = "/authsec/adm/users/page/{page}/size/{size}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-   @ApiOperation(value = "ADM用户中心-账户管理，获取所有账户")
+   @ApiOperation(value = "用户中心-账户管理，获取所有账户")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -146,7 +145,7 @@ public class UserMgmtController {
    }
 
    @RequestMapping(value = "/authsec/adm/user/{user_id}/enable", method = RequestMethod.PUT)
-   @ApiOperation(value = "ADM用户中心-账号管理，启用")
+   @ApiOperation(value = "用户中心-账号管理，启用")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -156,7 +155,7 @@ public class UserMgmtController {
    }
 
    @RequestMapping(value = "/authsec/adm/user/{user_id}/disable", method = RequestMethod.PUT)
-   @ApiOperation(value = "ADM用户中心-账号管理，禁用")
+   @ApiOperation(value = "用户中心-账号管理，禁用")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -166,7 +165,7 @@ public class UserMgmtController {
    }
 
    @RequestMapping(value = "/authsec/adm/user/{user_id}", method = RequestMethod.DELETE)
-   @ApiOperation(value = "ADM用户中心-账号管理，删除")
+   @ApiOperation(value = "用户中心-账号管理，删除")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -176,7 +175,7 @@ public class UserMgmtController {
    }
 
    @RequestMapping(value = "/authsec/adm/user/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-   @ApiOperation(value = "ADM用户中心-账户管理，查询当前账户")
+   @ApiOperation(value = "用户中心-账户管理，查询当前账户")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -186,7 +185,7 @@ public class UserMgmtController {
    
    
    @RequestMapping(value = "/authsec/adm/users/organization/{organization_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-   @ApiOperation(value = "ADM用户中心-账户管理，获得属于指定机构下所有用户")
+   @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
@@ -197,7 +196,7 @@ public class UserMgmtController {
    
    
    @RequestMapping(value = "/authsec/adm/users/search/page/{page}/size/{size}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-   @ApiOperation(value = "ADM用户中心-账户管理，通过用户名模糊查询账户")
+   @ApiOperation(value = "用户中心-账户管理，通过用户名模糊查询账户")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
