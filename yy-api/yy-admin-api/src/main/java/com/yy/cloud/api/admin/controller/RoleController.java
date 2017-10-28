@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yy.cloud.api.admin.service.RoleService;
+import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
@@ -58,5 +59,10 @@ public class RoleController {
  	   log.debug("The value of roleDetailsItem is \' "+roleDetailsItem+"\'");
         return  roleService.roleAndMenuManage(roleDetailsItem);
     }
+    
+    
+    
+   
+
 
 }

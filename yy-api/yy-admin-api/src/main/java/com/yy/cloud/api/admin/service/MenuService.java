@@ -14,5 +14,7 @@ public interface MenuService {
     GeneralContentResult<RoleDetailsItem> getMenuTreeByRoleId(String _roleId);
 
     GeneralContentResult<List<MenuItem>> getMenuTreeByRoleIds(List<RoleProfile> _roleProfiles);
+    
+    public GeneralContentResult<RoleDetailsItem> getMenuTreeByRoleIdForEdit( String _roleId);
 
 }

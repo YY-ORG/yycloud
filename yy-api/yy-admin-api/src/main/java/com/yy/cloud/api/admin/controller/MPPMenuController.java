@@ -38,13 +38,24 @@ public class MPPMenuController {
     }
 
     @RequestMapping(value = "/authsec/mpp/menu/tree/{role_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "根据一个角色获得菜单")
+    @ApiOperation(value = "根据一个角色获得菜单--view")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
     })
     public GeneralContentResult<RoleDetailsItem> getMenuTreeByRoleId(
             @PathVariable("role_id") String _roleId) {
         return menuService.getMenuTreeByRoleId(_roleId);
+    }
+    
+    
+    @RequestMapping(value = "/authsec/mpp/menu/{role_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "角色管理--根据一个角色获得已经选择和未选择的菜单--edit")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<RoleDetailsItem> getMenuTreeByRoleIdForEdit(
+            @PathVariable("role_id") String _roleId) {
+        return menuService.getMenuTreeByRoleIdForEdit(_roleId);
     }
 
     @RequestMapping(value = "/authsec/mpp/tree/roles", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,5 +67,7 @@ public class MPPMenuController {
             @RequestBody List<RoleProfile> _roleProfiles) {
         return menuService.getMenuTreeByRoleIds(_roleProfiles);
     }
+    
+    
 
 }

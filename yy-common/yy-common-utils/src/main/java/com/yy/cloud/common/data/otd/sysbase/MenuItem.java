@@ -16,6 +16,8 @@ public class MenuItem {
     private String code;
 
     private String routing;
+    
+    private boolean selected;
 
     private Byte status;
 

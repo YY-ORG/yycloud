@@ -14,6 +14,10 @@ import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
 import com.yy.cloud.common.data.otd.sysbase.MenuItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 @FeignClient("usermgmt")
 public interface MenuClient {
 
@@ -27,5 +31,16 @@ public interface MenuClient {
     @RequestMapping(value = "/authsec/menu/tree/roles", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     GeneralContentResult<List<MenuItem>> getMenuTreeByRoleIds(
             @RequestBody List<RoleProfile> _roleProfiles);
+    
+    
+    
+    @RequestMapping(value = "/authsec/mpp/menu/{role_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "角色管理--根据一个角色获得已经选择和未选择的菜单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<RoleDetailsItem> getMenuTreeByRoleIdForEdit(
+            @PathVariable("role_id") String _roleId) ;
+    
 
 }

@@ -33,4 +33,9 @@ public class MenuServiceImpl implements MenuService {
         return menuClient.getMenuTreeByRoleIds(_roleProfiles);
     }
 
+	@Override
+	public GeneralContentResult<RoleDetailsItem> getMenuTreeByRoleIdForEdit(String _roleId) {
+		return menuClient.getMenuTreeByRoleIdForEdit(_roleId);
+	}
+
 }
