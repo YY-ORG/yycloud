@@ -10,6 +10,8 @@ import com.yy.cloud.common.data.otd.sysbase.MenuItem;
 public class RoleDetailsItem {
 
     String roleName;
+    
+    String roleId;
 
     List<MenuItem> menus;
 

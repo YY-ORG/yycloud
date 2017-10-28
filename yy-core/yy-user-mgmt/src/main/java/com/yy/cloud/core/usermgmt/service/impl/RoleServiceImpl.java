@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
+import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
@@ -122,4 +124,10 @@ public class RoleServiceImpl implements RoleService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "查询后台企业，所有该：{}角色的所有成员：{}", roleNames, generalContentResult);
         return generalContentResult;
     }
+
+	@Override
+	public GeneralResult roleAndMenuManage(RoleDetailsItem roleDetailsItem) {
+		// TODO Auto-generated method stub
+		return new GeneralResult() ;
+	}
 }

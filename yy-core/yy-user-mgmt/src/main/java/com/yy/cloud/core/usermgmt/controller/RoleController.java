@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
+import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.core.usermgmt.service.RoleService;
@@ -81,4 +83,15 @@ public class RoleController {
     public GeneralContentResult<List<UserItem>> getAdmUserListByRole(@RequestBody List<String> roleNames){
         return roleService.findAdmUserByRoleList(roleNames);
     }
+    
+    
+    @RequestMapping(value = "/authsec/adm/role/menu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "角色管理--分配权限")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult roleAndMenuManage(
+            @RequestBody RoleDetailsItem roleDetailsItem){
+    	return roleService.roleAndMenuManage(roleDetailsItem);
+    };
 }

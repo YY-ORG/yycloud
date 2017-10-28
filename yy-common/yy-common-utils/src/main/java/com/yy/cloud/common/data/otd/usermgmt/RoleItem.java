@@ -25,5 +25,9 @@ public class RoleItem implements Serializable {
 
     @ApiModelProperty(notes = "描述")
     private String description;
+    
+    
+    
+    
 
 }
