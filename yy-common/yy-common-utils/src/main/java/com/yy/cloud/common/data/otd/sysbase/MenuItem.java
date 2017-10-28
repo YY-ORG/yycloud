@@ -17,6 +17,13 @@ public class MenuItem {
 
     private String routing;
     
+    //图标
+    private String iclass;
+    
+    
+    //菜单排序
+    private String orderBy;
+    
     private boolean selected;
 
     private Byte status;

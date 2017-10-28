@@ -61,6 +61,10 @@ public class YYMenu implements Serializable {
 
     @Column(name = "TYPE")
     private Byte type;
+    
+    
+    @Column(name = "ORDER_BY")
+    private String orderBy;
 
     @Column(name = "CREATE_DATE")
     private Timestamp createDate;
