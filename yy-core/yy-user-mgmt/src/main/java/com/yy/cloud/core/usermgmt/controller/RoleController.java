@@ -21,6 +21,7 @@ import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
 import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
+import com.yy.cloud.core.usermgmt.service.MenuService;
 import com.yy.cloud.core.usermgmt.service.RoleService;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -34,6 +35,12 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+    
+    
+    @Autowired
+    private MenuService menuService;
+    
+    
 
     @RequestMapping(value = "/authsec/role", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "ADM用户中心-角色管理，创建")
@@ -58,7 +65,7 @@ public class RoleController {
     public GeneralPagingResult<List<RoleItem>> findRoles(
             @RequestParam(value = "page") Integer _page,
             @RequestParam(value = "size") Integer _size) {
-        GeneralPagingResult<List<RoleItem>> result = new GeneralPagingResult();
+        GeneralPagingResult<List<RoleItem>> result = new GeneralPagingResult<List<RoleItem>>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
         PageInfo pageInfo = new PageInfo();
@@ -66,7 +73,12 @@ public class RoleController {
         pageInfo.setPageSize(_size);
 
         List<RoleItem> roleItems = roleService.listRolesByPage(pageInfo);
-
+        if(roleItems!=null){
+        	for(RoleItem roleItem :roleItems){
+        		RoleDetailsItem menuitem= menuService.getMenuTreeByRoleId(roleItem.getId());
+        		roleItem.setRoleDetailsItem(menuitem);
+        	}
+        }
         result.setResultContent(roleItems);
         result.setPageInfo(pageInfo);
         return result;

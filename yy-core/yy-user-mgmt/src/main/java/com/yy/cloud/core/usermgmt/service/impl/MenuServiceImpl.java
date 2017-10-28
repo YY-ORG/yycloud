@@ -13,6 +13,9 @@ import com.yy.cloud.common.data.dto.menu.MenuProfile;
 import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
 import com.yy.cloud.common.data.otd.sysbase.MenuItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
+import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
+import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.core.usermgmt.data.domain.YYMenu;
 import com.yy.cloud.core.usermgmt.data.domain.YYRole;
 import com.yy.cloud.core.usermgmt.data.domain.YYRoleMenu;
@@ -35,6 +38,14 @@ public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private ModelMapper modelMapper;
+    
+    
+    /**
+	 * 用来获取当前登录用户信息
+	 */
+	@Autowired
+	private SecurityService securityService;
+
 
     @Override
     public String createMenu(MenuProfile _menuProfile) {
@@ -121,6 +132,21 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuItem> getMenuTreeByRoleIds(List<RoleProfile> _roleProfiles) {
+    	UserDetailsItem tempUser = this.securityService.getCurrentUser();
+    	List<RoleItem> roles= tempUser.getRoles();
+    	boolean adminFlag=false;
+		if (roles != null) {
+			for (RoleItem roleItem : roles) {
+				if ("系统管理员".equalsIgnoreCase(roleItem.getName())) {
+					adminFlag = true;
+				}
+			}
+		}
+		if(adminFlag){
+			List<YYMenu> foxMenus =yyMenuRepository.findAll();
+			return generateMenuTree(foxMenus);
+		}
+    	
         List<String> roleIds = _roleProfiles.stream()
                 .map(roleProfile -> roleProfile.getId())
                 .distinct()

@@ -26,6 +26,12 @@ public class RoleItem implements Serializable {
     @ApiModelProperty(notes = "描述")
     private String description;
     
+    @ApiModelProperty(notes = "menus")
+    private RoleDetailsItem roleDetailsItem;
+    
+    
+    
+    
     
     
     
