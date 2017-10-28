@@ -1,17 +1,17 @@
 package com.yy.cloud.common.data.otd.usermgmt;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
 
-/**
- * Created by guof on 2016/11/9.
- */
 @Data
 public class RoleItem implements Serializable {
 
-    @ApiModelProperty(notes = "角色ID")
+	private static final long serialVersionUID = 1L;
+
+	@ApiModelProperty(notes = "角色ID")
     private String id;
 
     @ApiModelProperty(notes = "角色名")

@@ -17,6 +17,7 @@ import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
+import com.yy.cloud.common.utils.PageUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,14 +70,12 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 
 	@Override
 	public GeneralContentResult<UserDetailsItem> findUserById(String _userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return userMgmtClient.findUserById(_userId);
 	}
 
 	@Override
 	public GeneralPagingResult<List<UserItem>> findUsers(Byte _status, Integer _page, Integer _size) {
-		// TODO Auto-generated method stub
-		return null;
+		 return userMgmtClient.findUsers(_status, PageUtils.getPageNo(_page), _size);		
 	}
 
 	@Override

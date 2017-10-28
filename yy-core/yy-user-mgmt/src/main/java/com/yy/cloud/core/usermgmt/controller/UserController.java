@@ -295,7 +295,7 @@ public class UserController {
     })
     public GeneralContentResult<UserDetailsItem> loadUserById(
             @RequestParam("user_id") String _userId) {
-        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult();
+        GeneralContentResult<UserDetailsItem> result = new GeneralContentResult<UserDetailsItem>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
         UserDetailsItem userDetailsItem = userService.loadUserByUserId(_userId);
         result.setResultContent(userDetailsItem);

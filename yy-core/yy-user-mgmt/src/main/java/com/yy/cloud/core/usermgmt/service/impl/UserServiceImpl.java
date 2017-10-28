@@ -352,8 +352,6 @@ public class UserServiceImpl implements UserService {
 
         userDetailsItem.setIsAD(false);
         if (foxUser.getType() != null && foxUser.getType().byteValue() == AdUserMgmtConstants.USER_TYPE_AD) {
-        	
-        	
         }
         return userDetailsItem;
     }

@@ -16,10 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.yy.cloud.common.constant.CommonConstant;
-import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
@@ -28,6 +27,7 @@ import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -172,6 +172,14 @@ public interface UserMgmtClient {
           @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
   })
   public GeneralContentResult<UserDetailsItem> findCurrentUser();
+  
+  
+  @RequestMapping(value = "/authsec/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	GeneralPagingResult<List<UserItem>> findUsers(@RequestParam(value = "status", required = false) Byte _status,
+			@RequestParam(value = "page") Integer _page, @RequestParam(value = "size") Integer _size);
+
+	@RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	GeneralContentResult<UserDetailsItem> findUserById(@PathVariable("user_id") String _userId);
 
   
 }

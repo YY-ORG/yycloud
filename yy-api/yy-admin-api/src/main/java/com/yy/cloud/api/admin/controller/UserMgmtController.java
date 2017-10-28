@@ -97,7 +97,6 @@ public class UserMgmtController {
        return  userMgmtService.createAdmUser(_userProfile);
    }
 
-    // 费用中心 end
    
    
    @RequestMapping(value = "/authsec/adm/user/{user_id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -207,5 +206,11 @@ public class UserMgmtController {
        return userMgmtService.findUsersByUserName(_userName, _page, _size);
    }
 
+   
+   
+   
+   
+   
+   
 
 }
