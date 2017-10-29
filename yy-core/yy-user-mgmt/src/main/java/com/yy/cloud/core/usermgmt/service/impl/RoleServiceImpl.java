@@ -67,6 +67,7 @@ public class RoleServiceImpl implements RoleService {
                 foxRole -> {
                     RoleItem roleItem = modelMapp.map(foxRole, RoleItem.class);
                     roleItem.setDescription(foxRole.getDescription());
+                    roleItem.setId(foxRole.getId());
                     roleItems.add(roleItem);
                 }
         );

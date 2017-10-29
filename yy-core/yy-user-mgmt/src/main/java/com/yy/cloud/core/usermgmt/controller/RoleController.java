@@ -77,6 +77,8 @@ public class RoleController {
         	pageInfo.setTotalPage(roleItems.size());
         	for(RoleItem roleItem :roleItems){
         		RoleDetailsItem menuitem= menuService.getMenuTreeByRoleId(roleItem.getId());
+        		menuitem.setRoleId(roleItem.getId());
+        		menuitem.setRoleName(roleItem.getRoleName());
         		roleItem.setRoleDetailsItem(menuitem);
         	}
         }
