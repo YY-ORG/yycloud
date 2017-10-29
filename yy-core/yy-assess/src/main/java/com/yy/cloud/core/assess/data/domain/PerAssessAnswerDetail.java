@@ -1,112 +1,106 @@
 package com.yy.cloud.core.assess.data.domain;
 
+import java.io.Serializable;
 import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import java.sql.Timestamp;
 
+
 /**
- * Function: TODO ADD FUNCTION. <br/>
- * Reason:	 TODO ADD REASON. <br/>
- * Date:     10/13/17 5:11 PM<br/>
- *
- * @author chenxj
- * @see
- * @since JDK 1.8
+ * The persistent class for the PER_ASSESS_ANSWER_DETAIL database table.
+ * 
  */
 @Entity
-@Table(name = "PER_ASSESS_ANSWER_DETAIL", schema = "yy", catalog = "")
-public class PerAssessAnswerDetail {
-    private String id;
-    private String itemId;
-    private String itemCode;
-    private String itemValue;
-    private Timestamp createDate;
-    private Timestamp updateDate;
+@Table(name="PER_ASSESS_ANSWER_DETAIL")
+@NamedQuery(name="PerAssessAnswerDetail.findAll", query="SELECT p FROM PerAssessAnswerDetail p")
+public class PerAssessAnswerDetail implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(name = "ID", nullable = false, length = 36)
-    public String getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
+	@Column(name="ID")
+	private String id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	@Column(name="CREATE_DATE")
+	private Timestamp createDate;
 
-    @Basic
-    @Column(name = "ITEM_ID", nullable = true, length = 36)
-    public String getItemId() {
-        return itemId;
-    }
+	@Column(name="ITEM_CODE")
+	private String itemCode;
 
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
-    }
+	@Column(name="ITEM_ID")
+	private String itemId;
 
-    @Basic
-    @Column(name = "ITEM_CODE", nullable = true, length = 255)
-    public String getItemCode() {
-        return itemCode;
-    }
+	@Column(name="ITEM_VALUE")
+	private String itemValue;
 
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
-    }
+	@Column(name="UPDATE_DATE")
+	private Timestamp updateDate;
 
-    @Basic
-    @Column(name = "ITEM_VALUE", nullable = true, length = 500)
-    public String getItemValue() {
-        return itemValue;
-    }
+	//bi-directional many-to-one association to PerAssessAnswerItem
+	@ManyToOne
+	@JoinColumn(name="ASSESS_ANSWER_ITEM_ID")
+	private PerAssessAnswerItem perAssessAnswerItem;
 
-    public void setItemValue(String itemValue) {
-        this.itemValue = itemValue;
-    }
+	public PerAssessAnswerDetail() {
+	}
 
-    @Basic
-    @Column(name = "CREATE_DATE", nullable = true)
-    public Timestamp getCreateDate() {
-        return createDate;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    public void setCreateDate(Timestamp createDate) {
-        this.createDate = createDate;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    @Basic
-    @Column(name = "UPDATE_DATE", nullable = true)
-    public Timestamp getUpdateDate() {
-        return updateDate;
-    }
+	public Timestamp getCreateDate() {
+		return this.createDate;
+	}
 
-    public void setUpdateDate(Timestamp updateDate) {
-        this.updateDate = updateDate;
-    }
+	public void setCreateDate(Timestamp createDate) {
+		this.createDate = createDate;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	public String getItemCode() {
+		return this.itemCode;
+	}
 
-        PerAssessAnswerDetail that = (PerAssessAnswerDetail) o;
+	public void setItemCode(String itemCode) {
+		this.itemCode = itemCode;
+	}
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (itemId != null ? !itemId.equals(that.itemId) : that.itemId != null) return false;
-        if (itemCode != null ? !itemCode.equals(that.itemCode) : that.itemCode != null) return false;
-        if (itemValue != null ? !itemValue.equals(that.itemValue) : that.itemValue != null) return false;
-        if (createDate != null ? !createDate.equals(that.createDate) : that.createDate != null) return false;
-        if (updateDate != null ? !updateDate.equals(that.updateDate) : that.updateDate != null) return false;
+	public String getItemId() {
+		return this.itemId;
+	}
 
-        return true;
-    }
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
+	}
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (itemId != null ? itemId.hashCode() : 0);
-        result = 31 * result + (itemCode != null ? itemCode.hashCode() : 0);
-        result = 31 * result + (itemValue != null ? itemValue.hashCode() : 0);
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
-        result = 31 * result + (updateDate != null ? updateDate.hashCode() : 0);
-        return result;
-    }
+	public String getItemValue() {
+		return this.itemValue;
+	}
+
+	public void setItemValue(String itemValue) {
+		this.itemValue = itemValue;
+	}
+
+	public Timestamp getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(Timestamp updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public PerAssessAnswerItem getPerAssessAnswerItem() {
+		return this.perAssessAnswerItem;
+	}
+
+	public void setPerAssessAnswerItem(PerAssessAnswerItem perAssessAnswerItem) {
+		this.perAssessAnswerItem = perAssessAnswerItem;
+	}
+
 }

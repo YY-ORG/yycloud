@@ -1,99 +1,122 @@
 package com.yy.cloud.core.assess.data.domain;
 
+import java.io.Serializable;
 import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import java.sql.Timestamp;
+import java.util.List;
+
 
 /**
- * Function: TODO ADD FUNCTION. <br/>
- * Reason:	 TODO ADD REASON. <br/>
- * Date:     10/13/17 5:11 PM<br/>
- *
- * @author chenxj
- * @see
- * @since JDK 1.8
+ * The persistent class for the PER_ASSESS_ANSWER_ITEM database table.
+ * 
  */
 @Entity
-@Table(name = "PER_ASSESS_ANSWER_ITEM", schema = "yy", catalog = "")
-public class PerAssessAnswerItem {
-    private String id;
-    private String templateId;
-    private Short seqNo;
-    private Timestamp createDate;
-    private Timestamp updateDate;
+@Table(name="PER_ASSESS_ANSWER_ITEM")
+@NamedQuery(name="PerAssessAnswerItem.findAll", query="SELECT p FROM PerAssessAnswerItem p")
+public class PerAssessAnswerItem implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(name = "ID", nullable = false, length = 36)
-    public String getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
+	@Column(name="ID")
+	private String id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	@Column(name="CREATE_DATE")
+	private Timestamp createDate;
 
-    @Basic
-    @Column(name = "TEMPLATE_ID", nullable = true, length = 36)
-    public String getTemplateId() {
-        return templateId;
-    }
+	@Column(name="SEQ_NO")
+	private Short seqNo;
 
-    public void setTemplateId(String templateId) {
-        this.templateId = templateId;
-    }
+	@Column(name="TEMPLATE_ID")
+	private String templateId;
 
-    @Basic
-    @Column(name = "SEQ_NO", nullable = true)
-    public Short getSeqNo() {
-        return seqNo;
-    }
+	@Column(name="UPDATE_DATE")
+	private Timestamp updateDate;
 
-    public void setSeqNo(Short seqNo) {
-        this.seqNo = seqNo;
-    }
+	//bi-directional many-to-one association to PerAssessAnswerDetail
+	@OneToMany(mappedBy="perAssessAnswerItem")
+	private List<PerAssessAnswerDetail> perAssessAnswerDetails;
 
-    @Basic
-    @Column(name = "CREATE_DATE", nullable = true)
-    public Timestamp getCreateDate() {
-        return createDate;
-    }
+	//bi-directional many-to-one association to PerAssessAnswer
+	@ManyToOne
+	@JoinColumn(name="ASSESS_ANSWER_ID")
+	private PerAssessAnswer perAssessAnswer;
 
-    public void setCreateDate(Timestamp createDate) {
-        this.createDate = createDate;
-    }
+	public PerAssessAnswerItem() {
+	}
 
-    @Basic
-    @Column(name = "UPDATE_DATE", nullable = true)
-    public Timestamp getUpdateDate() {
-        return updateDate;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    public void setUpdateDate(Timestamp updateDate) {
-        this.updateDate = updateDate;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	public Timestamp getCreateDate() {
+		return this.createDate;
+	}
 
-        PerAssessAnswerItem that = (PerAssessAnswerItem) o;
+	public void setCreateDate(Timestamp createDate) {
+		this.createDate = createDate;
+	}
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (templateId != null ? !templateId.equals(that.templateId) : that.templateId != null) return false;
-        if (seqNo != null ? !seqNo.equals(that.seqNo) : that.seqNo != null) return false;
-        if (createDate != null ? !createDate.equals(that.createDate) : that.createDate != null) return false;
-        if (updateDate != null ? !updateDate.equals(that.updateDate) : that.updateDate != null) return false;
+	public Short getSeqNo() {
+		return this.seqNo;
+	}
 
-        return true;
-    }
+	public void setSeqNo(Short seqNo) {
+		this.seqNo = seqNo;
+	}
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (templateId != null ? templateId.hashCode() : 0);
-        result = 31 * result + (seqNo != null ? seqNo.hashCode() : 0);
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
-        result = 31 * result + (updateDate != null ? updateDate.hashCode() : 0);
-        return result;
-    }
+	public String getTemplateId() {
+		return this.templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		this.templateId = templateId;
+	}
+
+	public Timestamp getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(Timestamp updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public List<PerAssessAnswerDetail> getPerAssessAnswerDetails() {
+		return this.perAssessAnswerDetails;
+	}
+
+	public void setPerAssessAnswerDetails(List<PerAssessAnswerDetail> perAssessAnswerDetails) {
+		this.perAssessAnswerDetails = perAssessAnswerDetails;
+	}
+
+	public PerAssessAnswerDetail addPerAssessAnswerDetail(PerAssessAnswerDetail perAssessAnswerDetail) {
+		getPerAssessAnswerDetails().add(perAssessAnswerDetail);
+		perAssessAnswerDetail.setPerAssessAnswerItem(this);
+
+		return perAssessAnswerDetail;
+	}
+
+	public PerAssessAnswerDetail removePerAssessAnswerDetail(PerAssessAnswerDetail perAssessAnswerDetail) {
+		getPerAssessAnswerDetails().remove(perAssessAnswerDetail);
+		perAssessAnswerDetail.setPerAssessAnswerItem(null);
+
+		return perAssessAnswerDetail;
+	}
+
+	public PerAssessAnswer getPerAssessAnswer() {
+		return this.perAssessAnswer;
+	}
+
+	public void setPerAssessAnswer(PerAssessAnswer perAssessAnswer) {
+		this.perAssessAnswer = perAssessAnswer;
+	}
+
 }

@@ -1,126 +1,131 @@
 package com.yy.cloud.core.assess.data.domain;
 
+import java.io.Serializable;
 import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import java.sql.Timestamp;
+import java.util.List;
+
 
 /**
- * Function: TODO ADD FUNCTION. <br/>
- * Reason:	 TODO ADD REASON. <br/>
- * Date:     10/13/17 5:11 PM<br/>
- *
- * @author chenxj
- * @see
- * @since JDK 1.8
+ * The persistent class for the PER_ASSESS_ANSWER database table.
+ * 
  */
 @Entity
-@Table(name = "PER_ASSESS_ANSWER", schema = "yy", catalog = "")
-public class PerAssessAnswer {
-    private String id;
-    private String assessPaperId;
-    private String assessId;
-    private Byte status;
-    private String creatorId;
-    private Timestamp createDate;
-    private Timestamp updateDate;
+@Table(name="PER_ASSESS_ANSWER")
+@NamedQuery(name="PerAssessAnswer.findAll", query="SELECT p FROM PerAssessAnswer p")
+public class PerAssessAnswer implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(name = "ID", nullable = false, length = 36)
-    public String getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
+	@Column(name="ID")
+	private String id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	@Column(name="ASSESS_ID")
+	private String assessId;
 
-    @Basic
-    @Column(name = "ASSESS_PAPER_ID", nullable = true, length = 36)
-    public String getAssessPaperId() {
-        return assessPaperId;
-    }
+	@Column(name="ASSESS_PAPER_ID")
+	private String assessPaperId;
 
-    public void setAssessPaperId(String assessPaperId) {
-        this.assessPaperId = assessPaperId;
-    }
+	@Column(name="CREATE_DATE")
+	private Timestamp createDate;
 
-    @Basic
-    @Column(name = "ASSESS_ID", nullable = true, length = 36)
-    public String getAssessId() {
-        return assessId;
-    }
+	@Column(name="CREATOR_ID")
+	private String creatorId;
 
-    public void setAssessId(String assessId) {
-        this.assessId = assessId;
-    }
+	@Column(name="STATUS")
+	private Byte status;
 
-    @Basic
-    @Column(name = "STATUS", nullable = true)
-    public Byte getStatus() {
-        return status;
-    }
+	@Column(name="UPDATE_DATE")
+	private Timestamp updateDate;
 
-    public void setStatus(Byte status) {
-        this.status = status;
-    }
+	//bi-directional many-to-one association to PerAssessAnswerItem
+	@OneToMany(mappedBy="perAssessAnswer")
+	private List<PerAssessAnswerItem> perAssessAnswerItems;
 
-    @Basic
-    @Column(name = "CREATOR_ID", nullable = true, length = 36)
-    public String getCreatorId() {
-        return creatorId;
-    }
+	public PerAssessAnswer() {
+	}
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    @Basic
-    @Column(name = "CREATE_DATE", nullable = true)
-    public Timestamp getCreateDate() {
-        return createDate;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setCreateDate(Timestamp createDate) {
-        this.createDate = createDate;
-    }
+	public String getAssessId() {
+		return this.assessId;
+	}
 
-    @Basic
-    @Column(name = "UPDATE_DATE", nullable = true)
-    public Timestamp getUpdateDate() {
-        return updateDate;
-    }
+	public void setAssessId(String assessId) {
+		this.assessId = assessId;
+	}
 
-    public void setUpdateDate(Timestamp updateDate) {
-        this.updateDate = updateDate;
-    }
+	public String getAssessPaperId() {
+		return this.assessPaperId;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	public void setAssessPaperId(String assessPaperId) {
+		this.assessPaperId = assessPaperId;
+	}
 
-        PerAssessAnswer that = (PerAssessAnswer) o;
+	public Timestamp getCreateDate() {
+		return this.createDate;
+	}
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (assessPaperId != null ? !assessPaperId.equals(that.assessPaperId) : that.assessPaperId != null)
-            return false;
-        if (assessId != null ? !assessId.equals(that.assessId) : that.assessId != null) return false;
-        if (status != null ? !status.equals(that.status) : that.status != null) return false;
-        if (creatorId != null ? !creatorId.equals(that.creatorId) : that.creatorId != null) return false;
-        if (createDate != null ? !createDate.equals(that.createDate) : that.createDate != null) return false;
-        if (updateDate != null ? !updateDate.equals(that.updateDate) : that.updateDate != null) return false;
+	public void setCreateDate(Timestamp createDate) {
+		this.createDate = createDate;
+	}
 
-        return true;
-    }
+	public String getCreatorId() {
+		return this.creatorId;
+	}
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (assessPaperId != null ? assessPaperId.hashCode() : 0);
-        result = 31 * result + (assessId != null ? assessId.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0);
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
-        result = 31 * result + (updateDate != null ? updateDate.hashCode() : 0);
-        return result;
-    }
+	public void setCreatorId(String creatorId) {
+		this.creatorId = creatorId;
+	}
+
+	public Byte getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+
+	public Timestamp getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(Timestamp updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public List<PerAssessAnswerItem> getPerAssessAnswerItems() {
+		return this.perAssessAnswerItems;
+	}
+
+	public void setPerAssessAnswerItems(List<PerAssessAnswerItem> perAssessAnswerItems) {
+		this.perAssessAnswerItems = perAssessAnswerItems;
+	}
+
+	public PerAssessAnswerItem addPerAssessAnswerItem(PerAssessAnswerItem perAssessAnswerItem) {
+		getPerAssessAnswerItems().add(perAssessAnswerItem);
+		perAssessAnswerItem.setPerAssessAnswer(this);
+
+		return perAssessAnswerItem;
+	}
+
+	public PerAssessAnswerItem removePerAssessAnswerItem(PerAssessAnswerItem perAssessAnswerItem) {
+		getPerAssessAnswerItems().remove(perAssessAnswerItem);
+		perAssessAnswerItem.setPerAssessAnswer(null);
+
+		return perAssessAnswerItem;
+	}
+
 }
