@@ -80,7 +80,6 @@ public class RoleController {
         		roleItem.setRoleDetailsItem(menuitem);
         	}
         }
-        
         result.setResultContent(roleItems);
         result.setPageInfo(pageInfo);
         return result;

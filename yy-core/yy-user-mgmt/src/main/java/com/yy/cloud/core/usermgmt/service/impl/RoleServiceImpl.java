@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -59,8 +60,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleItem> listRolesByPage(PageInfo _pageInfo) {
-        List<YYRole> foxRoles = yyRoleRepository.findAll();
-
+        PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize());
+        Page<YYRole> foxRoles = yyRoleRepository.findAll(pageRequest);
         List<RoleItem> roleItems = new ArrayList<>();
         foxRoles.forEach(
                 foxRole -> {
@@ -70,8 +71,6 @@ public class RoleServiceImpl implements RoleService {
                 }
         );
 
-        //_pageInfo.setTotalPage(foxRoles.getTotalPages());
-        //_pageInfo.setTotalRecords(new Long(foxRoles.getTotalElements()).intValue());
 
         return roleItems;
     }
