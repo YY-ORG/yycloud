@@ -18,7 +18,7 @@ public class MenuItem {
     private String routing;
     
     //图标
-    private String iclass;
+    private String iClass;
     
     
     //菜单排序

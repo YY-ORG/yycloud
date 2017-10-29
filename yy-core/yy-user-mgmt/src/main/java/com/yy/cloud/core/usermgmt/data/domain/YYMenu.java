@@ -46,6 +46,7 @@ public class YYMenu implements Serializable {
 
     @Column(name = "I_CLASS")
     private String iClass;
+    
 
     @Column(name = "PARENT_ID")
     private String parentId;

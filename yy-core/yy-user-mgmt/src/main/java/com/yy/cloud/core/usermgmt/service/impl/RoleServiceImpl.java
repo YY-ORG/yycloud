@@ -59,11 +59,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleItem> listRolesByPage(PageInfo _pageInfo) {
-        PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(), Sort.Direction.ASC, "id");
-        //UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        //Page<FoxRole> foxRoles = foxRoleRepository.findAll(pageRequest);
-        Byte type = isProviderUser()? RoleTypeConstant.ROLE_PROVIDER:RoleTypeConstant.ROLE_BUYER;
-        List<YYRole> foxRoles = yyRoleRepository.findByType(type);
+        List<YYRole> foxRoles = yyRoleRepository.findAll();
 
         List<RoleItem> roleItems = new ArrayList<>();
         foxRoles.forEach(
