@@ -31,7 +31,7 @@ public class PerAssessAnswer implements Serializable {
 	@Column(name="ASSESS_PAPER_ID")
 	private String assessPaperId;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="CREATOR_ID")
@@ -40,12 +40,17 @@ public class PerAssessAnswer implements Serializable {
 	@Column(name="STATUS")
 	private Byte status;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerAssessAnswerItem
-	@OneToMany(mappedBy="perAssessAnswer")
+	@OneToMany(cascade = { CascadeType.PERSIST }, mappedBy="perAssessAnswer")
 	private List<PerAssessAnswerItem> perAssessAnswerItems;
+
+	//bi-directional many-to-one association to PerAssessAnswer
+	@ManyToOne
+	@JoinColumn(name="ASSESS_ID", insertable = false, updatable = false)
+	private PerAssess perAssess;
 
 	public PerAssessAnswer() {
 	}
@@ -128,4 +133,11 @@ public class PerAssessAnswer implements Serializable {
 		return perAssessAnswerItem;
 	}
 
+	public PerAssess getPerAssess() {
+		return perAssess;
+	}
+
+	public void setPerAssess(PerAssess perAssess) {
+		this.perAssess = perAssess;
+	}
 }

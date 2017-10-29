@@ -24,7 +24,7 @@ public class PerAssessAnswerDetail implements Serializable {
 	@Column(name="ID")
 	private String id;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="ITEM_CODE")
@@ -36,7 +36,7 @@ public class PerAssessAnswerDetail implements Serializable {
 	@Column(name="ITEM_VALUE")
 	private String itemValue;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerAssessAnswerItem

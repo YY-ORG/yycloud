@@ -43,13 +43,9 @@ public class PerAssess implements Serializable {
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
-	//bi-directional many-to-one association to PerAssessAnswer
+    //bi-directional many-to-one association to PerAssessAnswer
 	@OneToMany(mappedBy="perAssess")
-	private List<PerAssessAnswer> perAssessAnswers;
-
-	//bi-directional many-to-one association to PerAssessAnswerGroup
-	@OneToMany(mappedBy="perAssess")
-	private List<PerAssessAnswerGroup> perAssessAnswerGroups;
+	private List<PerAssessAnswer> PerAssessAnswers;
 
 	//bi-directional many-to-one association to PerAssessAspMap
 	@OneToMany(mappedBy="perAssess")
@@ -119,47 +115,25 @@ public class PerAssess implements Serializable {
 	}
 
 	public List<PerAssessAnswer> getPerAssessAnswers() {
-		return this.perAssessAnswers;
+		return this.PerAssessAnswers;
 	}
 
-	public void setPerAssessAnswers(List<PerAssessAnswer> perAssessAnswers) {
-		this.perAssessAnswers = perAssessAnswers;
+	public void setPerAssessAnswers(List<PerAssessAnswer> PerAssessAnswers) {
+		this.PerAssessAnswers = PerAssessAnswers;
 	}
 
-	public PerAssessAnswer addPerAssessAnswer(PerAssessAnswer perAssessAnswer) {
-		getPerAssessAnswers().add(perAssessAnswer);
-		perAssessAnswer.setPerAssess(this);
+	public PerAssessAnswer addPerAssessAnswer(PerAssessAnswer PerAssessAnswer) {
+		getPerAssessAnswers().add(PerAssessAnswer);
+		PerAssessAnswer.setPerAssess(this);
 
-		return perAssessAnswer;
+		return PerAssessAnswer;
 	}
 
-	public PerAssessAnswer removePerAssessAnswer(PerAssessAnswer perAssessAnswer) {
-		getPerAssessAnswers().remove(perAssessAnswer);
-		perAssessAnswer.setPerAssess(null);
+	public PerAssessAnswer removePerAssessAnswer(PerAssessAnswer PerAssessAnswer) {
+		getPerAssessAnswers().remove(PerAssessAnswer);
+		PerAssessAnswer.setPerAssess(null);
 
-		return perAssessAnswer;
-	}
-
-	public List<PerAssessAnswerGroup> getPerAssessAnswerGroups() {
-		return this.perAssessAnswerGroups;
-	}
-
-	public void setPerAssessAnswerGroups(List<PerAssessAnswerGroup> perAssessAnswerGroups) {
-		this.perAssessAnswerGroups = perAssessAnswerGroups;
-	}
-
-	public PerAssessAnswerGroup addPerAssessAnswerGroup(PerAssessAnswerGroup perAssessAnswerGroup) {
-		getPerAssessAnswerGroups().add(perAssessAnswerGroup);
-		perAssessAnswerGroup.setPerAssess(this);
-
-		return perAssessAnswerGroup;
-	}
-
-	public PerAssessAnswerGroup removePerAssessAnswerGroup(PerAssessAnswerGroup perAssessAnswerGroup) {
-		getPerAssessAnswerGroups().remove(perAssessAnswerGroup);
-		perAssessAnswerGroup.setPerAssess(null);
-
-		return perAssessAnswerGroup;
+		return PerAssessAnswer;
 	}
 
 	public List<PerAssessAspMap> getPerAssessAspMaps() {

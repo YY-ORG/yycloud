@@ -9,6 +9,7 @@
 
 package com.yy.cloud.core.assess.data.repositories;
 
+import com.yy.cloud.core.assess.data.domain.PerAssessAnswer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 

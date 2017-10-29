@@ -46,10 +46,6 @@ public class PerAssessPaper implements Serializable {
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
-	//bi-directional many-to-one association to PerAssessAnswerGroup
-	@OneToMany(mappedBy="perAssessPaper")
-	private List<PerAssessAnswerGroup> perAssessAnswerGroups;
-
 	//bi-directional many-to-one association to PerAssessAspMap
 	@OneToMany(mappedBy="perAssessPaper")
 	private List<PerAssessAspMap> perAssessAspMaps;
@@ -119,28 +115,6 @@ public class PerAssessPaper implements Serializable {
 
 	public void setUpdateDate(Timestamp updateDate) {
 		this.updateDate = updateDate;
-	}
-
-	public List<PerAssessAnswerGroup> getPerAssessAnswerGroups() {
-		return this.perAssessAnswerGroups;
-	}
-
-	public void setPerAssessAnswerGroups(List<PerAssessAnswerGroup> perAssessAnswerGroups) {
-		this.perAssessAnswerGroups = perAssessAnswerGroups;
-	}
-
-	public PerAssessAnswerGroup addPerAssessAnswerGroup(PerAssessAnswerGroup perAssessAnswerGroup) {
-		getPerAssessAnswerGroups().add(perAssessAnswerGroup);
-		perAssessAnswerGroup.setPerAssessPaper(this);
-
-		return perAssessAnswerGroup;
-	}
-
-	public PerAssessAnswerGroup removePerAssessAnswerGroup(PerAssessAnswerGroup perAssessAnswerGroup) {
-		getPerAssessAnswerGroups().remove(perAssessAnswerGroup);
-		perAssessAnswerGroup.setPerAssessPaper(null);
-
-		return perAssessAnswerGroup;
 	}
 
 	public List<PerAssessAspMap> getPerAssessAspMaps() {

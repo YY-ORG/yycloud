@@ -25,7 +25,7 @@ public class PerAssessAnswerItem implements Serializable {
 	@Column(name="ID")
 	private String id;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="SEQ_NO")
@@ -34,11 +34,11 @@ public class PerAssessAnswerItem implements Serializable {
 	@Column(name="TEMPLATE_ID")
 	private String templateId;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerAssessAnswerDetail
-	@OneToMany(mappedBy="perAssessAnswerItem")
+	@OneToMany(cascade = { CascadeType.PERSIST }, mappedBy="perAssessAnswerItem")
 	private List<PerAssessAnswerDetail> perAssessAnswerDetails;
 
 	//bi-directional many-to-one association to PerAssessAnswer

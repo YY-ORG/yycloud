@@ -52,6 +52,7 @@ public class DoingAssessController {
             AssessAnswerReq tempAnswerReq = new AssessAnswerReq();
             tempAnswerReq.setAssessId(_assessId);
             tempAnswerReq.setAssessPaperId(_assessPaperId);
+            tempAnswerReq.setAnswerList(_groupSummaryReq);
 
             result = this.doingAssessService.submitAssessAnswer(tempUserId, tempAnswerReq);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);

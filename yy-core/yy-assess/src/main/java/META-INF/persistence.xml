@@ -3,8 +3,6 @@
     <persistence-unit name="yy">
         <class>com.yy.cloud.core.assess.data.domain.PerAaThesi</class>
         <class>com.yy.cloud.core.assess.data.domain.PerAssess</class>
-        <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswer</class>
-        <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswerGroup</class>
         <class>com.yy.cloud.core.assess.data.domain.PerAssessAspMap</class>
         <class>com.yy.cloud.core.assess.data.domain.PerAssessPaper</class>
         <class>com.yy.cloud.core.assess.data.domain.PerAssessTemplateMap</class>
@@ -12,7 +10,7 @@
         <class>com.yy.cloud.core.assess.data.domain.PerTemplate</class>
         <class>com.yy.cloud.core.assess.data.domain.PerTemplateItem</class>
         <class>com.yy.cloud.core.assess.data.domain.PerTemplateTiMap</class>
-        <class>com.yy.cloud.core.assess.data.PerAssessAnswer</class>
+        <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswer</class>
         <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswerDetail</class>
         <class>com.yy.cloud.core.assess.data.domain.PerAssessAnswerItem</class>
         <properties>
