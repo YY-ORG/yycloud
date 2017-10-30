@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
@@ -181,5 +183,13 @@ public interface UserMgmtClient {
 	@RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	GeneralContentResult<UserDetailsItem> findUserById(@PathVariable("user_id") String _userId);
 
+	
+	@RequestMapping(value = "/authsec/users/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "用户中心-账户管理，通过用户名模糊查询账户")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ") })
+	public GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(
+			@RequestParam(value = "userName", required = false) String _userName,
+			@RequestParam(value = "page") Integer _page, @RequestParam(value = "size") Integer _size);
   
 }

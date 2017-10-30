@@ -80,7 +80,7 @@ public interface UserMgmtService {
 
     GeneralContentResult<UserDetailsItem> loadUserById(String _userId);
 
-    GeneralPagingResult<List<UserItem>> findUsersByUserName(String _userName, Integer _page, Integer _size);
+    GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(String _userName, Integer _page, Integer _size);
 
     GeneralContentResult<String> validateLoginName(String _loginName);
 

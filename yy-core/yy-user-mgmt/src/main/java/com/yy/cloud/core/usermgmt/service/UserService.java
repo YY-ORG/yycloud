@@ -19,7 +19,7 @@ public interface UserService {
 
     List<UserItem> listUsersByPage(PageInfo _pageInfo, Byte _status);
 
-    List<UserItem> listUsersByUserName(PageInfo _pageInfo, String _userName);
+    List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName);
 
     void modifyUser(UserProfile _userProfile);
 

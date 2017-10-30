@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,14 +238,60 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserItem> listUsersByPage(PageInfo _pageInfo, Byte _status) {
     	
+    	
     	return new ArrayList<UserItem>();
     }
 
     @Override
-    public List<UserItem> listUsersByUserName(PageInfo _pageInfo, String _userName) {
-    	
-    	return new ArrayList<UserItem>();
-    }
+    public List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName) {
+		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
+				Sort.Direction.DESC, "createDate");
+
+		UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
+		Page<YYUser> foxUsers;
+		List<UserDetailsItem> UserDetailsItems = new ArrayList<UserDetailsItem>();
+		if (StringUtils.isBlank(_userName)) {
+			foxUsers = foxUserRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+					pageRequest);
+		} else {
+			foxUsers = foxUserRepository.findByStatusLessThanAndUserInfoUserNameLike(
+					 CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+					"%" + _userName + "%", pageRequest);
+		}
+		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
+		foxUsers.forEach(foxUser -> {
+			UserDetailsItem userDetailTemp = modelMapper.map(foxUser, UserDetailsItem.class);
+			// 获取每个用户的部门
+			List<YYOrganization> foxOrganizations = yyOrganzationRepository
+					.findOrganizationByUserId(foxUser.getId());
+			if (!CollectionUtils.isEmpty(foxOrganizations)) {
+				userDetailTemp.setOrganizationName(foxOrganizations.get(0).getName());
+			}
+			// 获取每个用户的角色
+			List<YYRole> foxRoles = foxRoleRepository.findRolesByUserId(foxUser.getId());
+			if (!CollectionUtils.isEmpty(foxRoles)) {
+				List<RoleItem> roles=new ArrayList<>();
+				for(YYRole role :foxRoles){
+					RoleItem roleite=new RoleItem();
+					roleite.setId(role.getId());
+					roleite.setName(role.getName());
+					roleite.setRoleName(role.getRoleName());
+					roleite.setDescription(role.getDescription());
+					roles.add(roleite);
+					
+				}
+				userDetailsItem.setRoles(roles);
+			}
+			UserDetailsItems.add(userDetailTemp);
+		});
+	
+
+		_pageInfo.setTotalPage(foxUsers.getTotalPages());
+		_pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()).intValue());
+
+		return UserDetailsItems;
+	}
 
     @Override
     public List<UserItem> listNonOrganizationMembers(PageInfo _pageInfo) {

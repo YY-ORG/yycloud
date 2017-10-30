@@ -145,9 +145,8 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 	}
 
 	@Override
-	public GeneralPagingResult<List<UserItem>> findUsersByUserName(String _userName, Integer _page, Integer _size) {
-		// TODO Auto-generated method stub
-		return null;
+	public GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(String _userName, Integer _page, Integer _size) {
+		return userMgmtClient.findUsersByUserName(_userName,_page,_size);
 	}
 
 	@Override

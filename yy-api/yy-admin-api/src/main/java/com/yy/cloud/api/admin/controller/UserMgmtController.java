@@ -199,7 +199,7 @@ public class UserMgmtController {
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
-   public GeneralPagingResult<List<UserItem>> findUsersByUserName(
+   public GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(
            @RequestParam(value = "userName", required = false) String _userName,
            @PathVariable("page") Integer _page,
            @PathVariable("size") Integer _size) {

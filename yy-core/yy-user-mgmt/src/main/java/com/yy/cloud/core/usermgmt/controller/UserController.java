@@ -187,18 +187,18 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
     })
-    public GeneralPagingResult<List<UserItem>> findUsersByUserName(
+    public GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(
             @RequestParam(value = "userName", required = false) String _userName,
             @RequestParam(value = "page") Integer _page,
             @RequestParam(value = "size") Integer _size) {
-        GeneralPagingResult<List<UserItem>> result = new GeneralPagingResult();
+        GeneralPagingResult<List<UserDetailsItem>> result = new GeneralPagingResult<List<UserDetailsItem>>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
         PageInfo pageInfo = new PageInfo();
         pageInfo.setCurrentPage(_page);
         pageInfo.setPageSize(_size);
 
-        List<UserItem> userItems = userService.listUsersByUserName(pageInfo, _userName);
+        List<UserDetailsItem> userItems = userService.listUsersByUserName(pageInfo, _userName);
 
         result.setResultContent(userItems);
         result.setPageInfo(pageInfo);
