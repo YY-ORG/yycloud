@@ -261,28 +261,24 @@ public class UserServiceImpl implements UserService {
 		}
 		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
 		foxUsers.forEach(foxUser -> {
-			UserDetailsItem userDetailTemp = modelMapper.map(foxUser, UserDetailsItem.class);
+			UserDetailsItem userDetailTemp = restructUserBean(foxUser);
 			// 获取每个用户的部门
 			List<YYOrganization> foxOrganizations = yyOrganzationRepository
 					.findOrganizationByUserId(foxUser.getId());
 			if (!CollectionUtils.isEmpty(foxOrganizations)) {
 				userDetailTemp.setOrganizationName(foxOrganizations.get(0).getName());
 			}
-			// 获取每个用户的角色
-			List<YYRole> foxRoles = foxRoleRepository.findRolesByUserId(foxUser.getId());
-			if (!CollectionUtils.isEmpty(foxRoles)) {
-				List<RoleItem> roles=new ArrayList<>();
-				for(YYRole role :foxRoles){
-					RoleItem roleite=new RoleItem();
-					roleite.setId(role.getId());
-					roleite.setName(role.getName());
-					roleite.setRoleName(role.getRoleName());
-					roleite.setDescription(role.getDescription());
-					roles.add(roleite);
-					
-				}
-				userDetailsItem.setRoles(roles);
-			}
+			List<RoleItem> roleItems = new ArrayList<>();
+	        foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
+	            YYRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
+	            RoleItem roleItem = new RoleItem();
+	            roleItem.setId(foxRole.getId());
+	            roleItem.setName(foxRole.getName());
+	            roleItem.setRoleName(foxRole.getRoleName());
+	            roleItem.setStatus(foxRole.getStatus());
+	            roleItems.add(roleItem);
+	        });
+	        userDetailTemp.setRoles(roleItems);
 			UserDetailsItems.add(userDetailTemp);
 		});
 	
@@ -292,6 +288,26 @@ public class UserServiceImpl implements UserService {
 
 		return UserDetailsItems;
 	}
+    
+    
+    /**
+     * 
+     * @param yyUser
+     * @return
+     */
+    private UserDetailsItem  restructUserBean(YYUser yyUser){
+    	UserDetailsItem userDetailsItem= new UserDetailsItem();
+    	 userDetailsItem.setUserId(yyUser.getId());
+         userDetailsItem.setLoginName(yyUser.getLoginName());
+         userDetailsItem.setPassword(yyUser.getPassword());
+         userDetailsItem.setUserName(yyUser.getUserInfo().getUserName());
+         userDetailsItem.setEmail(yyUser.getUserInfo().getEmail());
+         userDetailsItem.setPhone(yyUser.getUserInfo().getPhone());
+         userDetailsItem.setStatus(yyUser.getStatus());
+         userDetailsItem.setDescription(yyUser.getDescription());
+    	
+    	return userDetailsItem;
+    }
 
     @Override
     public List<UserItem> listNonOrganizationMembers(PageInfo _pageInfo) {
