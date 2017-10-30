@@ -1,5 +1,6 @@
 package com.yy.cloud.core.usermgmt.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yy.cloud.common.constant.CommonConstant;
+import com.yy.cloud.common.constant.ResultCode;
+import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.dto.menu.MenuProfile;
 import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
 import com.yy.cloud.common.data.otd.sysbase.MenuItem;
@@ -126,6 +129,7 @@ public class MenuServiceImpl implements MenuService {
 
         YYRole foxRole = foxRoleRepository.findOne(_roleId);
         roleDetailsItem.setRoleName(foxRole.getRoleName());
+        roleDetailsItem.setRoleId(_roleId);
 
         return roleDetailsItem;
     }
@@ -160,5 +164,78 @@ public class MenuServiceImpl implements MenuService {
 
         List<YYMenu> foxMenus = yyMenuRepository.findByIdIn(menuIds);
         return generateMenuTree(foxMenus);
+    }
+
+	@Override
+	public GeneralContentResult<RoleDetailsItem> getMenuTreeByRoleIdForEdit(String _roleId) {
+		List<String> existMenuIds=new ArrayList<String>();
+		 List<YYRoleMenu> foxRoleMenus = foxRoleMenuRepository.findByRoleId(_roleId);
+	        List<String> menuIds = foxRoleMenus.stream()
+	                .map(foxRoleMenu -> foxRoleMenu.getMenuId())
+	                .collect(Collectors.toList());
+	        List<YYMenu> foxMenus = yyMenuRepository.findByIdIn(menuIds);
+	        if(foxMenus!=null){
+	        	for(YYMenu yyMenu :foxMenus){
+	        		existMenuIds.add(yyMenu.getId());
+	        	}
+	        }
+	        List<YYMenu> allMenus = yyMenuRepository.findAll();
+	        List<MenuItem> menus=new ArrayList<MenuItem>();
+	        if(allMenus!=null){
+	        	menus=generateMenuTreeForMenuEdit(allMenus,existMenuIds );
+	        }
+		
+	        GeneralContentResult<RoleDetailsItem> result= new GeneralContentResult<RoleDetailsItem>();
+	        RoleDetailsItem roleDetailsItem=new RoleDetailsItem();
+	        roleDetailsItem.setRoleId(_roleId);
+	        roleDetailsItem.setMenus(menus);
+	        result.setResultContent(roleDetailsItem);
+	        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+	        result.setDetailDescription(ResultCode.OPERATION_SUCCESS);
+		
+		return result;
+	}
+	
+	
+	private List<MenuItem> generateMenuTreeForMenuEdit(List<YYMenu> foxMenus, List<String> menuids) {
+        // 把全部FoxMenu转换成MenuItem
+        List<MenuItem> menuItems = foxMenus.stream() 
+                .map(foxMenu -> modelMapper.map(foxMenu, MenuItem.class))
+                .collect(Collectors.toList());
+
+        // 获得顶层菜单
+        List<MenuItem> topMenuItems = menuItems.stream()
+                .filter(menuItem -> StringUtils.isBlank(menuItem.getParentId()))
+                .collect(Collectors.toList());
+
+        // 获得非顶层菜单
+        List<MenuItem> nonTopMenuItems = menuItems.stream()
+                .filter(menuItem -> !StringUtils.isBlank(menuItem.getParentId()))
+                .collect(Collectors.toList());
+
+        for (MenuItem menuItem : nonTopMenuItems) {
+            for (MenuItem subMenuItem : nonTopMenuItems) {
+                if (menuItem.getId().equals(subMenuItem.getParentId())) {
+                	
+                	if(menuids.contains(subMenuItem.getId())){
+                		subMenuItem.setSelected(true);
+                	}
+                    menuItem.addChildren(subMenuItem);
+                }
+            }
+        }
+
+        for (MenuItem topMenuItem : topMenuItems) {
+            for (MenuItem menuItem : nonTopMenuItems) {
+                if (topMenuItem.getId().equals(menuItem.getParentId())) {
+                	if(menuids.contains(menuItem.getId())){
+                		menuItem.setSelected(true);
+                	}
+                    topMenuItem.addChildren(menuItem);
+                }
+            }
+        }
+
+        return topMenuItems;
     }
 }

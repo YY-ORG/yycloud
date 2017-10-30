@@ -110,7 +110,7 @@ public class MenuController {
     })
     public GeneralContentResult<RoleDetailsItem> getMenuTreeByRoleIdForEdit(
             @PathVariable("role_id") String _roleId){
-    	return new GeneralContentResult<RoleDetailsItem>();
+    	return menuService.getMenuTreeByRoleIdForEdit(_roleId);
     } 
     
 }

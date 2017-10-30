@@ -25,5 +25,7 @@ public interface YYRoleMenuRepository extends JpaRepository<YYRoleMenu, String> 
     List<YYRoleMenu> findByRoleIdIn(Collection<String> roleIds);
 
     List<YYRoleMenu> findByMenuIdAndRoleId(String menuId, String roleId);
+    
+    
 
 }

@@ -118,12 +118,23 @@ public class RoleServiceImpl implements RoleService {
 		List<MenuItem> menus=roleDetailsItem.getMenus();
 		if (menus != null) {
 			for (MenuItem menu : menus) {
-				saveRoleMenu(_roleId, menu);
+				if(menu.isSelected()){
+					saveRoleMenu(_roleId, menu);
+				}else{
+					
+					deleteRoleMenu(_roleId, menu);
+				}
+				
 				if (menu.getChildren() != null) {
 					List<MenuItem> MenuItemchilds = menu.getChildren();
 					if (MenuItemchilds != null) {
 						for (MenuItem childMenu : MenuItemchilds) {
-							saveRoleMenu(_roleId, childMenu);
+							if(menu.isSelected()){
+								saveRoleMenu(_roleId, childMenu);
+							}else{
+								deleteRoleMenu(_roleId, menu);
+							}
+							
 						}
 					}
 				}
@@ -145,4 +156,11 @@ public class RoleServiceImpl implements RoleService {
 		        yyRoleMenuRepository.save(foxRoleMenu);
 		    }
 	}
+	private void deleteRoleMenu(String _roleId, MenuItem menu) {
+		List<YYRoleMenu> foxRoleMenus = yyRoleMenuRepository.findByMenuIdAndRoleId(menu.getId(), _roleId);
+		    if (!foxRoleMenus.isEmpty()) {
+		    	yyRoleMenuRepository.delete(foxRoleMenus);
+		    }
+	}
+	
 }
