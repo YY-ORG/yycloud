@@ -141,6 +141,7 @@ public class RoleServiceImpl implements RoleService {
 		        YYRoleMenu foxRoleMenu = new YYRoleMenu();
 		        foxRoleMenu.setMenuId(menu.getId());
 		        foxRoleMenu.setRoleId(_roleId);
+		        foxRoleMenu.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 		        yyRoleMenuRepository.save(foxRoleMenu);
 		    }
 	}
