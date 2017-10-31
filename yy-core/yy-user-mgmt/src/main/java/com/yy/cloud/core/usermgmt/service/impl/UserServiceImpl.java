@@ -30,6 +30,7 @@ import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.exception.NoRecordFoundException;
 import com.yy.cloud.common.service.SecurityService;
+import com.yy.cloud.common.utils.AssertHelper;
 import com.yy.cloud.common.utils.DateUtils;
 import com.yy.cloud.core.usermgmt.constant.AdUserMgmtConstants;
 import com.yy.cloud.core.usermgmt.constant.UserMgmtConstants;
@@ -175,48 +176,62 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void modifyUser(UserProfile _userProfile) {
-        YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userProfile.getId())).orElseThrow(
-                () -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
+	public void modifyUser(UserProfile _userProfile) {
+		YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userProfile.getId())).orElseThrow(
+				() -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
 
-        String userId = _userProfile.getId();
-        String password = foxUser.getPassword();
-        Byte status = foxUser.getStatus();
-        Byte type = foxUser.getType();
-        String loginName = foxUser.getLoginName();
+		String userId = _userProfile.getId();
+		String password = foxUser.getPassword();
+		Byte status = foxUser.getStatus();
+		Byte type = foxUser.getType();
+		String loginName = foxUser.getLoginName();
 
-        foxUser = modelMapper.map(_userProfile, YYUser.class);
-        foxUser.setStatus(status);
-        foxUser.setPassword(password);
-        foxUser.setType(type);
-        foxUser.setLoginName(loginName);
-        UserDetailsItem userDetailItem = securityService.getCurrentUser();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem );
+		foxUser = modelMapper.map(_userProfile, YYUser.class);
+		foxUser.setStatus(status);
+		foxUser.setPassword(password);
+		foxUser.setType(type);
+		foxUser.setLoginName(loginName);
+		UserDetailsItem userDetailItem = securityService.getCurrentUser();
+		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem);
 
-        foxUserRepository.save(foxUser);
+		YYUserInfo yyUserInfo = foxUser.getUserInfo();
 
-        // 绑定角色
-        if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
-            List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
-            foxUserRoleRepository.deleteInBatch(foxUserRoles);
+		if (AssertHelper.notEmpty(_userProfile.getAddress())) {
+			yyUserInfo.setAddress(_userProfile.getAddress());
+		}
+		if (AssertHelper.notEmpty(_userProfile.getOrgId())) {
 
-            // 过滤重复的roleId
-            Set<String> roleIdSet = new HashSet<String>();
-            _userProfile.getRoles().forEach(roleProfile -> {
-                roleIdSet.add(roleProfile.getId());
-            });
+			yyUserInfo.setDeptId(_userProfile.getOrgId());
 
-            roleIdSet.forEach(roleId -> {
-                YYUserRole foxUserRole = new YYUserRole();
-                foxUserRole.setRoleId(roleId);
-                foxUserRole.setUserId(userId);
-                foxUserRoleRepository.save(foxUserRole);
-            });
-        }
+		}
+		if (AssertHelper.notEmpty(_userProfile.getEmail())) {
 
-        // 绑定机构
-        
-    }
+			yyUserInfo.setEmail(_userProfile.getEmail());
+		}
+		if (AssertHelper.notEmpty(_userProfile.getGender())) {
+			yyUserInfo.setGender(_userProfile.getGender());
+		}
+		
+		foxUserRepository.save(foxUser);
+		// 绑定角色
+		if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
+			List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
+			foxUserRoleRepository.deleteInBatch(foxUserRoles);
+
+			// 过滤重复的roleId
+			Set<String> roleIdSet = new HashSet<String>();
+			_userProfile.getRoles().forEach(roleProfile -> {
+				roleIdSet.add(roleProfile.getId());
+			});
+
+			roleIdSet.forEach(roleId -> {
+				YYUserRole foxUserRole = new YYUserRole();
+				foxUserRole.setRoleId(roleId);
+				foxUserRole.setUserId(userId);
+				foxUserRoleRepository.save(foxUserRole);
+			});
+		}
+	}
 
     @Override
     public void updateUserStatus(String _userId, Byte _status) {

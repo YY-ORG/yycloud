@@ -92,8 +92,7 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 
 	@Override
 	public GeneralResult modifyUser(String _userId, UserProfile _userProfile) {
-		// TODO Auto-generated method stub
-		return null;
+		return userMgmtClient.modifyUser(_userId, _userProfile);
 	}
 
 	@Override

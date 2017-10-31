@@ -191,5 +191,16 @@ public interface UserMgmtClient {
 	public GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(
 			@RequestParam(value = "userName", required = false) String _userName,
 			@RequestParam(value = "page") Integer _page, @RequestParam(value = "size") Integer _size);
+	
+	
+	
+	@RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，编辑账号，本地")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult modifyUser(
+            @PathVariable("user_id") String _userId,
+            @RequestBody UserProfile _userProfile) ;
   
 }
