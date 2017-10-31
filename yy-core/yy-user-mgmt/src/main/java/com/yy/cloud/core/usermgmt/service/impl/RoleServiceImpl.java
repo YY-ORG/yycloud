@@ -66,7 +66,10 @@ public class RoleServiceImpl implements RoleService {
     public List<RoleItem> listRolesByPage(PageInfo _pageInfo) {
         PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize());
         Page<YYRole> foxRoles = yyRoleRepository.findAll(pageRequest);
-        _pageInfo=VOUtil.initPageInfo(foxRoles);
+
+    	_pageInfo.setTotalPage(foxRoles.getTotalPages());
+		_pageInfo.setTotalRecords(new Long(foxRoles.getTotalElements()).intValue());
+        
         List<RoleItem> roleItems = new ArrayList<>();
         foxRoles.forEach(
                 foxRole -> {
