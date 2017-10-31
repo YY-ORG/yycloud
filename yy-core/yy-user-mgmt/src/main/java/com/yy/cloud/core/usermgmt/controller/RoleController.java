@@ -74,7 +74,6 @@ public class RoleController {
 
         List<RoleItem> roleItems = roleService.listRolesByPage(pageInfo);
         if(roleItems!=null){
-        	pageInfo.setTotalPage(roleItems.size());
         	for(RoleItem roleItem :roleItems){
         		RoleDetailsItem menuitem= menuService.getMenuTreeByRoleId(roleItem.getId());
         		menuitem.setRoleId(roleItem.getId());

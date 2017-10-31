@@ -28,6 +28,7 @@ import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRoleRepository;
 import com.yy.cloud.core.usermgmt.service.RoleService;
+import com.yy.cloud.core.usermgmt.utils.VOUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,6 +66,7 @@ public class RoleServiceImpl implements RoleService {
     public List<RoleItem> listRolesByPage(PageInfo _pageInfo) {
         PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize());
         Page<YYRole> foxRoles = yyRoleRepository.findAll(pageRequest);
+        _pageInfo=VOUtil.initPageInfo(foxRoles);
         List<RoleItem> roleItems = new ArrayList<>();
         foxRoles.forEach(
                 foxRole -> {
