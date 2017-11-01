@@ -44,6 +44,6 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 	
 	
 	@Modifying
-	@Query("update FoxUser f set f.status=?1 where f.id=?2")
+	@Query("update YYUser f set f.status=?1 where f.id=?2")
 	public int setStatusFor(Byte status, String id);
 }
