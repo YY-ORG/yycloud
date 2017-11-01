@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -40,4 +41,9 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 	
 	Page<YYUser> findByStatusLessThanAndUserInfoUserNameLike( Byte status, String username,
 			Pageable pageable);
+	
+	
+	@Modifying
+	@Query("update FoxUser f set f.status=?1 where f.id=?2")
+	public int setStatusFor(Byte status, String id);
 }

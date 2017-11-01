@@ -1,6 +1,7 @@
 package com.yy.cloud.core.usermgmt.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -15,11 +16,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
@@ -41,6 +44,7 @@ import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
 import com.yy.cloud.core.usermgmt.data.domain.YYUserRole;
 import com.yy.cloud.core.usermgmt.data.repositories.YYOrganizationRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYUserInfoRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserOrganizationRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRoleRepository;
@@ -56,6 +60,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private YYUserRepository foxUserRepository;
+    
+    
+    @Autowired
+    private YYUserInfoRepository yyUserInfoRepository;
 
     @Autowired
     private YYUserOrganizationRepository foxUserOrganizationRepository;
@@ -177,60 +185,67 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
 	public void modifyUser(UserProfile _userProfile) {
-		YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userProfile.getId())).orElseThrow(
-				() -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
+    	
+			log.debug("The method modifyUser is begin");
+			YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userProfile.getId())).orElseThrow(
+					() -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
 
-		String userId = _userProfile.getId();
-		String password = foxUser.getPassword();
-		Byte status = foxUser.getStatus();
-		Byte type = foxUser.getType();
-		String loginName = foxUser.getLoginName();
+			String userId = _userProfile.getId();
+			String password = foxUser.getPassword();
+			Byte status = foxUser.getStatus();
+			Byte type = foxUser.getType();
+			String loginName = foxUser.getLoginName();
 
-		foxUser = modelMapper.map(_userProfile, YYUser.class);
-		foxUser.setStatus(status);
-		foxUser.setPassword(password);
-		foxUser.setType(type);
-		foxUser.setLoginName(loginName);
-		UserDetailsItem userDetailItem = securityService.getCurrentUser();
-		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem);
+			foxUser = modelMapper.map(_userProfile, YYUser.class);
+			
+			log.debug("The value foxUser.loginName is \'"+foxUser.getLoginName()+"\'");
+			foxUser.setStatus(status);
+			foxUser.setPassword(password);
+			foxUser.setType(type);
+			foxUser.setLoginName(loginName);
+			UserDetailsItem userDetailItem = securityService.getCurrentUser();
+			log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem);
 
-		YYUserInfo yyUserInfo = foxUser.getUserInfo();
+			YYUserInfo yyUserInfo = yyUserInfoRepository.findByUser(foxUser);
+			
+			log.debug(CommonConstant.LOG_DEBUG_TAG + "获取用户Info",  yyUserInfo);
+			
+			if (AssertHelper.notEmpty(_userProfile.getAddress())) {
+				yyUserInfo.setAddress(_userProfile.getAddress());
+			}
+			if (AssertHelper.notEmpty(_userProfile.getOrgId())) {
 
-		if (AssertHelper.notEmpty(_userProfile.getAddress())) {
-			yyUserInfo.setAddress(_userProfile.getAddress());
-		}
-		if (AssertHelper.notEmpty(_userProfile.getOrgId())) {
+				yyUserInfo.setDeptId(_userProfile.getOrgId());
 
-			yyUserInfo.setDeptId(_userProfile.getOrgId());
+			}
+			if (AssertHelper.notEmpty(_userProfile.getEmail())) {
 
-		}
-		if (AssertHelper.notEmpty(_userProfile.getEmail())) {
+				yyUserInfo.setEmail(_userProfile.getEmail());
+			}
+			if (AssertHelper.notEmpty(_userProfile.getGender())) {
+				yyUserInfo.setGender(_userProfile.getGender());
+			}
+			foxUser.setUserInfo(yyUserInfo);
+			foxUserRepository.save(foxUser);
+			// 绑定角色
+			if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
+				List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
+				foxUserRoleRepository.deleteInBatch(foxUserRoles);
 
-			yyUserInfo.setEmail(_userProfile.getEmail());
-		}
-		if (AssertHelper.notEmpty(_userProfile.getGender())) {
-			yyUserInfo.setGender(_userProfile.getGender());
-		}
-		
-		foxUserRepository.save(foxUser);
-		// 绑定角色
-		if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
-			List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
-			foxUserRoleRepository.deleteInBatch(foxUserRoles);
+				// 过滤重复的roleId
+				Set<String> roleIdSet = new HashSet<String>();
+				_userProfile.getRoles().forEach(roleProfile -> {
+					roleIdSet.add(roleProfile.getId());
+				});
 
-			// 过滤重复的roleId
-			Set<String> roleIdSet = new HashSet<String>();
-			_userProfile.getRoles().forEach(roleProfile -> {
-				roleIdSet.add(roleProfile.getId());
-			});
-
-			roleIdSet.forEach(roleId -> {
-				YYUserRole foxUserRole = new YYUserRole();
-				foxUserRole.setRoleId(roleId);
-				foxUserRole.setUserId(userId);
-				foxUserRoleRepository.save(foxUserRole);
-			});
-		}
+				roleIdSet.forEach(roleId -> {
+					YYUserRole foxUserRole = new YYUserRole();
+					foxUserRole.setRoleId(roleId);
+					foxUserRole.setUserId(userId);
+					foxUserRole.setCreateDate(new Date());
+					foxUserRoleRepository.save(foxUserRole);
+				});
+			}
 	}
 
     @Override
@@ -521,6 +536,17 @@ public class UserServiceImpl implements UserService {
         log.info(CommonConstant.LOG_DEBUG_TAG + "通过登录名判断该用户是前台用户还是后台用户,结果：{}", generalContentResult);
         return generalContentResult;
     }
+    
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public GeneralResult deleteUser(String id) {
+    	foxUserRepository.setStatusFor(UserMgmtConstants.STATUS_GLOBAL_DELETED, id);
+    	GeneralResult result = new GeneralResult();
+    	result.setResultCode(ResultCode.OPERATION_SUCCESS);
+    	return result;
+    	
+	}
 
     
 }

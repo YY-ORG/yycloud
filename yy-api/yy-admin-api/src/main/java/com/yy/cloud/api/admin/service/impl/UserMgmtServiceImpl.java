@@ -97,8 +97,7 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 
 	@Override
 	public GeneralResult deleteUser(String _userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return userMgmtClient.deleteUser(_userId);
 	}
 
 	@Override

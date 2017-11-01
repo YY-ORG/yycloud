@@ -213,9 +213,11 @@ public class UserController {
     public GeneralResult modifyUser(
             @PathVariable("user_id") String _userId,
             @RequestBody UserProfile _userProfile) {
+    	  log.debug("The method of UserController.modifyUser is begin");
         GeneralResult result = new GeneralResult();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
         _userProfile.setId(_userId);
+        
         userService.modifyUser(_userProfile);
         return result;
     }
@@ -338,4 +340,16 @@ public class UserController {
     public GeneralContentResult<FoxUserItem> validateUserType(@RequestParam(value = "loginName") String loginName){
         return userService.validateUserType(loginName);
     }
+    
+    
+    @RequestMapping(value = "/authsec/adm/user/{user_id}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "用户中心-账号管理，删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult deleteUser(
+            @PathVariable("user_id") String _userId) {
+        return userService.deleteUser(_userId);
+    }
+    
 }

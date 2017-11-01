@@ -2,7 +2,10 @@ package com.yy.cloud.core.usermgmt.service;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
@@ -10,6 +13,7 @@ import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
+import com.yy.cloud.core.usermgmt.constant.UserMgmtConstants;
 
 public interface UserService {
 
@@ -49,5 +53,9 @@ public interface UserService {
      * @return
      */
     public GeneralContentResult<List<OrganizationItem>>   findAllorgnazation();
+    
+    
+	public GeneralResult deleteUser(String id);
+
     
 }

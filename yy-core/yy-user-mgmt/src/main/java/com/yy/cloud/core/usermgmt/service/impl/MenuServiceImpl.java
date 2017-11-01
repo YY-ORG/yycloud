@@ -230,6 +230,7 @@ public class MenuServiceImpl implements MenuService {
                 if (topMenuItem.getId().equals(menuItem.getParentId())) {
                 	if(menuids.contains(menuItem.getId())){
                 		menuItem.setSelected(true);
+                		topMenuItem.setSelected(true);
                 	}
                     topMenuItem.addChildren(menuItem);
                 }

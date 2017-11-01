@@ -202,5 +202,17 @@ public interface UserMgmtClient {
     public GeneralResult modifyUser(
             @PathVariable("user_id") String _userId,
             @RequestBody UserProfile _userProfile) ;
+	
+	
+	 @RequestMapping(value = "/authsec/adm/user/{user_id}", method = RequestMethod.DELETE)
+	   @ApiOperation(value = "用户中心-账号管理，删除")
+	   @ApiImplicitParams({
+	           @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+	   })
+	   public GeneralResult deleteUser(
+	           @PathVariable("user_id") String _userId) ;
+	
+	
+	
   
 }
