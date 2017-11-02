@@ -181,7 +181,7 @@ public class OrgnizationServiceImpl implements OrgnizationService {
 							_status, pageRequest);
 				}
 			} else {
-				YYOrganizations = YYOrganizationRepository.findByUserId(userDetailsItem.getUserId(), pageRequest);
+				YYOrganizations = YYOrganizationRepository.findByStatusLessThan( CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
 			}
 		List<OrganizationItem> organizationItems = new ArrayList<>();
 		YYOrganizations.forEach(yyOrganization -> {

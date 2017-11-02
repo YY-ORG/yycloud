@@ -13,7 +13,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -27,12 +26,6 @@ public interface YYOrganizationRepository extends JpaRepository<YYOrganization, 
 	@Query(value = "SELECT O.* FROM yy_user_organization UO LEFT JOIN yy_organization O ON UO.ORGANIZATION_ID=O.ID WHERE UO.USER_ID = ?1", nativeQuery = true)
 	List<YYOrganization> findOrganizationByUserId(String userId);
 	
-	
-	
-	
-
-	@Query("SELECT f FROM YYOrganization f WHERE f.id IN (SELECT u.organizationId FROM YYUserOrganization u WHERE u.userId=?1)")
-	Page<YYOrganization> findByUserId(String userId, Pageable pageable);
 
 	@Query("SELECT f FROM YYOrganization f WHERE f.id IN (?1)")
 	List<YYOrganization> findByIdIn(List<String> ids);
