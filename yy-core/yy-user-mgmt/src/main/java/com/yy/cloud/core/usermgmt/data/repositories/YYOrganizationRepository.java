@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -35,6 +36,26 @@ public interface YYOrganizationRepository extends JpaRepository<YYOrganization, 
 
 	@Query("SELECT f FROM YYOrganization f WHERE f.id IN (?1)")
 	List<YYOrganization> findByIdIn(List<String> ids);
+	
+	
+	
+	/**
+	 * 查询后台机构
+	 * 
+	 * @param type
+	 * @param status
+	 * @return
+	 */
+	Page<YYOrganization> findByStatusLessThan( Byte status, Pageable pageable);
+
+	List<YYOrganization> findStatusLessThan( Byte status);
+
+	Page<YYOrganization> findAndStatus( Byte status, Pageable pageable);
+
+
+
+
+	
 
 
 

@@ -1,4 +1,4 @@
-package com.yy.cloud.api.admin.controller;
+package com.yy.cloud.core.usermgmt.controller;
 
 import java.util.List;
 
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.yy.cloud.api.admin.service.OrgnizationService;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
@@ -19,20 +18,19 @@ import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationProfile;
+import com.yy.cloud.core.usermgmt.service.OrgnizationService;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
-
 @RestController
 @Slf4j
-public class OrgnizationMgmtController {
-	
+public class OrgnizationController {
+
 	@Autowired
 	private OrgnizationService orgnizationService;
-
 
 	@RequestMapping(value = "/authsec/organization", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "用户中心-组织管理，创建")
@@ -83,7 +81,7 @@ public class OrgnizationMgmtController {
 	public GeneralPagingResult<List<OrganizationItem>> findOrganizations(
 			@RequestParam(value = "status", required = false) Byte _status, @RequestParam(value = "page") Integer _page,
 			@RequestParam(value = "size") Integer _size) {
-		GeneralPagingResult<List<OrganizationItem>> result = new GeneralPagingResult();
+		GeneralPagingResult<List<OrganizationItem>> result = new GeneralPagingResult<List<OrganizationItem>>();
 		result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
 		PageInfo pageInfo = new PageInfo();
@@ -96,8 +94,19 @@ public class OrgnizationMgmtController {
 		result.setPageInfo(pageInfo);
 		return result;
 	}
-    
-    
 
+	@RequestMapping(value = "/authsec/organization/{organization_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "用户中心-组织管理，获取单个机构")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ") })
+	public GeneralContentResult<OrganizationItem> findOrganizationById(
+			@PathVariable("organization_id") String _organizationId) {
+		GeneralContentResult<OrganizationItem> result = new GeneralContentResult<OrganizationItem>();
+		result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
+		OrganizationItem organizationItem = orgnizationService.findOrganizationItemById(_organizationId);
+
+		result.setResultContent(organizationItem);
+		return result;
+	}
 }
