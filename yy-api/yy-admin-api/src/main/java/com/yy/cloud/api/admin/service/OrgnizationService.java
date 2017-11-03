@@ -3,6 +3,7 @@ package com.yy.cloud.api.admin.service;
 import java.util.List;
 
 import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
@@ -46,7 +47,9 @@ public interface OrgnizationService {
 	 * @param _status
 	 * @return
 	 */
-	List<OrganizationItem> listOrganizationsByPage(PageInfo _pageInfo, Byte _status);
+	GeneralPagingResult<List<OrganizationItem>> listOrganizationsByPage(
+			Byte _status,  Integer _page,
+			Integer _size);
 
-	OrganizationItem findOrganizationItemById(String _organizationId);
+	GeneralContentResult<OrganizationItem> findOrganizationItemById(String _organizationId);
 }

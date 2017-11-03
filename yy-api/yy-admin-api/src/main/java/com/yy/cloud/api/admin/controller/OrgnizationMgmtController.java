@@ -16,7 +16,6 @@ import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
-import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationProfile;
 
@@ -83,17 +82,8 @@ public class OrgnizationMgmtController {
 	public GeneralPagingResult<List<OrganizationItem>> findOrganizations(
 			@RequestParam(value = "status", required = false) Byte _status, @RequestParam(value = "page") Integer _page,
 			@RequestParam(value = "size") Integer _size) {
-		GeneralPagingResult<List<OrganizationItem>> result = new GeneralPagingResult();
+		GeneralPagingResult<List<OrganizationItem>> result = 	 orgnizationService.listOrganizationsByPage(_status, _page, _size);
 		result.setResultCode(ResultCode.OPERATION_SUCCESS);
-
-		PageInfo pageInfo = new PageInfo();
-		pageInfo.setCurrentPage(_page);
-		pageInfo.setPageSize(_size);
-
-		List<OrganizationItem> organizationItems = orgnizationService.listOrganizationsByPage(pageInfo, _status);
-
-		result.setResultContent(organizationItems);
-		result.setPageInfo(pageInfo);
 		return result;
 	}
     
