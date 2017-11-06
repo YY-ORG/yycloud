@@ -49,6 +49,8 @@ public class ResultCode {
 	public final static String USERMGMT_UNEXPECTED_EXCEPTION = "10001001";
 
 	public final static String USERMGMT_USER_NOT_FOUND = "10001002";
+	
+	public final static String USERMGMT_ORG_EXISTED = "10001003";
 
 	public final static String ORDERMGMT_UNEXPECTED_EXCEPTION = "10003001";
 

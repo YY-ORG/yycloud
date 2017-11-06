@@ -31,11 +31,6 @@ public interface YYOrganizationRepository extends JpaRepository<YYOrganization, 
 
 	Page<YYOrganization> findByStatus( Byte status, Pageable pageable);
 
-
-
-
 	
-
-
-
+	int findByNameAndStatusLessThan(String name, Byte status);
 }

@@ -63,6 +63,18 @@ public class OrgnizationServiceImpl implements OrgnizationService {
 		log.debug(CommonConstant.LOG_DEBUG_TAG + "_organizationProfile name is \'" + _organizationProfile.getName()
 				+ "\'");
 		GeneralContentResult<String> result = new GeneralContentResult<String>();
+		
+		
+		String orgName = _organizationProfile.getName();
+		int count = yyOrganizationRepository.findByNameAndStatusLessThan(orgName,
+				CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+
+		if (count > 0) {
+			
+			result.setResultCode(ResultCode.USERMGMT_ORG_EXISTED);
+			return result;
+		}
+		
 		YYOrganization yyOrganization = new YYOrganization();
 		yyOrganization.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 		yyOrganization.setDescription(_organizationProfile.getDescription());
