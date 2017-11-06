@@ -214,7 +214,7 @@ public interface UserMgmtClient {
 	
 	
 	 
-	  @RequestMapping(value = "/authsec/users/organization/{organization_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	  @RequestMapping(value = "/authsec/users/organization/{organization_id}/page/{page}/size/{size}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	    @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
 	    @ApiImplicitParams({
 	            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
