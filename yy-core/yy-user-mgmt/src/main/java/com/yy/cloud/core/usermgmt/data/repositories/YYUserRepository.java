@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.yy.cloud.core.usermgmt.data.domain.YYUser;
+import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
 
 /**
  * ClassName: AcmeUser UserRepository <br/>
@@ -47,10 +48,7 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 	@Query("update YYUser f set f.status=?1 where f.id=?2")
 	public int setStatusFor(Byte status, String id);
 	
-	
-	@Query("SELECT * FROM YY_USER Y , YY_USER_INFO S WHERE Y.ID=S.USER_ID AND S.DEPT_ID='1' AND Y.STATUS <>'4' ")
-	Page<YYUser> findUsersByOrgId(String orgId, Pageable pageable);
-	
+	Page<YYUser> findByStatusLessThanAndUserInfoDeptId(Byte status,String orgId, Pageable pageable);
 	
 	
 }

@@ -366,7 +366,7 @@ public class UserServiceImpl implements UserService {
 		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
 		Page<YYUser> foxUsers;
 		List<UserDetailsItem> UserDetailsItems = new ArrayList<UserDetailsItem>();
-		foxUsers = foxUserRepository.findUsersByOrgId(_organizationId, pageRequest);
+		foxUsers = foxUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId, pageRequest);
 		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
 		foxUsers.forEach(foxUser -> {
 			UserDetailsItem userDetailTemp = restructUserBean(foxUser);
