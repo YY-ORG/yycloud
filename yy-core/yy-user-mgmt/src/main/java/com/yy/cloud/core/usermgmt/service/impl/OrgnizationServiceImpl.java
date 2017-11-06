@@ -66,11 +66,9 @@ public class OrgnizationServiceImpl implements OrgnizationService {
 		
 		
 		String orgName = _organizationProfile.getName();
-		int count = yyOrganizationRepository.findByNameAndStatusLessThan(orgName,
-				CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
-
-		if (count > 0) {
-			
+		List<YYOrganization> countOfList = yyOrganizationRepository.findByNameAndStatusLessThan(orgName,
+				CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+		if (countOfList !=null && countOfList.size()>0) {
 			result.setResultCode(ResultCode.USERMGMT_ORG_EXISTED);
 			return result;
 		}
