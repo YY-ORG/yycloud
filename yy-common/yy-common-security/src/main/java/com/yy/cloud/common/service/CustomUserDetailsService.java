@@ -3,7 +3,7 @@ package com.yy.cloud.common.service;
 import com.yy.cloud.common.clients.SecurityClient;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
-import com.yy.cloud.common.data.otd.tenant.OrganizationItem;
+import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.security.LizCurrentUser;
 
