@@ -31,7 +31,7 @@ public interface UserService {
 
     void modifyPassword(PasswordProfile _passwordProfile);
 
-    List<UserItem> listUsersInOrganization(String _organizationId);
+    List<UserDetailsItem> listUsersInOrganization(String _organizationId, PageInfo pageinfo);
 
     List<UserItem> listNonOrganizationMembers(PageInfo _pageInfo);
 

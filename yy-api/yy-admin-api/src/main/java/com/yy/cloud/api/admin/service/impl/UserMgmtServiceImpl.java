@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.yy.cloud.api.admin.clients.UserMgmtClient;
 import com.yy.cloud.api.admin.service.UserMgmtService;
@@ -125,9 +127,9 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 	}
 
 	@Override
-	public GeneralContentResult<List<UserItem>> getMembersInOrganization(String _organizationId) {
-		// TODO Auto-generated method stub
-		return null;
+	public GeneralContentResult<List<UserDetailsItem>> getMembersInOrganization(String _organizationId, Integer _page,
+			Integer _size) {
+		return userMgmtClient.getMembersInOrganization(_organizationId,_page,_size);
 	}
 
 	@Override

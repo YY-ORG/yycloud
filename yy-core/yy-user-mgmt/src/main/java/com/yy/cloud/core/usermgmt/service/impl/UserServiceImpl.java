@@ -359,10 +359,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserItem> listUsersInOrganization(String _organizationId) {
-    	
-    	return new ArrayList<UserItem>();
-    }
+	public List<UserDetailsItem> listUsersInOrganization(String _organizationId, PageInfo _pageInfo) {
+		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize());
+
+		UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
+		Page<YYUser> foxUsers;
+		List<UserDetailsItem> UserDetailsItems = new ArrayList<UserDetailsItem>();
+		foxUsers = foxUserRepository.findUsersByOrgId(_organizationId, pageRequest);
+		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
+		foxUsers.forEach(foxUser -> {
+			UserDetailsItem userDetailTemp = restructUserBean(foxUser);
+			// 获取每个用户的部门
+			List<YYOrganization> foxOrganizations = yyOrganzationRepository.findOrganizationByUserId(foxUser.getId());
+			if (!CollectionUtils.isEmpty(foxOrganizations)) {
+				userDetailTemp.setOrganizationName(foxOrganizations.get(0).getName());
+			}
+			List<RoleItem> roleItems = new ArrayList<>();
+			foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
+				YYRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
+				RoleItem roleItem = new RoleItem();
+				roleItem.setId(foxRole.getId());
+				roleItem.setName(foxRole.getName());
+				roleItem.setRoleName(foxRole.getRoleName());
+				roleItem.setStatus(foxRole.getStatus());
+				roleItems.add(roleItem);
+			});
+			userDetailTemp.setRoles(roleItems);
+			UserDetailsItems.add(userDetailTemp);
+		});
+
+		_pageInfo.setTotalPage(foxUsers.getTotalPages());
+		_pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()).intValue());
+
+		return UserDetailsItems;
+	}
 
     @Override
     public void modifyPassword(PasswordProfile _passwordProfile) {

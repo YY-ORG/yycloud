@@ -183,14 +183,15 @@ public class UserMgmtController {
    }
    
    
-   @RequestMapping(value = "/authsec/adm/users/organization/{organization_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+   @RequestMapping(value = "/authsec/adm/users/organization/{organization_id}/page/{page}/size/{size}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
    @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
    @ApiImplicitParams({
            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
    })
-   public GeneralContentResult<List<UserItem>> getMembersInOrganization(
-           @PathVariable("organization_id") String _organizationId) {
-       return userMgmtService.getMembersInOrganization(_organizationId);
+   public GeneralContentResult<List<UserDetailsItem>> getMembersInOrganization(
+           @PathVariable("organization_id") String _organizationId,   @PathVariable(value = "page") Integer _page,
+           @PathVariable(value = "size") Integer _size) {
+       return userMgmtService.getMembersInOrganization(_organizationId,_page,_size);
    }
    
    

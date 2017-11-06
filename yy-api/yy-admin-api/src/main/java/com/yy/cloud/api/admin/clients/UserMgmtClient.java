@@ -213,6 +213,15 @@ public interface UserMgmtClient {
 	           @PathVariable("user_id") String _userId) ;
 	
 	
+	 
+	  @RequestMapping(value = "/authsec/users/organization/{organization_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	    @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
+	    @ApiImplicitParams({
+	            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+	    })
+	    public GeneralContentResult<List<UserDetailsItem>> getMembersInOrganization(
+	            @PathVariable("organization_id") String _organizationId,   @PathVariable(value = "page") Integer _page,
+	            @PathVariable(value = "size") Integer _size);
 	
   
 }

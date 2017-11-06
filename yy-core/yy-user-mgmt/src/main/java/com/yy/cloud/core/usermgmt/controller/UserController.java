@@ -241,12 +241,18 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
     })
-    public GeneralContentResult<List<UserItem>> getMembersInOrganization(
-            @PathVariable("organization_id") String _organizationId) {
-        GeneralContentResult<List<UserItem>> result = new GeneralContentResult();
+    public GeneralPagingResult<List<UserDetailsItem>> getMembersInOrganization(
+            @PathVariable("organization_id") String _organizationId,   @PathVariable(value = "page") Integer _page,
+            @PathVariable(value = "size") Integer _size) {
+    	GeneralPagingResult<List<UserDetailsItem>> result = new GeneralPagingResult<List<UserDetailsItem>>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
-        List<UserItem> userItems = userService.listUsersInOrganization(_organizationId);
+        
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setCurrentPage(_page);
+        pageInfo.setPageSize(_size);
+        List<UserDetailsItem> userItems = userService.listUsersInOrganization(_organizationId,pageInfo );
         result.setResultContent(userItems);
+        result.setPageInfo(pageInfo);
         return result;
     }
 

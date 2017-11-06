@@ -46,4 +46,11 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 	@Modifying
 	@Query("update YYUser f set f.status=?1 where f.id=?2")
 	public int setStatusFor(Byte status, String id);
+	
+	
+	@Query("SELECT * FROM YY_USER Y , YY_USER_INFO S WHERE Y.ID=S.USER_ID AND S.DEPT_ID='1' AND Y.STATUS <>'4' ")
+	Page<YYUser> findUsersByOrgId(String orgId, Pageable pageable);
+	
+	
+	
 }
