@@ -8,8 +8,6 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.List;
 
-import com.yy.cloud.common.data.otd.tenant.OrganizationItem;
-
 @Data
 @ApiModel
 public class UserDetailsItem implements Serializable, Principal {
