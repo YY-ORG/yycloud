@@ -51,6 +51,9 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
+	@Column(name="TEMPLATE_ITEM_ID")
+	private String templateItemId;
+
 	//bi-directional many-to-one association to PerTemplate
 	@ManyToOne
 	@JoinColumn(name="TEMPLATE_ID")
@@ -58,7 +61,7 @@ public class PerTemplateTiMap implements Serializable {
 
 	//bi-directional many-to-one association to PerTemplateItem
 	@ManyToOne
-	@JoinColumn(name="TEMPLATE_ITEM_ID")
+	@JoinColumn(name="TEMPLATE_ITEM_ID", insertable = false, updatable = false)
 	private PerTemplateItem perTemplateItem;
 
 	public PerTemplateTiMap() {
@@ -160,4 +163,12 @@ public class PerTemplateTiMap implements Serializable {
 		this.perTemplateItem = perTemplateItem;
 	}
 
+
+	public String getTemplateItemId() {
+		return templateItemId;
+	}
+
+	public void setTemplateItemId(String templateItemId) {
+		this.templateItemId = templateItemId;
+	}
 }

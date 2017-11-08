@@ -11,6 +11,15 @@ package com.yy.cloud.core.assess.controller;
 
 import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.assess.AssessPaperItem;
+import com.yy.cloud.common.data.dto.assess.AssessProfileReq;
+import com.yy.cloud.common.data.dto.assess.AssessWithIDProfileReq;
+import com.yy.cloud.common.data.dto.metadata.TemplateItemProfileReq;
+import com.yy.cloud.common.data.dto.metadata.TemplateItemWithIDProfileReq;
+import com.yy.cloud.common.data.dto.metadata.TemplateProfileReq;
+import com.yy.cloud.common.data.dto.metadata.TemplateWithIDProfileReq;
+import com.yy.cloud.common.data.otd.assess.SimpleAssessItem;
+import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
+import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import com.yy.cloud.common.service.SecurityService;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -87,8 +96,8 @@ public class AssessMgmtController {
 	@ApiOperation(value = "依据考卷ID来检索该考卷下的试题列表")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralContentResult<List<AssessMenuItem>> getAssessByAssessPaperId(@ApiParam(value = "Assess Paper ID")
-																				   @PathVariable(value = "_id", required = true) String _assessPaperId){
+	public GeneralContentResult<List<AssessMenuItem>> getAssessByAssessPaperId(@ApiParam(value = "Assess Profile")
+																				   @RequestBody String _assessPaperId){
 		GeneralContentResult<List<AssessMenuItem>> result = new GeneralContentResult<List<AssessMenuItem>>();
 		try {
 			log.info("Is going to retrieve the assess menu list for Assess Paper [{}]", _assessPaperId);
@@ -122,4 +131,107 @@ public class AssessMgmtController {
 		}
 		return result;
 	}
+
+	@RequestMapping(value = "/authsec/assess", method = RequestMethod.POST)
+	@ApiOperation(value = "单独创建考题")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<SimpleAssessItem> createAssess( @ApiParam(value = "创建题目") AssessProfileReq _profile) {
+		GeneralContentResult<SimpleAssessItem> result = new GeneralContentResult<>();
+		try {
+			result = this.assessService.createAssess(_profile);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/authsec/assess", method = RequestMethod.PUT)
+	@ApiOperation(value = "更新考题")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<SimpleAssessItem> updateAssess( @ApiParam(value = "更新题目") AssessWithIDProfileReq _profile) {
+		GeneralContentResult<SimpleAssessItem> result = new GeneralContentResult<>();
+		try {
+			result = this.assessService.updateAssess(_profile);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/authsec/assess/template/templateitem", method = RequestMethod.POST)
+	@ApiOperation(value = "创建考题的元素项")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<SimpleTemplateItem> createAssessTemplateItem(@ApiParam(value = "创建题目元素项") TemplateItemProfileReq _profile) {
+		GeneralContentResult<SimpleTemplateItem> result = new GeneralContentResult<>();
+		try {
+			result = this.assessService.createAssessTemplateItem(_profile);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+
+    @RequestMapping(value = "/authsec/assess/template/templateitem", method = RequestMethod.PUT)
+    @ApiOperation(value = "更新考题的元素项")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<SimpleTemplateItem> updateAssessTemplateItem(@ApiParam(value = "更新题目元素项") TemplateItemWithIDProfileReq _profile) {
+        GeneralContentResult<SimpleTemplateItem> result = new GeneralContentResult<>();
+        try {
+            result = this.assessService.updateAssessTemplateItem(_profile);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+	@RequestMapping(value = "/authsec/assess/template", method = RequestMethod.POST)
+	@ApiOperation(value = "创建考题的模板")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<SimpleTemplate> createAssessTemplate(@ApiParam(value = "创建题目模板") TemplateProfileReq _profile) {
+		GeneralContentResult<SimpleTemplate> result = new GeneralContentResult<>();
+		try {
+			result = this.assessService.createAssessTemplate(_profile);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+    @RequestMapping(value = "/authsec/assess/template", method = RequestMethod.PUT)
+    @ApiOperation(value = "更新考题的模板")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<SimpleTemplate> updateAssessTemplate(@ApiParam(value = "更新题目模板") TemplateWithIDProfileReq _profile) {
+        GeneralContentResult<SimpleTemplate> result = new GeneralContentResult<>();
+        try {
+            result = this.assessService.updateAssessTemplate(_profile);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
 }

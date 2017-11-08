@@ -15,13 +15,16 @@ import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.assess.AssessItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.assess.AssessPaperItem;
+import com.yy.cloud.common.data.dto.assess.AssessProfileReq;
+import com.yy.cloud.common.data.dto.assess.AssessWithIDProfileReq;
+import com.yy.cloud.common.data.dto.metadata.*;
 import com.yy.cloud.common.data.metadata.TemplateItem;
 import com.yy.cloud.common.data.metadata.TemplateItemItem;
+import com.yy.cloud.common.data.otd.assess.SimpleAssessItem;
+import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
+import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import com.yy.cloud.core.assess.data.domain.*;
-import com.yy.cloud.core.assess.data.repositories.PerAssessAspMapRepository;
-import com.yy.cloud.core.assess.data.repositories.PerAssessPaperRepository;
-import com.yy.cloud.core.assess.data.repositories.PerAssessRepository;
-import com.yy.cloud.core.assess.data.repositories.PerTemplateRepository;
+import com.yy.cloud.core.assess.data.repositories.*;
 import com.yy.cloud.core.assess.service.AssessMgmtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	private PerAssessPaperRepository perAssessPaperRepository;
 	@Autowired
 	private PerAssessAspMapRepository perAssessAspMapRepository;
+	@Autowired
+	private PerTemplateItemRepository perTemplateItemRepository;
 
 	@Override
 	public GeneralContentResult<AssessItem> getAssessItemById(String _id) {
@@ -237,5 +242,231 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setUpdateDate(_template.getUpdateDate());
 		return tempItem;
 	}
+
+	@Override
+	public GeneralContentResult<SimpleAssessItem> createAssess(AssessProfileReq _profile) {
+		GeneralContentResult<SimpleAssessItem> tempResult = new GeneralContentResult<>();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		if(_profile == null)
+			return tempResult;
+
+		PerAssess tempAssess = new PerAssess();
+		tempAssess.setCode(_profile.getCode());
+		tempAssess.setName(_profile.getName());
+		tempAssess.setType(_profile.getType());
+
+		List<PerAssessTemplateMap> tempMapList = new ArrayList<>();
+		if(_profile.getTemplateId() != null && _profile.getTemplateId().size() > 0){
+			for(String tempTemplateId : _profile.getTemplateId()){
+				PerAssessTemplateMap tempMapItem = new PerAssessTemplateMap();
+				tempMapItem.setTemplateId(tempTemplateId);
+				tempMapItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+				tempMapItem.setPerAssess(tempAssess);
+				tempMapList.add(tempMapItem);
+			}
+			tempAssess.setPerAssessTemplateMaps(tempMapList);
+		}
+		PerAssess newAssess = this.perAssessRepository.save(tempAssess);
+
+		SimpleAssessItem tempResultAssessItem = new SimpleAssessItem();
+		tempResultAssessItem.setCode(newAssess.getCode());
+		tempResultAssessItem.setName(newAssess.getName());
+		tempResultAssessItem.setType(newAssess.getType());
+		tempResultAssessItem.setType(newAssess.getType());
+		tempResultAssessItem.setStatus(newAssess.getStatus());
+		tempResultAssessItem.setId(newAssess.getId());
+
+		tempResult.setResultContent(tempResultAssessItem);
+		return tempResult;
+	}
+
+	@Override
+	public GeneralContentResult<SimpleAssessItem> updateAssess(AssessWithIDProfileReq _profile) {
+		GeneralContentResult<SimpleAssessItem> tempResult = new GeneralContentResult<>();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		if(_profile == null)
+			return tempResult;
+
+		PerAssess tempAssess = this.perAssessRepository.findOne(_profile.getId());
+		tempAssess.setCode(_profile.getCode());
+		tempAssess.setName(_profile.getName());
+		tempAssess.setType(_profile.getType());
+
+		List<PerAssessTemplateMap> tempMapList = tempAssess.getPerAssessTemplateMaps();
+		List<PerAssessTemplateMap> newMapList = new ArrayList<>();
+
+		if(_profile.getTemplateId() != null && _profile.getTemplateId().size() > 0){
+			for(String tempTemplateId : _profile.getTemplateId()){
+				Boolean findFlag = false;
+				for(PerAssessTemplateMap tempMap : tempMapList){
+					if(tempTemplateId.equals(tempMap.getTemplateId())){
+						findFlag = true;
+						newMapList.add(tempMap);
+						break;
+					}
+				}
+				if(findFlag)
+					continue;
+
+				PerAssessTemplateMap tempMapItem = new PerAssessTemplateMap();
+				tempMapItem.setTemplateId(tempTemplateId);
+				tempMapItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+				tempMapItem.setPerAssess(tempAssess);
+				newMapList.add(tempMapItem);
+			}
+		}
+		tempAssess.setPerAssessTemplateMaps(newMapList);
+		PerAssess newAssess = this.perAssessRepository.save(tempAssess);
+
+		SimpleAssessItem tempResultAssessItem = new SimpleAssessItem();
+		tempResultAssessItem.setCode(newAssess.getCode());
+		tempResultAssessItem.setName(newAssess.getName());
+		tempResultAssessItem.setType(newAssess.getType());
+		tempResultAssessItem.setType(newAssess.getType());
+		tempResultAssessItem.setStatus(newAssess.getStatus());
+		tempResultAssessItem.setId(newAssess.getId());
+
+		tempResult.setResultContent(tempResultAssessItem);
+		return tempResult;
+	}
+
+	@Override
+	public GeneralContentResult<SimpleTemplate> createAssessTemplate(TemplateProfileReq _req) {
+		GeneralContentResult<SimpleTemplate> tempResult = new GeneralContentResult<>();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		if(_req == null)
+			return tempResult;
+
+		PerTemplate tempTemplate = new PerTemplate();
+		tempTemplate.setCode(_req.getCode());
+		tempTemplate.setName(_req.getName());
+		tempTemplate.setType(_req.getType());
+		List<PerTemplateTiMap> tempMapList = new ArrayList<>();
+		if(_req.getItemList() != null && _req.getItemList().size() > 0){
+			for(TemplateItemMapReq tempTiReq : _req.getItemList()){
+				PerTemplateTiMap tempTiMap = new PerTemplateTiMap();
+				tempTiMap.setSeqNo(tempTiReq.getSeqNo());
+				tempTiMap.setEditable(tempTiReq.getEditable());
+				tempTiMap.setVisible(tempTiReq.getVisible());
+				tempTiMap.setMandatory(tempTiReq.getMandatory());
+				tempTiMap.setTemplateItemId(tempTiReq.getTemplateItemId());
+				tempMapList.add(tempTiMap);
+			}
+			tempTemplate.setPerTemplateTiMaps(tempMapList);
+		}
+
+		PerTemplate newTemplate = this.perTemplateRepository.save(tempTemplate);
+		SimpleTemplate tempResultTemplate = new SimpleTemplate();
+		tempResultTemplate.setCode(newTemplate.getCode());
+		tempResultTemplate.setName(newTemplate.getName());
+		tempResultTemplate.setType(newTemplate.getType());
+		tempResultTemplate.setId(newTemplate.getId());
+
+		tempResult.setResultContent(tempResultTemplate);
+		return tempResult;
+	}
+
+	@Override
+	public GeneralContentResult<SimpleTemplateItem> createAssessTemplateItem(TemplateItemProfileReq _req) {
+		PerTemplateItem tempTemplateItem = new PerTemplateItem();
+
+		tempTemplateItem.setCode(_req.getCode());
+		tempTemplateItem.setLabel(_req.getLabel());
+		tempTemplateItem.setName(_req.getName());
+		tempTemplateItem.setType(_req.getType());
+		tempTemplateItem.setPlaceholderTip(_req.getPlaceHolder());
+		tempTemplateItem.setTip(_req.getTip());
+		tempTemplateItem.setDefaultValue(_req.getDefaultValue());
+		tempTemplateItem.setValueSource(_req.getValueSource());
+		tempTemplateItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+
+		PerTemplateItem templateItem = this.perTemplateItemRepository.save(tempTemplateItem);
+		SimpleTemplateItem resultTemplateItem = new SimpleTemplateItem();
+		resultTemplateItem.setId(templateItem.getId());
+		resultTemplateItem.setCode(templateItem.getCode());
+		resultTemplateItem.setLabel(templateItem.getLabel());
+		resultTemplateItem.setName(templateItem.getName());
+		resultTemplateItem.setDefaultValue(templateItem.getDefaultValue());
+		resultTemplateItem.setValueSource(templateItem.getValueSource());
+		resultTemplateItem.setPlaceHolder(templateItem.getPlaceholderTip());
+		resultTemplateItem.setTip(templateItem.getTip());
+		resultTemplateItem.setStatus(templateItem.getStatus());
+
+		GeneralContentResult<SimpleTemplateItem> tempResult = new GeneralContentResult<>();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		tempResult.setResultContent(resultTemplateItem);
+		return tempResult;
+	}
+
+    @Override
+    public GeneralContentResult<SimpleTemplate> updateAssessTemplate(TemplateWithIDProfileReq _req) {
+        GeneralContentResult<SimpleTemplate> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        if(_req == null)
+            return tempResult;
+
+        PerTemplate tempTemplate = this.perTemplateRepository.findOne(_req.getId());
+        tempTemplate.setCode(_req.getCode());
+        tempTemplate.setName(_req.getName());
+        tempTemplate.setType(_req.getType());
+        List<PerTemplateTiMap> existsMapList = tempTemplate.getPerTemplateTiMaps();
+
+        List<PerTemplateTiMap> tempMapList = new ArrayList<>();
+
+        if(_req.getItemList() != null && _req.getItemList().size() > 0){
+            for(TemplateItemMapReq tempTiReq : _req.getItemList()){
+                PerTemplateTiMap tempTiMap = new PerTemplateTiMap();
+                tempTiMap.setSeqNo(tempTiReq.getSeqNo());
+                tempTiMap.setEditable(tempTiReq.getEditable());
+                tempTiMap.setVisible(tempTiReq.getVisible());
+                tempTiMap.setMandatory(tempTiReq.getMandatory());
+                tempTiMap.setTemplateItemId(tempTiReq.getTemplateItemId());
+                tempMapList.add(tempTiMap);
+            }
+            tempTemplate.setPerTemplateTiMaps(tempMapList);
+        }
+
+        PerTemplate newTemplate = this.perTemplateRepository.save(tempTemplate);
+        SimpleTemplate tempResultTemplate = new SimpleTemplate();
+        tempResultTemplate.setCode(newTemplate.getCode());
+        tempResultTemplate.setName(newTemplate.getName());
+        tempResultTemplate.setType(newTemplate.getType());
+        tempResultTemplate.setId(newTemplate.getId());
+
+        tempResult.setResultContent(tempResultTemplate);
+        return tempResult;
+    }
+
+    @Override
+    public GeneralContentResult<SimpleTemplateItem> updateAssessTemplateItem(TemplateItemWithIDProfileReq _req) {
+        PerTemplateItem tempTemplateItem = this.perTemplateItemRepository.findOne(_req.getId());
+
+        tempTemplateItem.setCode(_req.getCode());
+        tempTemplateItem.setLabel(_req.getLabel());
+        tempTemplateItem.setName(_req.getName());
+        tempTemplateItem.setType(_req.getType());
+        tempTemplateItem.setPlaceholderTip(_req.getPlaceHolder());
+        tempTemplateItem.setTip(_req.getTip());
+        tempTemplateItem.setDefaultValue(_req.getDefaultValue());
+        tempTemplateItem.setValueSource(_req.getValueSource());
+        tempTemplateItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+
+        PerTemplateItem templateItem = this.perTemplateItemRepository.save(tempTemplateItem);
+        SimpleTemplateItem resultTemplateItem = new SimpleTemplateItem();
+        resultTemplateItem.setId(templateItem.getId());
+        resultTemplateItem.setCode(templateItem.getCode());
+        resultTemplateItem.setLabel(templateItem.getLabel());
+        resultTemplateItem.setName(templateItem.getName());
+        resultTemplateItem.setDefaultValue(templateItem.getDefaultValue());
+        resultTemplateItem.setValueSource(templateItem.getValueSource());
+        resultTemplateItem.setPlaceHolder(templateItem.getPlaceholderTip());
+        resultTemplateItem.setTip(templateItem.getTip());
+        resultTemplateItem.setStatus(templateItem.getStatus());
+
+        GeneralContentResult<SimpleTemplateItem> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(resultTemplateItem);
+        return tempResult;
+    }
 }
 

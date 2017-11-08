@@ -50,7 +50,7 @@ public class PerTemplate implements Serializable {
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerTemplateTiMap
-	@OneToMany(mappedBy="perTemplate")
+	@OneToMany(cascade = { CascadeType.PERSIST },mappedBy="perTemplate")
 	private List<PerTemplateTiMap> perTemplateTiMaps;
 
 	public PerTemplate() {
