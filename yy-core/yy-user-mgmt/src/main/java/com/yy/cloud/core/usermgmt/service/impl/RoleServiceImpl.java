@@ -7,7 +7,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.yy.cloud.common.constant.CommonConstant;
@@ -16,18 +15,20 @@ import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.RoleProfile;
+import com.yy.cloud.common.data.otd.sysbase.MenuItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
-import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.service.SecurityService;
-import com.yy.cloud.core.usermgmt.constant.RoleTypeConstant;
 import com.yy.cloud.core.usermgmt.data.domain.YYRole;
+import com.yy.cloud.core.usermgmt.data.domain.YYRoleMenu;
 import com.yy.cloud.core.usermgmt.data.domain.YYUser;
+import com.yy.cloud.core.usermgmt.data.repositories.YYRoleMenuRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRoleRepository;
 import com.yy.cloud.core.usermgmt.service.RoleService;
+import com.yy.cloud.core.usermgmt.utils.VOUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +41,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private YYUserRoleRepository yyUserRoleRepository;
+    
+    @Autowired
+    private YYRoleMenuRepository yyRoleMenuRepository;
 
     @Autowired
     private YYUserRepository yyUserRepository;
@@ -62,6 +66,10 @@ public class RoleServiceImpl implements RoleService {
     public List<RoleItem> listRolesByPage(PageInfo _pageInfo) {
         PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize());
         Page<YYRole> foxRoles = yyRoleRepository.findAll(pageRequest);
+
+    	_pageInfo.setTotalPage(foxRoles.getTotalPages());
+		_pageInfo.setTotalRecords(new Long(foxRoles.getTotalElements()).intValue());
+        
         List<RoleItem> roleItems = new ArrayList<>();
         foxRoles.forEach(
                 foxRole -> {
@@ -76,18 +84,6 @@ public class RoleServiceImpl implements RoleService {
         return roleItems;
     }
 
-    //是否后台用户
-    private boolean isProviderUser(){
-        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}", userDetailsItem);
-        String tenantId = userDetailsItem.getEnterpriseId();
-        Byte tenantType = userDetailsItem.getEnterpriseType();
-        if(null == tenantId || null == tenantType || CommonConstant.DIC_TENANT_TYPE_PROVIDER.equals(tenantType)){
-            return true;
-        }else{
-            return false;
-        }
-    }
 
     @Override
     public GeneralContentResult<List<UserItem>> findMppUserByRoleList(String tenantId, List<String> roleNames) {
@@ -123,7 +119,53 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public GeneralResult roleAndMenuManage(RoleDetailsItem roleDetailsItem) {
-		// TODO Auto-generated method stub
-		return new GeneralResult() ;
+		String _roleId=roleDetailsItem.getRoleId();
+		List<MenuItem> menus=roleDetailsItem.getMenus();
+		if (menus != null) {
+			for (MenuItem menu : menus) {
+				if(menu.isSelected()){
+					saveRoleMenu(_roleId, menu);
+				}else{
+					
+					deleteRoleMenu(_roleId, menu);
+				}
+				
+				if (menu.getChildren() != null) {
+					List<MenuItem> MenuItemchilds = menu.getChildren();
+					if (MenuItemchilds != null) {
+						for (MenuItem childMenu : MenuItemchilds) {
+							if(menu.isSelected()){
+								saveRoleMenu(_roleId, childMenu);
+							}else{
+								deleteRoleMenu(_roleId, menu);
+							}
+							
+						}
+					}
+				}
+			}
+		}
+		GeneralResult reslut=new GeneralResult();
+		reslut.setResultCode(ResultCode.OPERATION_SUCCESS);
+		reslut.setDetailDescription(ResultCode.OPERATION_SUCCESS);
+		return reslut;
 	}
+
+	private void saveRoleMenu(String _roleId, MenuItem menu) {
+		List<YYRoleMenu> foxRoleMenus = yyRoleMenuRepository.findByMenuIdAndRoleId(menu.getId(), _roleId);
+		    if (foxRoleMenus.isEmpty()) {
+		        YYRoleMenu foxRoleMenu = new YYRoleMenu();
+		        foxRoleMenu.setMenuId(menu.getId());
+		        foxRoleMenu.setRoleId(_roleId);
+		        foxRoleMenu.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		        yyRoleMenuRepository.save(foxRoleMenu);
+		    }
+	}
+	private void deleteRoleMenu(String _roleId, MenuItem menu) {
+		List<YYRoleMenu> foxRoleMenus = yyRoleMenuRepository.findByMenuIdAndRoleId(menu.getId(), _roleId);
+		    if (!foxRoleMenus.isEmpty()) {
+		    	yyRoleMenuRepository.delete(foxRoleMenus);
+		    }
+	}
+	
 }

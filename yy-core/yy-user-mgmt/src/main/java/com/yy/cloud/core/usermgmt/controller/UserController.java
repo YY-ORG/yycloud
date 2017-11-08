@@ -187,18 +187,18 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
     })
-    public GeneralPagingResult<List<UserItem>> findUsersByUserName(
+    public GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(
             @RequestParam(value = "userName", required = false) String _userName,
             @RequestParam(value = "page") Integer _page,
             @RequestParam(value = "size") Integer _size) {
-        GeneralPagingResult<List<UserItem>> result = new GeneralPagingResult();
+        GeneralPagingResult<List<UserDetailsItem>> result = new GeneralPagingResult<List<UserDetailsItem>>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
         PageInfo pageInfo = new PageInfo();
         pageInfo.setCurrentPage(_page);
         pageInfo.setPageSize(_size);
 
-        List<UserItem> userItems = userService.listUsersByUserName(pageInfo, _userName);
+        List<UserDetailsItem> userItems = userService.listUsersByUserName(pageInfo, _userName);
 
         result.setResultContent(userItems);
         result.setPageInfo(pageInfo);
@@ -213,9 +213,11 @@ public class UserController {
     public GeneralResult modifyUser(
             @PathVariable("user_id") String _userId,
             @RequestBody UserProfile _userProfile) {
+    	  log.debug("The method of UserController.modifyUser is begin");
         GeneralResult result = new GeneralResult();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
         _userProfile.setId(_userId);
+        
         userService.modifyUser(_userProfile);
         return result;
     }
@@ -234,17 +236,23 @@ public class UserController {
         return result;
     }
 
-    @RequestMapping(value = "/authsec/users/organization/{organization_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/authsec/users/organization/{organization_id}/page/{page}/size/{size}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
     })
-    public GeneralContentResult<List<UserItem>> getMembersInOrganization(
-            @PathVariable("organization_id") String _organizationId) {
-        GeneralContentResult<List<UserItem>> result = new GeneralContentResult();
+    public GeneralPagingResult<List<UserDetailsItem>> getMembersInOrganization(
+            @PathVariable("organization_id") String _organizationId,   @PathVariable(value = "page") Integer _page,
+            @PathVariable(value = "size") Integer _size) {
+    	GeneralPagingResult<List<UserDetailsItem>> result = new GeneralPagingResult<List<UserDetailsItem>>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
-        List<UserItem> userItems = userService.listUsersInOrganization(_organizationId);
+        
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setCurrentPage(_page);
+        pageInfo.setPageSize(_size);
+        List<UserDetailsItem> userItems = userService.listUsersInOrganization(_organizationId,pageInfo );
         result.setResultContent(userItems);
+        result.setPageInfo(pageInfo);
         return result;
     }
 
@@ -338,4 +346,16 @@ public class UserController {
     public GeneralContentResult<FoxUserItem> validateUserType(@RequestParam(value = "loginName") String loginName){
         return userService.validateUserType(loginName);
     }
+    
+    
+    @RequestMapping(value = "/authsec/adm/user/{user_id}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "用户中心-账号管理，删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult deleteUser(
+            @PathVariable("user_id") String _userId) {
+        return userService.deleteUser(_userId);
+    }
+    
 }

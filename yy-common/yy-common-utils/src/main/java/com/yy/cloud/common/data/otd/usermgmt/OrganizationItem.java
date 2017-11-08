@@ -15,5 +15,15 @@ public class OrganizationItem {
     
     @ApiModelProperty(notes = "部门描述")
     private String desc;
+    
+    @ApiModelProperty(notes = "部门leader")
+    private String leaderName;
+    
+    @ApiModelProperty(notes = "部门leaderID")
+    private String leaderId;
+    
+    
+    @ApiModelProperty(notes = "部门serial")
+    private String serial;
 
 }

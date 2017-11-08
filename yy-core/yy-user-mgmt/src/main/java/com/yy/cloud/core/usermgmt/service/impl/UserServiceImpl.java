@@ -1,11 +1,13 @@
 package com.yy.cloud.core.usermgmt.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +16,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
@@ -29,6 +33,7 @@ import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
 import com.yy.cloud.common.exception.NoRecordFoundException;
 import com.yy.cloud.common.service.SecurityService;
+import com.yy.cloud.common.utils.AssertHelper;
 import com.yy.cloud.common.utils.DateUtils;
 import com.yy.cloud.core.usermgmt.constant.AdUserMgmtConstants;
 import com.yy.cloud.core.usermgmt.constant.UserMgmtConstants;
@@ -39,6 +44,7 @@ import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
 import com.yy.cloud.core.usermgmt.data.domain.YYUserRole;
 import com.yy.cloud.core.usermgmt.data.repositories.YYOrganizationRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
+import com.yy.cloud.core.usermgmt.data.repositories.YYUserInfoRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserOrganizationRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRoleRepository;
@@ -54,6 +60,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private YYUserRepository foxUserRepository;
+    
+    
+    @Autowired
+    private YYUserInfoRepository yyUserInfoRepository;
 
     @Autowired
     private YYUserOrganizationRepository foxUserOrganizationRepository;
@@ -174,48 +184,69 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void modifyUser(UserProfile _userProfile) {
-        YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userProfile.getId())).orElseThrow(
-                () -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
+	public void modifyUser(UserProfile _userProfile) {
+    	
+			log.debug("The method modifyUser is begin");
+			YYUser foxUser = Optional.ofNullable(foxUserRepository.findOne(_userProfile.getId())).orElseThrow(
+					() -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
 
-        String userId = _userProfile.getId();
-        String password = foxUser.getPassword();
-        Byte status = foxUser.getStatus();
-        Byte type = foxUser.getType();
-        String loginName = foxUser.getLoginName();
+			String userId = _userProfile.getId();
+			String password = foxUser.getPassword();
+			Byte status = foxUser.getStatus();
+			Byte type = foxUser.getType();
+			String loginName = foxUser.getLoginName();
 
-        foxUser = modelMapper.map(_userProfile, YYUser.class);
-        foxUser.setStatus(status);
-        foxUser.setPassword(password);
-        foxUser.setType(type);
-        foxUser.setLoginName(loginName);
-        UserDetailsItem userDetailItem = securityService.getCurrentUser();
-        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem );
+			foxUser = modelMapper.map(_userProfile, YYUser.class);
+			
+			log.debug("The value foxUser.loginName is \'"+foxUser.getLoginName()+"\'");
+			foxUser.setStatus(status);
+			foxUser.setPassword(password);
+			foxUser.setType(type);
+			foxUser.setLoginName(loginName);
+			UserDetailsItem userDetailItem = securityService.getCurrentUser();
+			log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem);
 
-        foxUserRepository.save(foxUser);
+			YYUserInfo yyUserInfo = yyUserInfoRepository.findByUser(foxUser);
+			
+			log.debug(CommonConstant.LOG_DEBUG_TAG + "获取用户Info",  yyUserInfo);
+			
+			if (AssertHelper.notEmpty(_userProfile.getAddress())) {
+				yyUserInfo.setAddress(_userProfile.getAddress());
+			}
+			if (AssertHelper.notEmpty(_userProfile.getOrgId())) {
 
-        // 绑定角色
-        if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
-            List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
-            foxUserRoleRepository.deleteInBatch(foxUserRoles);
+				yyUserInfo.setDeptId(_userProfile.getOrgId());
 
-            // 过滤重复的roleId
-            Set<String> roleIdSet = new HashSet<String>();
-            _userProfile.getRoles().forEach(roleProfile -> {
-                roleIdSet.add(roleProfile.getId());
-            });
+			}
+			if (AssertHelper.notEmpty(_userProfile.getEmail())) {
 
-            roleIdSet.forEach(roleId -> {
-                YYUserRole foxUserRole = new YYUserRole();
-                foxUserRole.setRoleId(roleId);
-                foxUserRole.setUserId(userId);
-                foxUserRoleRepository.save(foxUserRole);
-            });
-        }
+				yyUserInfo.setEmail(_userProfile.getEmail());
+			}
+			if (AssertHelper.notEmpty(_userProfile.getGender())) {
+				yyUserInfo.setGender(_userProfile.getGender());
+			}
+			foxUser.setUserInfo(yyUserInfo);
+			foxUserRepository.save(foxUser);
+			// 绑定角色
+			if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
+				List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
+				foxUserRoleRepository.deleteInBatch(foxUserRoles);
 
-        // 绑定机构
-        
-    }
+				// 过滤重复的roleId
+				Set<String> roleIdSet = new HashSet<String>();
+				_userProfile.getRoles().forEach(roleProfile -> {
+					roleIdSet.add(roleProfile.getId());
+				});
+
+				roleIdSet.forEach(roleId -> {
+					YYUserRole foxUserRole = new YYUserRole();
+					foxUserRole.setRoleId(roleId);
+					foxUserRole.setUserId(userId);
+					foxUserRole.setCreateDate(new Date());
+					foxUserRoleRepository.save(foxUserRole);
+				});
+			}
+	}
 
     @Override
     public void updateUserStatus(String _userId, Byte _status) {
@@ -237,13 +268,75 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserItem> listUsersByPage(PageInfo _pageInfo, Byte _status) {
     	
+    	
     	return new ArrayList<UserItem>();
     }
 
     @Override
-    public List<UserItem> listUsersByUserName(PageInfo _pageInfo, String _userName) {
+    public List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName) {
+		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
+				Sort.Direction.DESC, "createDate");
+
+		UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
+		Page<YYUser> foxUsers;
+		List<UserDetailsItem> UserDetailsItems = new ArrayList<UserDetailsItem>();
+		if (StringUtils.isBlank(_userName)) {
+			foxUsers = foxUserRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+					pageRequest);
+		} else {
+			foxUsers = foxUserRepository.findByStatusLessThanAndUserInfoUserNameLike(
+					 CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+					"%" + _userName + "%", pageRequest);
+		}
+		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
+		foxUsers.forEach(foxUser -> {
+			UserDetailsItem userDetailTemp = restructUserBean(foxUser);
+			// 获取每个用户的部门
+			List<YYOrganization> foxOrganizations = yyOrganzationRepository
+					.findOrganizationByUserId(foxUser.getId());
+			if (!CollectionUtils.isEmpty(foxOrganizations)) {
+				userDetailTemp.setOrganizationName(foxOrganizations.get(0).getName());
+			}
+			List<RoleItem> roleItems = new ArrayList<>();
+	        foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
+	            YYRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
+	            RoleItem roleItem = new RoleItem();
+	            roleItem.setId(foxRole.getId());
+	            roleItem.setName(foxRole.getName());
+	            roleItem.setRoleName(foxRole.getRoleName());
+	            roleItem.setStatus(foxRole.getStatus());
+	            roleItems.add(roleItem);
+	        });
+	        userDetailTemp.setRoles(roleItems);
+			UserDetailsItems.add(userDetailTemp);
+		});
+	
+
+		_pageInfo.setTotalPage(foxUsers.getTotalPages());
+		_pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()).intValue());
+
+		return UserDetailsItems;
+	}
+    
+    
+    /**
+     * 
+     * @param yyUser
+     * @return
+     */
+    private UserDetailsItem  restructUserBean(YYUser yyUser){
+    	UserDetailsItem userDetailsItem= new UserDetailsItem();
+    	 userDetailsItem.setUserId(yyUser.getId());
+         userDetailsItem.setLoginName(yyUser.getLoginName());
+         userDetailsItem.setPassword(yyUser.getPassword());
+         userDetailsItem.setUserName(yyUser.getUserInfo().getUserName());
+         userDetailsItem.setEmail(yyUser.getUserInfo().getEmail());
+         userDetailsItem.setPhone(yyUser.getUserInfo().getPhone());
+         userDetailsItem.setStatus(yyUser.getStatus());
+         userDetailsItem.setDescription(yyUser.getDescription());
     	
-    	return new ArrayList<UserItem>();
+    	return userDetailsItem;
     }
 
     @Override
@@ -266,10 +359,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserItem> listUsersInOrganization(String _organizationId) {
-    	
-    	return new ArrayList<UserItem>();
-    }
+	public List<UserDetailsItem> listUsersInOrganization(String _organizationId, PageInfo _pageInfo) {
+		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize());
+
+		UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
+		Page<YYUser> foxUsers;
+		List<UserDetailsItem> UserDetailsItems = new ArrayList<UserDetailsItem>();
+		foxUsers = foxUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId, pageRequest);
+		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
+		foxUsers.forEach(foxUser -> {
+			UserDetailsItem userDetailTemp = restructUserBean(foxUser);
+			// 获取每个用户的部门
+			List<YYOrganization> foxOrganizations = yyOrganzationRepository.findOrganizationByUserId(foxUser.getId());
+			if (!CollectionUtils.isEmpty(foxOrganizations)) {
+				userDetailTemp.setOrganizationName(foxOrganizations.get(0).getName());
+
+				List<OrganizationItem> organizations = new ArrayList<OrganizationItem>();
+				OrganizationItem item = new OrganizationItem();
+
+				item.setId(foxOrganizations.get(0).getId());
+				item.setDesc(foxOrganizations.get(0).getDescription());
+				item.setOrganizitionName(foxOrganizations.get(0).getName());
+				item.setLeaderId(foxOrganizations.get(0).getLeadeShip());
+				userDetailTemp.setOrganizations(organizations);
+			}
+			List<RoleItem> roleItems = new ArrayList<>();
+			foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
+				YYRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
+				RoleItem roleItem = new RoleItem();
+				roleItem.setId(foxRole.getId());
+				roleItem.setName(foxRole.getName());
+				roleItem.setRoleName(foxRole.getRoleName());
+				roleItem.setStatus(foxRole.getStatus());
+				roleItems.add(roleItem);
+			});
+			userDetailTemp.setRoles(roleItems);
+			UserDetailsItems.add(userDetailTemp);
+		});
+
+		_pageInfo.setTotalPage(foxUsers.getTotalPages());
+		_pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()).intValue());
+
+		return UserDetailsItems;
+	}
 
     @Override
     public void modifyPassword(PasswordProfile _passwordProfile) {
@@ -443,6 +576,17 @@ public class UserServiceImpl implements UserService {
         log.info(CommonConstant.LOG_DEBUG_TAG + "通过登录名判断该用户是前台用户还是后台用户,结果：{}", generalContentResult);
         return generalContentResult;
     }
+    
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public GeneralResult deleteUser(String id) {
+    	foxUserRepository.setStatusFor(UserMgmtConstants.STATUS_GLOBAL_DELETED, id);
+    	GeneralResult result = new GeneralResult();
+    	result.setResultCode(ResultCode.OPERATION_SUCCESS);
+    	return result;
+    	
+	}
 
     
 }

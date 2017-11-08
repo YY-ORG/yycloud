@@ -17,25 +17,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.yy.cloud.core.usermgmt.data.domain.YYOrganization;
+import java.lang.String;
 
 @Repository
 public interface YYOrganizationRepository extends JpaRepository<YYOrganization, String> {
-
-	Page<YYOrganization> findByStatus(Byte status, Pageable pageable);
 	
 	@Query(value = "SELECT O.* FROM yy_user_organization UO LEFT JOIN yy_organization O ON UO.ORGANIZATION_ID=O.ID WHERE UO.USER_ID = ?1", nativeQuery = true)
 	List<YYOrganization> findOrganizationByUserId(String userId);
 	
+	Page<YYOrganization> findByStatusLessThan( Byte status, Pageable pageable);
+
+	List<YYOrganization> findByStatusLessThan( Byte status);
+
+	Page<YYOrganization> findByStatus( Byte status, Pageable pageable);
+
 	
-	
-	
-
-	@Query("SELECT f FROM YYOrganization f WHERE f.id IN (SELECT u.organizationId FROM YYUserOrganization u WHERE u.userId=?1)")
-	Page<YYOrganization> findByUserId(String userId, Pageable pageable);
-
-	@Query("SELECT f FROM YYOrganization f WHERE f.id IN (?1)")
-	List<YYOrganization> findByIdIn(List<String> ids);
-
-
-
+	List<YYOrganization> findByNameAndStatusLessThan(String name, Byte status);
 }

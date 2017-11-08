@@ -52,6 +52,12 @@ public class YYOrganization implements Serializable {
 	@Column(name = "PARENT_ID")
 	private String parentId;
 	
+	@Column(name = "SERIAL")
+	private String serial;
+	
+	@Column(name = "LEADER_SHIP")
+	private String leadeShip;
+	
 	@Column(name = "CREATE_BY")
 	private String createBy;
 	

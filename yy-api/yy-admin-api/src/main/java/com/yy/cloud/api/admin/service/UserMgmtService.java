@@ -2,6 +2,9 @@ package com.yy.cloud.api.admin.service;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
@@ -74,13 +77,15 @@ public interface UserMgmtService {
 
     GeneralResult modifyAdmPassword(PasswordProfile _passwordProfile);
 
-    GeneralContentResult<List<UserItem>> getMembersInOrganization(String _organizationId);
+    GeneralContentResult<List<UserDetailsItem>> getMembersInOrganization(
+            String _organizationId,    Integer _page,
+             Integer _size);
 
     GeneralPagingResult<List<UserItem>> getNonOrganizationMembers(Integer _page, Integer _size);
 
     GeneralContentResult<UserDetailsItem> loadUserById(String _userId);
 
-    GeneralPagingResult<List<UserItem>> findUsersByUserName(String _userName, Integer _page, Integer _size);
+    GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(String _userName, Integer _page, Integer _size);
 
     GeneralContentResult<String> validateLoginName(String _loginName);
 

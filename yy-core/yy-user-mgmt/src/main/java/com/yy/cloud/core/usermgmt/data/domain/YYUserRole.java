@@ -43,7 +43,7 @@ public class YYUserRole implements Serializable {
     @Column(name = "ROLE_ID")
     private String roleId;
 
-    @Column(name = "CREATE_DATE", updatable = false)
+    @Column(name = "CREATE_DATE", updatable = false, insertable=true)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 

@@ -6,10 +6,12 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.yy.cloud.core.usermgmt.data.domain.YYUser;
+import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
 
 /**
  * ClassName: AcmeUser UserRepository <br/>
@@ -35,4 +37,18 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 	List<YYUser> findAdmUserByRoleList(List<String> roleNames);
 
 	YYUser findByLoginNameOrId(String _loginName, String _id);
+	
+	Page<YYUser> findByStatusLessThan( Byte status, Pageable pageable);
+	
+	Page<YYUser> findByStatusLessThanAndUserInfoUserNameLike( Byte status, String username,
+			Pageable pageable);
+	
+	
+	@Modifying
+	@Query("update YYUser f set f.status=?1 where f.id=?2")
+	public int setStatusFor(Byte status, String id);
+	
+	Page<YYUser> findByStatusLessThanAndUserInfoDeptId(Byte status,String orgId, Pageable pageable);
+	
+	
 }

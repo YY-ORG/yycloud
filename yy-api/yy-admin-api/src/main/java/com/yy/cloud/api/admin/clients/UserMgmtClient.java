@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
@@ -181,5 +183,45 @@ public interface UserMgmtClient {
 	@RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	GeneralContentResult<UserDetailsItem> findUserById(@PathVariable("user_id") String _userId);
 
+	
+	@RequestMapping(value = "/authsec/users/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "用户中心-账户管理，通过用户名模糊查询账户")
+	@ApiImplicitParams({
+			@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ") })
+	public GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(
+			@RequestParam(value = "userName", required = false) String _userName,
+			@RequestParam(value = "page") Integer _page, @RequestParam(value = "size") Integer _size);
+	
+	
+	
+	@RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，编辑账号，本地")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralResult modifyUser(
+            @PathVariable("user_id") String _userId,
+            @RequestBody UserProfile _userProfile) ;
+	
+	
+	 @RequestMapping(value = "/authsec/adm/user/{user_id}", method = RequestMethod.DELETE)
+	   @ApiOperation(value = "用户中心-账号管理，删除")
+	   @ApiImplicitParams({
+	           @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+	   })
+	   public GeneralResult deleteUser(
+	           @PathVariable("user_id") String _userId) ;
+	
+	
+	 
+	  @RequestMapping(value = "/authsec/users/organization/{organization_id}/page/{page}/size/{size}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	    @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
+	    @ApiImplicitParams({
+	            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+	    })
+	    public GeneralContentResult<List<UserDetailsItem>> getMembersInOrganization(
+	            @PathVariable("organization_id") String _organizationId,   @PathVariable(value = "page") Integer _page,
+	            @PathVariable(value = "size") Integer _size);
+	
   
 }
