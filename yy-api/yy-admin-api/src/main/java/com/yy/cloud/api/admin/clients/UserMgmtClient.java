@@ -219,7 +219,7 @@ public interface UserMgmtClient {
 	    @ApiImplicitParams({
 	            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
 	    })
-	    public GeneralContentResult<List<UserDetailsItem>> getMembersInOrganization(
+	    public GeneralPagingResult<List<UserDetailsItem>> getMembersInOrganization(
 	            @PathVariable("organization_id") String _organizationId,   @PathVariable(value = "page") Integer _page,
 	            @PathVariable(value = "size") Integer _size);
 	

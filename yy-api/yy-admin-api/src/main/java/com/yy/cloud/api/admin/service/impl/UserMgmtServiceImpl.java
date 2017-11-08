@@ -127,7 +127,7 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 	}
 
 	@Override
-	public GeneralContentResult<List<UserDetailsItem>> getMembersInOrganization(String _organizationId, Integer _page,
+	public GeneralPagingResult<List<UserDetailsItem>>  getMembersInOrganization(String _organizationId, Integer _page,
 			Integer _size) {
 		return userMgmtClient.getMembersInOrganization(_organizationId,_page,_size);
 	}

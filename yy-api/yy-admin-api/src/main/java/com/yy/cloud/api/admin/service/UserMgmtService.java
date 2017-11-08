@@ -77,7 +77,7 @@ public interface UserMgmtService {
 
     GeneralResult modifyAdmPassword(PasswordProfile _passwordProfile);
 
-    GeneralContentResult<List<UserDetailsItem>> getMembersInOrganization(
+    GeneralPagingResult<List<UserDetailsItem>> getMembersInOrganization(
             String _organizationId,    Integer _page,
              Integer _size);
 
