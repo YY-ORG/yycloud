@@ -28,7 +28,6 @@ import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRepository;
 import com.yy.cloud.core.usermgmt.data.repositories.YYUserRoleRepository;
 import com.yy.cloud.core.usermgmt.service.RoleService;
-import com.yy.cloud.core.usermgmt.utils.VOUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -134,10 +133,10 @@ public class RoleServiceImpl implements RoleService {
 					List<MenuItem> MenuItemchilds = menu.getChildren();
 					if (MenuItemchilds != null) {
 						for (MenuItem childMenu : MenuItemchilds) {
-							if(menu.isSelected()){
+							if(childMenu.isSelected()){
 								saveRoleMenu(_roleId, childMenu);
 							}else{
-								deleteRoleMenu(_roleId, menu);
+								deleteRoleMenu(_roleId, childMenu);
 							}
 							
 						}
