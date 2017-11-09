@@ -297,6 +297,7 @@ public class UserServiceImpl implements UserService {
 					.findOrganizationByUserId(foxUser.getId());
 			if (!CollectionUtils.isEmpty(foxOrganizations)) {
 				userDetailTemp.setOrganizationName(foxOrganizations.get(0).getName());
+				userDetailTemp.setOrganizationId(foxOrganizations.get(0).getId());
 			}
 			List<RoleItem> roleItems = new ArrayList<>();
 	        foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
