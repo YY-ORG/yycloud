@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.List;
 
+
 @Data
 @ApiModel
 public class UserDetailsItem implements Serializable, Principal {
@@ -59,6 +60,37 @@ public class UserDetailsItem implements Serializable, Principal {
     private List<OrganizationItem> organizations;
 
     private List<RoleItem> roles;
+    
+    
+    
+	private byte gender;
+
+	/**
+	 * 岗位类型:参考数据字典
+	 */
+	private byte occupationType;
+	
+	
+	/**
+	 * 职称:参考数据字典
+	 */
+	private byte professionalTitle;
+	
+	/**
+	 * 行政级别:参考数据字典
+	 */
+	private byte administrativeRank;
+	
+	/**
+	 * 行政职务: 参考数据字典
+	 */
+	private byte administrativePost;
+	
+	
+	/**
+	 * 部门Id
+	 */
+	private String deptId;
 
 	@Override
 	public String getName() {

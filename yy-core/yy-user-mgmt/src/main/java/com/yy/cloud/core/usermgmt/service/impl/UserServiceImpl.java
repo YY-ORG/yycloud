@@ -249,13 +249,8 @@ public class UserServiceImpl implements UserService {
 			}
 			
 			
-			
-			
-			
-			
-			
-			
-			
+
+			yyUserInfo.setUser(foxUser);
 			foxUser.setUserInfo(yyUserInfo);
 			foxUserRepository.save(foxUser);
 			// 绑定角色
@@ -323,12 +318,13 @@ public class UserServiceImpl implements UserService {
 		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
 		foxUsers.forEach(foxUser -> {
 			UserDetailsItem userDetailTemp = restructUserBean(foxUser);
+			
+			
 			// 获取每个用户的部门
-			List<YYOrganization> foxOrganizations = yyOrganzationRepository
-					.findOrganizationByUserId(foxUser.getId());
-			if (!CollectionUtils.isEmpty(foxOrganizations)) {
-				userDetailTemp.setOrganizationName(foxOrganizations.get(0).getName());
-				userDetailTemp.setOrganizationId(foxOrganizations.get(0).getId());
+			YYOrganization foxOrganizations = yyOrganzationRepository.findOne(userDetailTemp.getDeptId());
+			if (foxOrganizations!=null) {
+				userDetailTemp.setOrganizationName(foxOrganizations.getName());
+				userDetailTemp.setOrganizationId(foxOrganizations.getId());
 			}
 			List<RoleItem> roleItems = new ArrayList<>();
 	        foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
@@ -368,6 +364,13 @@ public class UserServiceImpl implements UserService {
          userDetailsItem.setStatus(yyUser.getStatus());
          userDetailsItem.setDescription(yyUser.getDescription());
     	
+         userDetailsItem.setAdministrativePost(yyUser.getUserInfo().getAdministrativePost());
+         userDetailsItem.setGender(yyUser.getUserInfo().getGender());
+         userDetailsItem.setAdministrativeRank(yyUser.getUserInfo().getAdministrativeRank());
+         userDetailsItem.setOrganizationId(yyUser.getUserInfo().getDeptId());
+         userDetailsItem.setProfessionalTitle(yyUser.getUserInfo().getProfessionalTitle());
+         userDetailsItem.setOccupationType(yyUser.getUserInfo().getOccupationType());
+         
     	return userDetailsItem;
     }
 
