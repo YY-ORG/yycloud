@@ -225,6 +225,37 @@ public class UserServiceImpl implements UserService {
 			if (AssertHelper.notEmpty(_userProfile.getGender())) {
 				yyUserInfo.setGender(_userProfile.getGender());
 			}
+			
+			
+			if (AssertHelper.notEmpty(_userProfile.getPhone())) {
+				yyUserInfo.setPhone(_userProfile.getPhone());
+			}
+			
+			if (AssertHelper.notEmpty(_userProfile.getAdministrativePost())) {
+				yyUserInfo.setAdministrativePost(_userProfile.getAdministrativePost());
+			}
+			
+			
+			if (AssertHelper.notEmpty(_userProfile.getAdministrativeRank())) {
+				yyUserInfo.setAdministrativeRank(_userProfile.getAdministrativeRank());
+			}
+			
+			if (AssertHelper.notEmpty(_userProfile.getOccupationType())) {
+				yyUserInfo.setOccupationType(_userProfile.getOccupationType());
+			}
+			
+			if (AssertHelper.notEmpty(_userProfile.getProfessionalTitle())) {
+				yyUserInfo.setProfessionalTitle(_userProfile.getProfessionalTitle());
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			foxUser.setUserInfo(yyUserInfo);
 			foxUserRepository.save(foxUser);
 			// 绑定角色
