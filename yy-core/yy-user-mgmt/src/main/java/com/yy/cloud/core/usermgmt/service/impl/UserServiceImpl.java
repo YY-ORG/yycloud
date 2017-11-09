@@ -370,6 +370,7 @@ public class UserServiceImpl implements UserService {
          userDetailsItem.setOrganizationId(yyUser.getUserInfo().getDeptId());
          userDetailsItem.setProfessionalTitle(yyUser.getUserInfo().getProfessionalTitle());
          userDetailsItem.setOccupationType(yyUser.getUserInfo().getOccupationType());
+         userDetailsItem.setDeptId(yyUser.getUserInfo().getDeptId());
          
     	return userDetailsItem;
     }
