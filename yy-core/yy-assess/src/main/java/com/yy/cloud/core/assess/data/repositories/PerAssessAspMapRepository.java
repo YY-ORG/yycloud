@@ -29,5 +29,6 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "perAssessAspMap", path = "perAssessAspMap")
 public interface PerAssessAspMapRepository extends JpaRepository<PerAssessAspMap, String> {
     List<PerAssessAspMap> findByAssessPaperIdAndStatus(String _assessPaperId, Byte _status);
+    void deletePerAssessAspMapsByAssessPaperId(String _assessPaperId);
 }
 

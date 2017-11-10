@@ -9,10 +9,13 @@
 
 package com.yy.cloud.core.assess.data.repositories;
 
+import com.yy.cloud.core.assess.data.domain.PerAssess;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessTemplateMap;
+
+import java.util.List;
 
 /**
  * ClassName:PerAssessTemplateMapRepository <br/>
@@ -26,6 +29,8 @@ import com.yy.cloud.core.assess.data.domain.PerAssessTemplateMap;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssessTemplateMap", path = "perAssessTemplateMap")
 public interface PerAssessTemplateMapRepository extends JpaRepository<PerAssessTemplateMap, String> {
-
+    List<PerAssessTemplateMap> findByTemplateId(String _templateId);
+    void deleteByTemplateId(String _templateId);
+    void deleteByPerAssess(PerAssess _assess);
 }
 

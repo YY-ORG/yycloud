@@ -26,6 +26,6 @@ import com.yy.cloud.core.assess.data.domain.PerTemplateTiMap;
  */
 @RepositoryRestResource(collectionResourceRel = "perTemplateTiMap", path = "perTemplateTiMap")
 public interface PerTemplateTiMapRepository extends JpaRepository<PerTemplateTiMap, String> {
-
+    void deletePerTemplateTiMapsByTemplateItemId(String _templateItemId);
 }
 

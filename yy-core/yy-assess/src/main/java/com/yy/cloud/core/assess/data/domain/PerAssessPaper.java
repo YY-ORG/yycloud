@@ -37,6 +37,9 @@ public class PerAssessPaper implements Serializable {
 	@Column(name="NAME")
 	private String name;
 
+	@Column(name="TITLE_TYPE")
+	private Byte titleType;
+
 	@Column(name="ORG_ID")
 	private String orgId;
 
@@ -47,7 +50,7 @@ public class PerAssessPaper implements Serializable {
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerAssessAspMap
-	@OneToMany(mappedBy="perAssessPaper")
+	@OneToMany(cascade = { CascadeType.PERSIST }, mappedBy="perAssessPaper")
 	private List<PerAssessAspMap> perAssessAspMaps;
 
 	public PerAssessPaper() {
@@ -139,4 +142,11 @@ public class PerAssessPaper implements Serializable {
 		return perAssessAspMap;
 	}
 
+	public Byte getTitleType() {
+		return titleType;
+	}
+
+	public void setTitleType(Byte titleType) {
+		this.titleType = titleType;
+	}
 }

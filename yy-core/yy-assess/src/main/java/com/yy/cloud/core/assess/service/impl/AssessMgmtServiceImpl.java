@@ -12,15 +12,18 @@ package com.yy.cloud.core.assess.service.impl;
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.assess.AssessItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.assess.AssessPaperItem;
-import com.yy.cloud.common.data.dto.assess.AssessProfileReq;
-import com.yy.cloud.common.data.dto.assess.AssessWithIDProfileReq;
+import com.yy.cloud.common.data.dto.assess.*;
 import com.yy.cloud.common.data.dto.metadata.*;
 import com.yy.cloud.common.data.metadata.TemplateItem;
 import com.yy.cloud.common.data.metadata.TemplateItemItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessItem;
+import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperItem;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import com.yy.cloud.core.assess.data.domain.*;
@@ -28,10 +31,13 @@ import com.yy.cloud.core.assess.data.repositories.*;
 import com.yy.cloud.core.assess.service.AssessMgmtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ClassName:AssessMgmtServiceImpl <br/>
@@ -51,11 +57,15 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	@Autowired
 	private PerTemplateRepository perTemplateRepository;
 	@Autowired
+    private PerTemplateTiMapRepository perTemplateTiMapRepository;
+	@Autowired
 	private PerAssessPaperRepository perAssessPaperRepository;
 	@Autowired
 	private PerAssessAspMapRepository perAssessAspMapRepository;
 	@Autowired
 	private PerTemplateItemRepository perTemplateItemRepository;
+	@Autowired
+    private	PerAssessTemplateMapRepository perAssessTemplateMapRepository;
 
 	@Override
 	public GeneralContentResult<AssessItem> getAssessItemById(String _id) {
@@ -157,6 +167,23 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setUpdateDate(_assess.getUpdateDate());
 		return tempItem;
 	}
+
+    /**
+     * 转换题所对应的简单的Obj
+     *
+     * @param _assess
+     * @return
+     */
+    private SimpleAssessItem convertToSPAOTD(PerAssess _assess) {
+        SimpleAssessItem tempItem = new SimpleAssessItem();
+
+        tempItem.setId(_assess.getId());
+        tempItem.setCode(_assess.getCode());
+        tempItem.setName(_assess.getName());
+        tempItem.setStatus(_assess.getStatus());
+        tempItem.setType(_assess.getType());
+        return tempItem;
+    }
 
 	/**
 	 * 获取某个题所对应的元数据模板
@@ -468,5 +495,219 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempResult.setResultContent(resultTemplateItem);
         return tempResult;
     }
+
+	@Override
+	public GeneralResult deleteAssess(String _assessId) {
+		PerAssess tempAssess = this.perAssessRepository.getOne(_assessId);
+//		List<PerAssessTemplateMap> tempItempMap = tempAssess.getPerAssessTemplateMaps();
+//		this.perAssessTemplateMapRepository.deleteInBatch(tempItempMap);
+		this.perAssessTemplateMapRepository.deleteByPerAssess(tempAssess);
+		this.perAssessRepository.delete(tempAssess);
+		GeneralResult tempResult = new GeneralResult();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+		return tempResult;
+	}
+
+	@Override
+	public GeneralResult deleteAssessTemplate(String _assessTemplateId) {
+		this.perAssessTemplateMapRepository.deleteByTemplateId(_assessTemplateId);
+		this.perTemplateRepository.delete(_assessTemplateId);
+		GeneralResult tempResult = new GeneralResult();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		return tempResult;
+	}
+
+	@Override
+	public GeneralResult deleteAssessTemplateItem(String _assessTemplateItemId) {
+        this.perTemplateTiMapRepository.deletePerTemplateTiMapsByTemplateItemId(_assessTemplateItemId);
+        this.perTemplateItemRepository.delete(_assessTemplateItemId);
+        GeneralResult tempResult = new GeneralResult();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		return tempResult;
+	}
+
+	@Override
+	public GeneralPagingResult<List<SimpleAssessItem>> getAssessList(Pageable _page) {
+        Page<PerAssess> assessPage = this.perAssessRepository.findAll(_page);
+
+        List<SimpleAssessItem> tempAssessList = assessPage.getContent().stream().map(this::convertToSPAOTD).collect(Collectors.toList());
+        GeneralPagingResult<List<SimpleAssessItem>> tempResult = new GeneralPagingResult<>();
+        tempResult.setResultContent(tempAssessList);
+
+        PageInfo _pageInfo = new PageInfo();
+        _pageInfo.setCurrentPage(assessPage.getNumber());
+        _pageInfo.setPageSize(assessPage.getSize());
+        _pageInfo.setTotalPage(assessPage.getTotalPages());
+        _pageInfo.setTotalRecords(assessPage.getTotalElements());
+        tempResult.setPageInfo(_pageInfo);
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+		return tempResult;
+	}
+
+	@Override
+	public GeneralPagingResult<List<SimpleAssessItem>> getAssessListByAssessPaper(String _assessPaperId, Pageable _page) {
+        Page<PerAssess> assessPage = this.perAssessRepository.getAssessByAsp(_assessPaperId, _page);
+        List<SimpleAssessItem> tempAssessList = assessPage.getContent().stream().map(this::convertToSPAOTD).collect(Collectors.toList());
+        GeneralPagingResult<List<SimpleAssessItem>> tempResult = new GeneralPagingResult<>();
+        tempResult.setResultContent(tempAssessList);
+
+        PageInfo _pageInfo = new PageInfo();
+        _pageInfo.setCurrentPage(assessPage.getNumber());
+        _pageInfo.setPageSize(assessPage.getSize());
+        _pageInfo.setTotalPage(assessPage.getTotalPages());
+        _pageInfo.setTotalRecords(assessPage.getTotalElements());
+        tempResult.setPageInfo(_pageInfo);
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+	    return null;
+	}
+
+	@Override
+	public GeneralContentResult<SimpleAssessPaperItem> createAssessPaper(AssessPaperProfileReq _req) {
+        GeneralContentResult<SimpleAssessPaperItem> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        if(_req == null)
+            return tempResult;
+
+        PerAssessPaper tempPAP = new PerAssessPaper();
+        tempPAP.setCode(_req.getCode());
+        tempPAP.setName(_req.getName());
+        tempPAP.setOrgId(_req.getOrgId());
+        tempPAP.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+        tempPAP.setTitleType(_req.getTitle());
+        List<PerAssessAspMap> tempPAAMapList = new ArrayList<>();
+        if(_req.getAssessList() != null && _req.getAssessList().size() > 0) {
+            for(SimpleAssessReq tempAssessReq : _req.getAssessList()) {
+                PerAssessAspMap tempPAAM = new PerAssessAspMap();
+                tempPAAM.setAssessId(tempAssessReq.getAssessId());
+                tempPAAM.setSeqNo(tempAssessReq.getSeqNo());
+                tempPAAM.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+                tempPAAM.setPerAssessPaper(tempPAP);
+
+                tempPAAMapList.add(tempPAAM);
+            }
+        }
+        tempPAP.setPerAssessAspMaps(tempPAAMapList);
+
+        PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
+        SimpleAssessPaperItem tempASPI = new SimpleAssessPaperItem();
+        tempASPI.setId(resultPAP.getId());
+        tempASPI.setCode(resultPAP.getCode());
+        tempASPI.setName(resultPAP.getName());
+        tempASPI.setOrgId(resultPAP.getOrgId());
+        tempASPI.setStatus(resultPAP.getStatus());
+        tempASPI.setTitle(resultPAP.getTitleType());
+        tempResult.setResultContent(tempASPI);
+
+	    return tempResult;
+	}
+
+	@Override
+	public GeneralContentResult<SimpleAssessPaperItem> updateAssessPaper(AssessPaperWithIDProfileReq _req) {
+        GeneralContentResult<SimpleAssessPaperItem> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        if(_req == null)
+            return tempResult;
+
+        PerAssessPaper tempPAP = this.perAssessPaperRepository.findOne(_req.getId());
+        tempPAP.setCode(_req.getCode());
+        tempPAP.setName(_req.getName());
+        tempPAP.setOrgId(_req.getOrgId());
+        tempPAP.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+        tempPAP.setTitleType(_req.getTitle());
+
+        this.perAssessAspMapRepository.deletePerAssessAspMapsByAssessPaperId(_req.getId());
+
+        List<PerAssessAspMap> tempPAAMapList = new ArrayList<>();
+        if(_req.getAssessList() != null && _req.getAssessList().size() > 0) {
+            for(SimpleAssessReq tempAssessReq : _req.getAssessList()) {
+                PerAssessAspMap tempPAAM = new PerAssessAspMap();
+                tempPAAM.setAssessId(tempAssessReq.getAssessId());
+                tempPAAM.setSeqNo(tempAssessReq.getSeqNo());
+                tempPAAM.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+                tempPAAM.setPerAssessPaper(tempPAP);
+                tempPAAMapList.add(tempPAAM);
+            }
+        }
+        tempPAP.setPerAssessAspMaps(tempPAAMapList);
+
+        PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
+        SimpleAssessPaperItem tempASPI = new SimpleAssessPaperItem();
+        tempASPI.setId(resultPAP.getId());
+        tempASPI.setCode(resultPAP.getCode());
+        tempASPI.setName(resultPAP.getName());
+        tempASPI.setOrgId(resultPAP.getOrgId());
+        tempASPI.setStatus(resultPAP.getStatus());
+        tempASPI.setTitle(resultPAP.getTitleType());
+        tempResult.setResultContent(tempASPI);
+
+        return tempResult;
+	}
+
+	@Override
+	public GeneralResult deleteAssessPaper(String _assessPaperId) {
+        this.perAssessAspMapRepository.deletePerAssessAspMapsByAssessPaperId(_assessPaperId);
+        this.perAssessPaperRepository.delete(_assessPaperId);
+
+        GeneralResult tempResult = new GeneralResult();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        return tempResult;
+	}
+
+	@Override
+	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperList(Pageable _page) {
+	    Page<PerAssessPaper> tempPAPPage = this.perAssessPaperRepository.findAll(_page);
+        List<SimpleAssessPaperItem> tempSAPI = tempPAPPage.getContent().stream().map(this::convertToAPIOTD).collect(Collectors.toList());
+        GeneralPagingResult<List<SimpleAssessPaperItem>> tempResult = new GeneralPagingResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(tempSAPI);
+
+        PageInfo _pageInfo = new PageInfo();
+        _pageInfo.setCurrentPage(tempPAPPage.getNumber());
+        _pageInfo.setPageSize(tempPAPPage.getSize());
+        _pageInfo.setTotalPage(tempPAPPage.getTotalPages());
+        _pageInfo.setTotalRecords(tempPAPPage.getTotalElements());
+        tempResult.setPageInfo(_pageInfo);
+
+		return tempResult;
+	}
+
+    @Override
+    public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperListByOrg(String _orgId, Pageable _page) {
+        Page<PerAssessPaper> tempPAPPage = this.perAssessPaperRepository.findByOrgIdAndAndStatus(_orgId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE, _page);
+        List<SimpleAssessPaperItem> tempSAPI = tempPAPPage.getContent().stream().map(this::convertToAPIOTD).collect(Collectors.toList());
+        GeneralPagingResult<List<SimpleAssessPaperItem>> tempResult = new GeneralPagingResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(tempSAPI);
+
+        PageInfo _pageInfo = new PageInfo();
+        _pageInfo.setCurrentPage(tempPAPPage.getNumber());
+        _pageInfo.setPageSize(tempPAPPage.getSize());
+        _pageInfo.setTotalPage(tempPAPPage.getTotalPages());
+        _pageInfo.setTotalRecords(tempPAPPage.getTotalElements());
+        tempResult.setPageInfo(_pageInfo);
+
+        return tempResult;
+    }
+
+    /**
+     * Convert the PerAssessPaper to SimpleAssessPaper.
+     *
+     * @param _pap
+     * @return
+     */
+	private SimpleAssessPaperItem convertToAPIOTD(PerAssessPaper _pap) {
+        SimpleAssessPaperItem tempItem = new SimpleAssessPaperItem();
+        tempItem.setId(_pap.getId());
+        tempItem.setCode(_pap.getCode());
+        tempItem.setName(_pap.getName());
+        tempItem.setStatus(_pap.getStatus());
+        tempItem.setOrgId(_pap.getOrgId());
+        tempItem.setTitle(_pap.getTitleType());
+        return tempItem;
+    }
+
+
 }
 
