@@ -39,9 +39,12 @@ public class PerApAcMap implements Serializable {
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
+	@Column(name="ASSESS_CATEGORY_ID")
+	private String assessCategoryId;
+
 	//bi-directional many-to-one association to PerAssessCategory
 	@ManyToOne
-	@JoinColumn(name="ASSESS_CATEGORY_ID")
+	@JoinColumn(name="ASSESS_CATEGORY_ID", insertable = false, updatable = false)
 	private PerAssessCategory perAssessCategory;
 
 	public PerApAcMap() {
@@ -103,4 +106,11 @@ public class PerApAcMap implements Serializable {
 		this.perAssessCategory = perAssessCategory;
 	}
 
+	public String getAssessCategoryId() {
+		return assessCategoryId;
+	}
+
+	public void setAssessCategoryId(String assessCategoryId) {
+		this.assessCategoryId = assessCategoryId;
+	}
 }
