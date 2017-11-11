@@ -61,11 +61,21 @@ public interface AssessMgmtService {
 
 	public GeneralContentResult<SimpleTemplate> updateAssessTemplate(TemplateWithIDProfileReq _req);
 
+    public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(Pageable _page);
+
+    public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(Byte _type, Pageable _page);
+
+    public GeneralContentResult<List<SimpleTemplate>> getAssessTemplateByAssess(String _assessId);
+
 	public GeneralResult deleteAssessTemplate(String _assessTemplateId);
 
 	public GeneralContentResult<SimpleTemplateItem> createAssessTemplateItem(TemplateItemProfileReq _req);
 
 	public GeneralContentResult<SimpleTemplateItem> updateAssessTemplateItem(TemplateItemWithIDProfileReq _req);
+
+	public GeneralPagingResult<List<SimpleTemplateItem>> getAssessTemplateItemList(Pageable _page);
+
+	public GeneralContentResult<List<SimpleTemplateItem>> getAssessTemplateItemByTemplate(String _templateId);
 
 	public GeneralResult deleteAssessTemplateItem(String _assessTemplateItemId);
 

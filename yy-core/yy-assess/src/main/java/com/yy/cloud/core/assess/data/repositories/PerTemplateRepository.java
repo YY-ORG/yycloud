@@ -9,10 +9,16 @@
 
 package com.yy.cloud.core.assess.data.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerTemplate;
+
+import java.util.List;
 
 /**
  * ClassName:PerTemplateRepository <br/>
@@ -26,6 +32,9 @@ import com.yy.cloud.core.assess.data.domain.PerTemplate;
  */
 @RepositoryRestResource(collectionResourceRel = "perTemplate", path = "perTemplate")
 public interface PerTemplateRepository extends JpaRepository<PerTemplate, String> {
+    @Query(value = "SELECT p.id, p.code, p.name, p.status, p.type FROM PerTemplate p, PerAssessTemplateMap ptm where p.id = ptm.templateId and ptm.assessId = :assessId")
+    List<PerTemplate> getListByAssess(@Param("assessId") String _assess);
 
+    Page<PerTemplate> findByType(Byte _type, Pageable _page);
 }
 

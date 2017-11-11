@@ -54,6 +54,9 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="TEMPLATE_ITEM_ID")
 	private String templateItemId;
 
+	@Column(name="TEMPLATE_ID", insertable = false, updatable = false)
+	private String templateId;
+
 	//bi-directional many-to-one association to PerTemplate
 	@ManyToOne
 	@JoinColumn(name="TEMPLATE_ID")

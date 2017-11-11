@@ -252,7 +252,28 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		return tempItem;
 	}
 
-	/**
+    /**
+     * 转换简单元数据模板元素的方法
+     *
+     * @param _tempPTI
+     * @return
+     */
+	private SimpleTemplateItem convertToSTIIOTD(PerTemplateItem _tempPTI){
+        SimpleTemplateItem tempItem = new SimpleTemplateItem();
+        tempItem.setId(_tempPTI.getId());
+        tempItem.setCode(_tempPTI.getCode());
+        tempItem.setName(_tempPTI.getName());
+        tempItem.setLabel(_tempPTI.getLabel());
+        tempItem.setPlaceholderTip(_tempPTI.getPlaceholderTip());
+        tempItem.setStatus(_tempPTI.getStatus());
+        tempItem.setTip(_tempPTI.getTip());
+        tempItem.setType(_tempPTI.getType());
+        tempItem.setValueSource(_tempPTI.getValueSource());
+        return tempItem;
+    }
+
+
+    /**
 	 * 增加元数据模板的转换方法
 	 *
 	 * @param _template
@@ -269,6 +290,22 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setUpdateDate(_template.getUpdateDate());
 		return tempItem;
 	}
+
+    /**
+     * 增加转换简单元数据模板的方法
+     *
+     * @param _template
+     * @return
+     */
+	private SimpleTemplate convertToSTIOTD(PerTemplate _template){
+        SimpleTemplate tempItem = new SimpleTemplate();
+        tempItem.setId(_template.getId());
+        tempItem.setCode(_template.getCode());
+        tempItem.setName(_template.getName());
+        tempItem.setStatus(_template.getStatus());
+        tempItem.setType(_template.getType());
+        return tempItem;
+    }
 
 	@Override
 	public GeneralContentResult<SimpleAssessItem> createAssess(AssessProfileReq _profile) {
@@ -393,38 +430,6 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		return tempResult;
 	}
 
-	@Override
-	public GeneralContentResult<SimpleTemplateItem> createAssessTemplateItem(TemplateItemProfileReq _req) {
-		PerTemplateItem tempTemplateItem = new PerTemplateItem();
-
-		tempTemplateItem.setCode(_req.getCode());
-		tempTemplateItem.setLabel(_req.getLabel());
-		tempTemplateItem.setName(_req.getName());
-		tempTemplateItem.setType(_req.getType());
-		tempTemplateItem.setPlaceholderTip(_req.getPlaceHolder());
-		tempTemplateItem.setTip(_req.getTip());
-		tempTemplateItem.setDefaultValue(_req.getDefaultValue());
-		tempTemplateItem.setValueSource(_req.getValueSource());
-		tempTemplateItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
-
-		PerTemplateItem templateItem = this.perTemplateItemRepository.save(tempTemplateItem);
-		SimpleTemplateItem resultTemplateItem = new SimpleTemplateItem();
-		resultTemplateItem.setId(templateItem.getId());
-		resultTemplateItem.setCode(templateItem.getCode());
-		resultTemplateItem.setLabel(templateItem.getLabel());
-		resultTemplateItem.setName(templateItem.getName());
-		resultTemplateItem.setDefaultValue(templateItem.getDefaultValue());
-		resultTemplateItem.setValueSource(templateItem.getValueSource());
-		resultTemplateItem.setPlaceHolder(templateItem.getPlaceholderTip());
-		resultTemplateItem.setTip(templateItem.getTip());
-		resultTemplateItem.setStatus(templateItem.getStatus());
-
-		GeneralContentResult<SimpleTemplateItem> tempResult = new GeneralContentResult<>();
-		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-		tempResult.setResultContent(resultTemplateItem);
-		return tempResult;
-	}
-
     @Override
     public GeneralContentResult<SimpleTemplate> updateAssessTemplate(TemplateWithIDProfileReq _req) {
         GeneralContentResult<SimpleTemplate> tempResult = new GeneralContentResult<>();
@@ -436,7 +441,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempTemplate.setCode(_req.getCode());
         tempTemplate.setName(_req.getName());
         tempTemplate.setType(_req.getType());
-        List<PerTemplateTiMap> existsMapList = tempTemplate.getPerTemplateTiMaps();
+      //  List<PerTemplateTiMap> existsMapList = tempTemplate.getPerTemplateTiMaps();
+        this.perTemplateTiMapRepository.deletePerTemplateTiMapsByTemplateItemId(_req.getId());
 
         List<PerTemplateTiMap> tempMapList = new ArrayList<>();
 
@@ -465,6 +471,88 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
     }
 
     @Override
+    public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(Pageable _page) {
+	    Page<PerTemplate> templatePage = this.perTemplateRepository.findAll(_page);
+
+        List<SimpleTemplate> tempTemplateList = templatePage.getContent().stream().map(this::convertToSTIOTD).collect(Collectors.toList());
+        GeneralPagingResult<List<SimpleTemplate>> tempResult = new GeneralPagingResult<>();
+        tempResult.setResultContent(tempTemplateList);
+
+        PageInfo _pageInfo = new PageInfo();
+        _pageInfo.setCurrentPage(templatePage.getNumber());
+        _pageInfo.setPageSize(templatePage.getSize());
+        _pageInfo.setTotalPage(templatePage.getTotalPages());
+        _pageInfo.setTotalRecords(templatePage.getTotalElements());
+        tempResult.setPageInfo(_pageInfo);
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        return tempResult;
+    }
+
+    @Override
+    public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(Byte _type, Pageable _page) {
+        Page<PerTemplate> templatePage = this.perTemplateRepository.findByType(_type, _page);
+
+        List<SimpleTemplate> tempTemplateList = templatePage.getContent().stream().map(this::convertToSTIOTD).collect(Collectors.toList());
+        GeneralPagingResult<List<SimpleTemplate>> tempResult = new GeneralPagingResult<>();
+        tempResult.setResultContent(tempTemplateList);
+
+        PageInfo _pageInfo = new PageInfo();
+        _pageInfo.setCurrentPage(templatePage.getNumber());
+        _pageInfo.setPageSize(templatePage.getSize());
+        _pageInfo.setTotalPage(templatePage.getTotalPages());
+        _pageInfo.setTotalRecords(templatePage.getTotalElements());
+        tempResult.setPageInfo(_pageInfo);
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        return tempResult;
+    }
+
+    @Override
+    public GeneralContentResult<List<SimpleTemplate>> getAssessTemplateByAssess(String _assessId) {
+	    List<PerTemplate> templateList = this.perTemplateRepository.getListByAssess(_assessId);
+
+        List<SimpleTemplate> tempSTempList = templateList.stream().map(this::convertToSTIOTD).collect(Collectors.toList());
+        GeneralContentResult<List<SimpleTemplate>> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(tempSTempList);
+
+        return tempResult;
+    }
+
+    @Override
+    public GeneralContentResult<SimpleTemplateItem> createAssessTemplateItem(TemplateItemProfileReq _req) {
+        PerTemplateItem tempTemplateItem = new PerTemplateItem();
+
+        tempTemplateItem.setCode(_req.getCode());
+        tempTemplateItem.setLabel(_req.getLabel());
+        tempTemplateItem.setName(_req.getName());
+        tempTemplateItem.setType(_req.getType());
+        tempTemplateItem.setPlaceholderTip(_req.getPlaceHolder());
+        tempTemplateItem.setTip(_req.getTip());
+        tempTemplateItem.setDefaultValue(_req.getDefaultValue());
+        tempTemplateItem.setValueSource(_req.getValueSource());
+        tempTemplateItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+
+        PerTemplateItem templateItem = this.perTemplateItemRepository.save(tempTemplateItem);
+        SimpleTemplateItem resultTemplateItem = new SimpleTemplateItem();
+        resultTemplateItem.setId(templateItem.getId());
+        resultTemplateItem.setCode(templateItem.getCode());
+        resultTemplateItem.setLabel(templateItem.getLabel());
+        resultTemplateItem.setName(templateItem.getName());
+        resultTemplateItem.setDefaultValue(templateItem.getDefaultValue());
+        resultTemplateItem.setValueSource(templateItem.getValueSource());
+        resultTemplateItem.setPlaceholderTip(templateItem.getPlaceholderTip());
+        resultTemplateItem.setTip(templateItem.getTip());
+        resultTemplateItem.setStatus(templateItem.getStatus());
+
+        GeneralContentResult<SimpleTemplateItem> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(resultTemplateItem);
+        return tempResult;
+    }
+
+    @Override
     public GeneralContentResult<SimpleTemplateItem> updateAssessTemplateItem(TemplateItemWithIDProfileReq _req) {
         PerTemplateItem tempTemplateItem = this.perTemplateItemRepository.findOne(_req.getId());
 
@@ -486,13 +574,44 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         resultTemplateItem.setName(templateItem.getName());
         resultTemplateItem.setDefaultValue(templateItem.getDefaultValue());
         resultTemplateItem.setValueSource(templateItem.getValueSource());
-        resultTemplateItem.setPlaceHolder(templateItem.getPlaceholderTip());
+        resultTemplateItem.setPlaceholderTip(templateItem.getPlaceholderTip());
         resultTemplateItem.setTip(templateItem.getTip());
         resultTemplateItem.setStatus(templateItem.getStatus());
 
         GeneralContentResult<SimpleTemplateItem> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         tempResult.setResultContent(resultTemplateItem);
+        return tempResult;
+    }
+
+    @Override
+    public GeneralPagingResult<List<SimpleTemplateItem>> getAssessTemplateItemList(Pageable _page) {
+        Page<PerTemplateItem> templatePage = this.perTemplateItemRepository.findAll(_page);
+
+        List<SimpleTemplateItem> tempTemplateItemList = templatePage.getContent().stream().map(this::convertToSTIIOTD).collect(Collectors.toList());
+        GeneralPagingResult<List<SimpleTemplateItem>> tempResult = new GeneralPagingResult<>();
+        tempResult.setResultContent(tempTemplateItemList);
+
+        PageInfo _pageInfo = new PageInfo();
+        _pageInfo.setCurrentPage(templatePage.getNumber());
+        _pageInfo.setPageSize(templatePage.getSize());
+        _pageInfo.setTotalPage(templatePage.getTotalPages());
+        _pageInfo.setTotalRecords(templatePage.getTotalElements());
+        tempResult.setPageInfo(_pageInfo);
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        return tempResult;
+    }
+
+    @Override
+    public GeneralContentResult<List<SimpleTemplateItem>> getAssessTemplateItemByTemplate(String _templateId) {
+        List<PerTemplateItem> templateList = this.perTemplateItemRepository.getTemplateItemByTemplate(_templateId);
+
+        List<SimpleTemplateItem> tempSTempList = templateList.stream().map(this::convertToSTIIOTD).collect(Collectors.toList());
+        GeneralContentResult<List<SimpleTemplateItem>> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(tempSTempList);
+
         return tempResult;
     }
 

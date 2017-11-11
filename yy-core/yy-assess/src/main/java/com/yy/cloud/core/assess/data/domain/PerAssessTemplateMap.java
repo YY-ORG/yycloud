@@ -36,6 +36,9 @@ public class PerAssessTemplateMap implements Serializable {
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
 
+	@Column(name="ASSESS_ID", insertable = false, updatable = false)
+	private String assessId;
+
 	//bi-directional many-to-one association to PerAssess
 	@ManyToOne
 	@JoinColumn(name="ASSESS_ID")
@@ -92,4 +95,11 @@ public class PerAssessTemplateMap implements Serializable {
 		this.perAssess = perAssess;
 	}
 
+	public String getAssessId() {
+		return assessId;
+	}
+
+	public void setAssessId(String assessId) {
+		this.assessId = assessId;
+	}
 }

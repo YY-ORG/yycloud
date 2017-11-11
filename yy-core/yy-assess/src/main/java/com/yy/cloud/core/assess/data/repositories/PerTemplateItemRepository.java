@@ -10,9 +10,13 @@
 package com.yy.cloud.core.assess.data.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerTemplateItem;
+
+import java.util.List;
 
 /**
  * ClassName:PerTemplateItemRepository <br/>
@@ -26,6 +30,9 @@ import com.yy.cloud.core.assess.data.domain.PerTemplateItem;
  */
 @RepositoryRestResource(collectionResourceRel = "perTemplateItem", path = "perTemplateItem")
 public interface PerTemplateItemRepository extends JpaRepository<PerTemplateItem, String> {
-
+    @Query(value = "SELECT pti.id, pti.code, pti.name, pti.status, pti.type, pti.label, pti.defaultValue, pti.placeholderTip " +
+            ", pti.tip, pti.valueSource " +
+            " FROM PerTemplateItem pti, PerTemplateTiMap pttm where pti.id = pttm.templateItemId and pttm.templateId = :templateId")
+    List<PerTemplateItem> getTemplateItemByTemplate(@Param("templateId") String _templateId);
 }
 

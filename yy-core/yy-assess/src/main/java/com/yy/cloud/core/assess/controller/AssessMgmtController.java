@@ -386,7 +386,7 @@ public class AssessMgmtController {
 	}
 
 	@RequestMapping(value = "/authsec/assesspaper/assesspaperlist", method = RequestMethod.GET)
-	@ApiOperation(value = "分页检索某个考卷的试题")
+	@ApiOperation(value = "分页检索所有的考卷")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
 	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperList(Pageable _page){
@@ -423,7 +423,7 @@ public class AssessMgmtController {
 	}
 
 	@RequestMapping(value = "/authsec/org/{_orgId}/assesspaper/assesspaperlist", method = RequestMethod.GET)
-	@ApiOperation(value = "分页检索当前登录用户所在部门的考卷列表")
+	@ApiOperation(value = "分页检索某个部门的考卷列表")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
 	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperListByOrg(@ApiParam(value = "部门的ID") @PathVariable(value = "_orgId") String _orgId, Pageable _page){
@@ -431,6 +431,101 @@ public class AssessMgmtController {
 		try {
 			log.info("Going to load assess paper list by org [{}] page [{}].", _orgId, _page);
 			result = this.assessService.getAssessPaperListByOrg(_orgId, _page);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+//
+//	@RequestMapping(value = "/authsec/template/templatelist", method = RequestMethod.GET)
+//	@ApiOperation(value = "分页检索所有的考题模板")
+//	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+//			value = "Token", defaultValue = "bearer ")
+//	public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(Pageable _page){
+//		GeneralPagingResult<List<SimpleTemplate>> result = new GeneralPagingResult<>();
+//		try {
+//			log.info("Going to load all of the assess's template.Page=[{}]", _page);
+//			result = this.assessService.getAssessTemplateList(_page);
+//			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+//		} catch (Exception e) {
+//			log.error("Unexpected Error occured", e);
+//			result.setDetailDescription("Unexpected Error occured...");
+//			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+//		}
+//		return result;
+//	}
+
+	@RequestMapping(value = "/authsec/template/templatelist", method = RequestMethod.GET)
+	@ApiOperation(value = "分页检索所有的某个类型的考题模板")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(@RequestParam(value = "_type") Byte _type, Pageable _page){
+		GeneralPagingResult<List<SimpleTemplate>> result = new GeneralPagingResult<>();
+		try {
+			log.info("Going to load all of the assess's template, type=[{}] Page=[{}].", _type, _page);
+			if(_type == null)
+				result = this.assessService.getAssessTemplateList(_page);
+			else
+				result = this.assessService.getAssessTemplateList(_type, _page);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+
+	@RequestMapping(value = "/authsec/assess/{_id}/template", method = RequestMethod.GET)
+	@ApiOperation(value = "获取某个试题的模板")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<List<SimpleTemplate>> getAssessTemplate(@ApiParam(value = "试题的ID") @PathVariable(value = "_id") String _id) {
+		GeneralContentResult<List<SimpleTemplate>> result = new GeneralContentResult<>();
+		try {
+			log.info("Going to get assess [{}]'s template.", _id);
+			result = this.assessService.getAssessTemplateByAssess(_id);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/authsec/templateitem/templateitemlist", method = RequestMethod.GET)
+	@ApiOperation(value = "分页检索所有的考题模板元素")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralPagingResult<List<SimpleTemplateItem>> getAssessTemplateItemList(Pageable _page){
+		GeneralPagingResult<List<SimpleTemplateItem>> result = new GeneralPagingResult<>();
+		try {
+			log.info("Going to load all of the assess's templateItem.Page=[{}]", _page);
+			result = this.assessService.getAssessTemplateItemList(_page);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/authsec/template/{_id}/templateitemlist", method = RequestMethod.GET)
+	@ApiOperation(value = "获取某个试题的模板")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<List<SimpleTemplateItem>> getAssessTemplateItemByTemplate(@ApiParam(value = "试题模板的ID") @PathVariable(value = "_id") String _id) {
+		GeneralContentResult<List<SimpleTemplateItem>> result = new GeneralContentResult<>();
+		try {
+			log.info("Going to get template [{}]'s templateItem.", _id);
+			result = this.assessService.getAssessTemplateItemByTemplate(_id);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);

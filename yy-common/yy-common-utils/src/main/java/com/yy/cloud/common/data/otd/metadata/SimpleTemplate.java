@@ -18,5 +18,6 @@ public class SimpleTemplate implements Serializable {
     private String id;
     private String name;
     private String code;
+    private Byte status;
     private Byte type;
 }
