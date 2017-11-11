@@ -142,7 +142,7 @@ public class AssessMgmtController {
 	@ApiOperation(value = "单独创建考题")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralContentResult<SimpleAssessItem> createAssess( @ApiParam(value = "创建题目") AssessProfileReq _profile) {
+	public GeneralContentResult<SimpleAssessItem> createAssess( @ApiParam(value = "创建题目") @RequestBody AssessProfileReq _profile) {
 		GeneralContentResult<SimpleAssessItem> result = new GeneralContentResult<>();
 		try {
 			result = this.assessService.createAssess(_profile);
@@ -159,7 +159,7 @@ public class AssessMgmtController {
 	@ApiOperation(value = "更新考题")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralContentResult<SimpleAssessItem> updateAssess( @ApiParam(value = "更新题目") AssessWithIDProfileReq _profile) {
+	public GeneralContentResult<SimpleAssessItem> updateAssess( @ApiParam(value = "更新题目") @RequestBody AssessWithIDProfileReq _profile) {
 		GeneralContentResult<SimpleAssessItem> result = new GeneralContentResult<>();
 		try {
 			result = this.assessService.updateAssess(_profile);
@@ -463,7 +463,7 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索所有的某个类型的考题模板")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(@RequestParam(value = "_type") Byte _type, Pageable _page){
+	public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(@RequestParam(value = "_type", required = false) Byte _type, Pageable _page){
 		GeneralPagingResult<List<SimpleTemplate>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load all of the assess's template, type=[{}] Page=[{}].", _type, _page);

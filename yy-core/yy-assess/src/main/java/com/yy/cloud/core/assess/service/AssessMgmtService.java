@@ -92,5 +92,7 @@ public interface AssessMgmtService {
 	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperList(Pageable _page);
 
     public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperListByOrg(String _orgId, Pageable _page);
+
+
 }
 
