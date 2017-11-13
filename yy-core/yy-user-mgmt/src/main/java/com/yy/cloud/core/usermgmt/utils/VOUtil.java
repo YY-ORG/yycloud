@@ -11,7 +11,7 @@ public class VOUtil {
 		pi.setCurrentPage(page.getNumber());
 		pi.setPageSize(page.getSize());
 		pi.setTotalPage(page.getTotalPages());
-		pi.setTotalRecords((int) page.getTotalElements());
+		pi.setTotalRecords(new Long( page.getTotalElements()));
 		return pi;
 	}
 }

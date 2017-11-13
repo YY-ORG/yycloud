@@ -16,6 +16,7 @@ import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
 import com.yy.cloud.common.data.dto.sysbase.UserProfile;
 import com.yy.cloud.common.data.otd.sysbase.CommonKeyValue;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
@@ -210,7 +211,17 @@ public class UserMgmtController {
    
    
    
-   
+
+   @RequestMapping(value = "/authsec/user/password/modify", method = RequestMethod.PUT)
+   @ApiOperation(value = "用户中心-账户管理，修改当前密码")
+   @ApiImplicitParams({
+           @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+   })
+   public GeneralResult modifyPassword(
+           @RequestBody PasswordProfile _passwordProfile) {
+	   return userMgmtService.modifyPassword(_passwordProfile);
+   }
+
    
    
 

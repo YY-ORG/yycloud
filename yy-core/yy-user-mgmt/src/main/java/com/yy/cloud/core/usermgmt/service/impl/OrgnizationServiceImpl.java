@@ -178,7 +178,7 @@ public class OrgnizationServiceImpl implements OrgnizationService {
 		});
 
 		_pageInfo.setTotalPage(YYOrganizations.getTotalPages());
-		_pageInfo.setTotalRecords(new Long(YYOrganizations.getTotalElements()).intValue());
+		_pageInfo.setTotalRecords(new Long(YYOrganizations.getTotalElements()));
 
 		return organizationItems;
 	}

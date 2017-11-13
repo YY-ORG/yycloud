@@ -342,7 +342,7 @@ public class UserServiceImpl implements UserService {
 	
 
 		_pageInfo.setTotalPage(foxUsers.getTotalPages());
-		_pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()).intValue());
+		_pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()));
 
 		return UserDetailsItems;
 	}
@@ -389,7 +389,7 @@ public class UserServiceImpl implements UserService {
         });
 
         _pageInfo.setTotalPage(userIds.getTotalPages());
-        _pageInfo.setTotalRecords(new Long(userIds.getTotalElements()).intValue());
+        _pageInfo.setTotalRecords(new Long(userIds.getTotalElements()));
 
         return userItems;
     }
@@ -435,7 +435,7 @@ public class UserServiceImpl implements UserService {
 		});
 
 		_pageInfo.setTotalPage(foxUsers.getTotalPages());
-		_pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()).intValue());
+		_pageInfo.setTotalRecords(new Long(foxUsers.getTotalElements()));
 
 		return UserDetailsItems;
 	}

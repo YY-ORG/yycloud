@@ -117,7 +117,7 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 	@Override
 	public GeneralResult modifyPassword(PasswordProfile _passwordProfile) {
 		// TODO Auto-generated method stub
-		return null;
+		return userMgmtClient.modifyPassword(_passwordProfile);
 	}
 
 	@Override
