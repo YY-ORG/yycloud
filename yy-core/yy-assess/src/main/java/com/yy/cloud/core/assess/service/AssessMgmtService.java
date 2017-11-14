@@ -25,6 +25,7 @@ import com.yy.cloud.common.data.dto.metadata.TemplateProfileReq;
 import com.yy.cloud.common.data.dto.metadata.TemplateWithIDProfileReq;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperItem;
+import com.yy.cloud.common.data.otd.metadata.ComplexTemplateItem;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import org.springframework.data.domain.Pageable;
@@ -75,7 +76,7 @@ public interface AssessMgmtService {
 
 	public GeneralPagingResult<List<SimpleTemplateItem>> getAssessTemplateItemList(Pageable _page);
 
-	public GeneralContentResult<List<SimpleTemplateItem>> getAssessTemplateItemByTemplate(String _templateId);
+	public GeneralContentResult<List<ComplexTemplateItem>> getAssessTemplateItemByTemplate(String _templateId);
 
 	public GeneralResult deleteAssessTemplateItem(String _assessTemplateItemId);
 

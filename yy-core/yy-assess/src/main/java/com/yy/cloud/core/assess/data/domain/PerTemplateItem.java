@@ -31,7 +31,7 @@ public class PerTemplateItem implements Serializable {
 	@Column(name="COMMENTS")
 	private String comments;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="DEFAULT_VALUE")
@@ -67,7 +67,7 @@ public class PerTemplateItem implements Serializable {
 	@Column(name="TYPE")
 	private Byte type;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	@Column(name="VALUE_DOMAIN")

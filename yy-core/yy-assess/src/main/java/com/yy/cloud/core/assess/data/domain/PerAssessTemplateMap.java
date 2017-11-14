@@ -24,7 +24,7 @@ public class PerAssessTemplateMap implements Serializable {
 	@Column(name="ID")
 	private String id;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="STATUS")
@@ -33,7 +33,7 @@ public class PerAssessTemplateMap implements Serializable {
 	@Column(name="TEMPLATE_ID")
 	private String templateId;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	@Column(name="ASSESS_ID", insertable = false, updatable = false)

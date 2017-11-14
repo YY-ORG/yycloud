@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessTemplateMap;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ import java.util.List;
 public interface PerAssessTemplateMapRepository extends JpaRepository<PerAssessTemplateMap, String> {
     List<PerAssessTemplateMap> findByTemplateId(String _templateId);
     void deleteByTemplateId(String _templateId);
+    @Transactional
     void deleteByPerAssess(PerAssess _assess);
 }
 

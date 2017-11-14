@@ -30,9 +30,7 @@ import java.util.List;
  */
 @RepositoryRestResource(collectionResourceRel = "perTemplateItem", path = "perTemplateItem")
 public interface PerTemplateItemRepository extends JpaRepository<PerTemplateItem, String> {
-    @Query(value = "SELECT pti.id, pti.code, pti.name, pti.status, pti.type, pti.label, pti.defaultValue, pti.placeholderTip " +
-            ", pti.tip, pti.valueSource " +
-            " FROM PerTemplateItem pti, PerTemplateTiMap pttm where pti.id = pttm.templateItemId and pttm.templateId = :templateId")
+    @Query(value = "SELECT pti FROM PerTemplateItem pti, PerTemplateTiMap pttm where pti.id = pttm.templateItemId and pttm.templateId = :templateId")
     List<PerTemplateItem> getTemplateItemByTemplate(@Param("templateId") String _templateId);
 }
 

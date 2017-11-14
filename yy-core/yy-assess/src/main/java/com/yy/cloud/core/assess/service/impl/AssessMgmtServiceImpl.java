@@ -24,16 +24,19 @@ import com.yy.cloud.common.data.metadata.TemplateItem;
 import com.yy.cloud.common.data.metadata.TemplateItemItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperItem;
+import com.yy.cloud.common.data.otd.metadata.ComplexTemplateItem;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import com.yy.cloud.core.assess.data.domain.*;
 import com.yy.cloud.core.assess.data.repositories.*;
 import com.yy.cloud.core.assess.service.AssessMgmtService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -318,6 +321,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempAssess.setCode(_profile.getCode());
 		tempAssess.setName(_profile.getName());
 		tempAssess.setType(_profile.getType());
+        tempAssess.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 
 		List<PerAssessTemplateMap> tempMapList = new ArrayList<>();
 		if(_profile.getTemplateId() != null && _profile.getTemplateId().size() > 0){
@@ -355,23 +359,13 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempAssess.setCode(_profile.getCode());
 		tempAssess.setName(_profile.getName());
 		tempAssess.setType(_profile.getType());
-
-		List<PerAssessTemplateMap> tempMapList = tempAssess.getPerAssessTemplateMaps();
+        tempAssess.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+        this.perAssessTemplateMapRepository.deleteByPerAssess(tempAssess);
+	//	List<PerAssessTemplateMap> tempMapList = tempAssess.getPerAssessTemplateMaps();
 		List<PerAssessTemplateMap> newMapList = new ArrayList<>();
 
 		if(_profile.getTemplateId() != null && _profile.getTemplateId().size() > 0){
 			for(String tempTemplateId : _profile.getTemplateId()){
-				Boolean findFlag = false;
-				for(PerAssessTemplateMap tempMap : tempMapList){
-					if(tempTemplateId.equals(tempMap.getTemplateId())){
-						findFlag = true;
-						newMapList.add(tempMap);
-						break;
-					}
-				}
-				if(findFlag)
-					continue;
-
 				PerAssessTemplateMap tempMapItem = new PerAssessTemplateMap();
 				tempMapItem.setTemplateId(tempTemplateId);
 				tempMapItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
@@ -405,6 +399,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempTemplate.setCode(_req.getCode());
 		tempTemplate.setName(_req.getName());
 		tempTemplate.setType(_req.getType());
+        tempTemplate.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 		List<PerTemplateTiMap> tempMapList = new ArrayList<>();
 		if(_req.getItemList() != null && _req.getItemList().size() > 0){
 			for(TemplateItemMapReq tempTiReq : _req.getItemList()){
@@ -414,6 +409,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 				tempTiMap.setVisible(tempTiReq.getVisible());
 				tempTiMap.setMandatory(tempTiReq.getMandatory());
 				tempTiMap.setTemplateItemId(tempTiReq.getTemplateItemId());
+                tempTiMap.setPerTemplate(tempTemplate);
+                tempTiMap.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 				tempMapList.add(tempTiMap);
 			}
 			tempTemplate.setPerTemplateTiMaps(tempMapList);
@@ -441,8 +438,9 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempTemplate.setCode(_req.getCode());
         tempTemplate.setName(_req.getName());
         tempTemplate.setType(_req.getType());
+        tempTemplate.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
       //  List<PerTemplateTiMap> existsMapList = tempTemplate.getPerTemplateTiMaps();
-        this.perTemplateTiMapRepository.deletePerTemplateTiMapsByTemplateItemId(_req.getId());
+        this.perTemplateTiMapRepository.deleteByTemplateId(_req.getId());
 
         List<PerTemplateTiMap> tempMapList = new ArrayList<>();
 
@@ -454,6 +452,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
                 tempTiMap.setVisible(tempTiReq.getVisible());
                 tempTiMap.setMandatory(tempTiReq.getMandatory());
                 tempTiMap.setTemplateItemId(tempTiReq.getTemplateItemId());
+                tempTiMap.setPerTemplate(tempTemplate);
+                tempTiMap.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
                 tempMapList.add(tempTiMap);
             }
             tempTemplate.setPerTemplateTiMaps(tempMapList);
@@ -604,17 +604,46 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
     }
 
     @Override
-    public GeneralContentResult<List<SimpleTemplateItem>> getAssessTemplateItemByTemplate(String _templateId) {
-        List<PerTemplateItem> templateList = this.perTemplateItemRepository.getTemplateItemByTemplate(_templateId);
+    public GeneralContentResult<List<ComplexTemplateItem>> getAssessTemplateItemByTemplate(String _templateId) {
+	    List<PerTemplateTiMap> templateTiMapList = this.perTemplateTiMapRepository.findByTemplateId(_templateId);
 
-        List<SimpleTemplateItem> tempSTempList = templateList.stream().map(this::convertToSTIIOTD).collect(Collectors.toList());
-        GeneralContentResult<List<SimpleTemplateItem>> tempResult = new GeneralContentResult<>();
+        List<ComplexTemplateItem> tempSTempList = templateTiMapList.stream().map(this::convertToCTIOTD).collect(Collectors.toList());
+
+//        List<PerTemplateItem> templateList = this.perTemplateItemRepository.getTemplateItemByTemplate(_templateId);
+//        log.info("Total records for [{}] is [{}].", _templateId, templateList.size());
+//        List<SimpleTemplateItem> tempSTempList = templateList.stream().map(this::convertToSTIIOTD).collect(Collectors.toList());
+        GeneralContentResult<List<ComplexTemplateItem>> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         tempResult.setResultContent(tempSTempList);
 
         return tempResult;
     }
 
+    private ComplexTemplateItem convertToCTIOTD(PerTemplateTiMap _tiMap){
+        ComplexTemplateItem tempItem = new ComplexTemplateItem();
+        tempItem.setEditable(_tiMap.isEditable());
+        tempItem.setMandatory(_tiMap.isMandatory());
+        tempItem.setVisible(_tiMap.isVisible());
+        tempItem.setSeqNo(_tiMap.getSeqNo());
+
+        if(StringUtils.isNotBlank(_tiMap.getReliedId())){//获取真实的Relied的Item ID
+            PerTemplateTiMap tempTiMap = this.perTemplateTiMapRepository.findOne(_tiMap.getReliedId());
+            tempItem.setReliedId(tempTiMap.getTemplateItemId());
+        }
+
+        PerTemplateItem tempTemplateItem = _tiMap.getPerTemplateItem();
+        tempItem.setId(tempTemplateItem.getId());
+        tempItem.setCode(tempTemplateItem.getCode());
+        tempItem.setName(tempTemplateItem.getName());
+        tempItem.setLabel(tempTemplateItem.getLabel());
+        tempItem.setPlaceholderTip(tempTemplateItem.getPlaceholderTip());
+        tempItem.setStatus(tempTemplateItem.getStatus());
+        tempItem.setTip(tempTemplateItem.getTip());
+        tempItem.setType(tempTemplateItem.getType());
+        tempItem.setValueSource(tempTemplateItem.getValueSource());
+        return tempItem;
+    }
+    @Transactional
 	@Override
 	public GeneralResult deleteAssess(String _assessId) {
 		PerAssess tempAssess = this.perAssessRepository.getOne(_assessId);
@@ -627,7 +656,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
 		return tempResult;
 	}
-
+    @Transactional
 	@Override
 	public GeneralResult deleteAssessTemplate(String _assessTemplateId) {
 		this.perAssessTemplateMapRepository.deleteByTemplateId(_assessTemplateId);
@@ -636,10 +665,10 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 		return tempResult;
 	}
-
+    @Transactional
 	@Override
 	public GeneralResult deleteAssessTemplateItem(String _assessTemplateItemId) {
-        this.perTemplateTiMapRepository.deletePerTemplateTiMapsByTemplateItemId(_assessTemplateItemId);
+        this.perTemplateTiMapRepository.deleteByTemplateItemId(_assessTemplateItemId);
         this.perTemplateItemRepository.delete(_assessTemplateItemId);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
@@ -763,7 +792,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
         return tempResult;
 	}
-
+    @Transactional
 	@Override
 	public GeneralResult deleteAssessPaper(String _assessPaperId) {
         this.perAssessAspMapRepository.deletePerAssessAspMapsByAssessPaperId(_assessPaperId);

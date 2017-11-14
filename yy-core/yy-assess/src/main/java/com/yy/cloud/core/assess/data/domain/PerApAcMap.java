@@ -27,7 +27,7 @@ public class PerApAcMap implements Serializable {
 	@Column(name="ASSESS_PAPER_ID")
 	private String assessPaperId;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="CREATOR_ID")
@@ -36,7 +36,7 @@ public class PerApAcMap implements Serializable {
 	@Column(name="STATUS")
 	private byte status;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	@Column(name="ASSESS_CATEGORY_ID")

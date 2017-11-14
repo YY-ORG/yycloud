@@ -19,6 +19,6 @@ import java.util.List;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssessCategory", path = "perAssessCategory")
 public interface PerAssessCategoryRepository extends JpaRepository<PerAssessCategory, String> {
-    @Query(value = "SELECT p.id, p.code, p.name, p.status, p.creatorId FROM PerAssessCategory p, PerApAcMap paam where p.id = paam.assessCategoryId and paam.assessPaperId = :assessPaperId")
+    @Query(value = "SELECT p FROM PerAssessCategory p, PerApAcMap paam where p.id = paam.assessCategoryId and paam.assessPaperId = :assessPaperId")
     List<PerAssessCategory> findByAssessPaper(@Param("assessPaperId") String _assessPaperId);
 }

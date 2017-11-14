@@ -28,7 +28,7 @@ public class PerAssess implements Serializable {
 	@Column(name="CODE")
 	private String code;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="NAME")
@@ -40,7 +40,7 @@ public class PerAssess implements Serializable {
 	@Column(name="TYPE")
 	private Byte type;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
     //bi-directional many-to-one association to PerAssessAnswer
@@ -52,7 +52,7 @@ public class PerAssess implements Serializable {
 	private List<PerAssessAspMap> perAssessAspMaps;
 
 	//bi-directional many-to-one association to PerAssessTemplateMap
-	@OneToMany(mappedBy="perAssess")
+	@OneToMany(cascade = { CascadeType.PERSIST , CascadeType.REFRESH, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy="perAssess")
 	private List<PerAssessTemplateMap> perAssessTemplateMaps;
 
 	public PerAssess() {

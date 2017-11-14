@@ -24,7 +24,7 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="ID")
 	private String id;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="RELIED_ID")
@@ -48,7 +48,7 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="VISIBLE")
 	private Boolean visible;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	@Column(name="TEMPLATE_ITEM_ID")

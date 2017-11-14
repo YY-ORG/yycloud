@@ -24,7 +24,7 @@ public class PerAssessAspMap implements Serializable {
 	@Column(name="ID")
 	private String id;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="STATUS")
@@ -33,10 +33,10 @@ public class PerAssessAspMap implements Serializable {
 	@Column(name="SEQ_NO")
 	private Integer seqNo;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
-	@Column(name="ASSESS_ID", insertable = false, updatable = false)
+	@Column(name="ASSESS_ID")
 	private String assessId;
 
 	@Column(name="ASSESS_PAPER_ID", insertable = false, updatable = false)
@@ -44,7 +44,7 @@ public class PerAssessAspMap implements Serializable {
 
 	//bi-directional many-to-one association to PerAssess
 	@ManyToOne
-	@JoinColumn(name="ASSESS_ID")
+	@JoinColumn(name="ASSESS_ID", insertable = false, updatable = false)
 	private PerAssess perAssess;
 
 	//bi-directional many-to-one association to PerAssessPaper

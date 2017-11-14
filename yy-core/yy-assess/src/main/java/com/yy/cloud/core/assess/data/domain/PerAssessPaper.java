@@ -28,7 +28,7 @@ public class PerAssessPaper implements Serializable {
 	@Column(name="CODE")
 	private String code;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="CREATOR_ID")
@@ -46,11 +46,11 @@ public class PerAssessPaper implements Serializable {
 	@Column(name="STATUS")
 	private Byte status;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerAssessAspMap
-	@OneToMany(cascade = { CascadeType.PERSIST }, mappedBy="perAssessPaper")
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, mappedBy="perAssessPaper")
 	private List<PerAssessAspMap> perAssessAspMaps;
 
 	public PerAssessPaper() {

@@ -28,13 +28,13 @@ public class PerContent implements Serializable {
 	@Column(name="CONTENT")
 	private String content;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="STATUS")
 	private Byte status;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	public PerContent() {

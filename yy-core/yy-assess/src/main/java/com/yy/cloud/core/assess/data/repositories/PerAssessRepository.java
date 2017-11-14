@@ -30,7 +30,7 @@ import com.yy.cloud.core.assess.data.domain.PerAssess;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssess", path = "perAssess")
 public interface PerAssessRepository extends JpaRepository<PerAssess, String> {
-    @Query(value = "SELECT pa.id, pa.code, pa.name, pa.status, pa.type FROM PerAssess pa, PerAssessAspMap pam where pa.id = pam.assessId and pam.assessPaperId = :assessPaperId")
+    @Query(value = "SELECT pa FROM PerAssess pa, PerAssessAspMap pam where pa.id = pam.assessId and pam.assessPaperId = :assessPaperId")
     Page<PerAssess> getAssessByAsp(@Param("assessPaperId") String _assessPaperId, Pageable _page);
 }
 

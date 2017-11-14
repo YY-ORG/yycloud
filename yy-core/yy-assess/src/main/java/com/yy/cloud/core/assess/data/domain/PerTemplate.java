@@ -28,7 +28,7 @@ public class PerTemplate implements Serializable {
 	@Column(name="CODE")
 	private String code;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="CREATOR_ID")
@@ -46,11 +46,11 @@ public class PerTemplate implements Serializable {
 	@Column(name="TYPE")
 	private Byte type;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerTemplateTiMap
-	@OneToMany(cascade = { CascadeType.PERSIST },mappedBy="perTemplate")
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE }, mappedBy="perTemplate")
 	private List<PerTemplateTiMap> perTemplateTiMaps;
 
 	public PerTemplate() {

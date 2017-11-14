@@ -23,6 +23,7 @@ import com.yy.cloud.common.data.dto.metadata.TemplateProfileReq;
 import com.yy.cloud.common.data.dto.metadata.TemplateWithIDProfileReq;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperItem;
+import com.yy.cloud.common.data.otd.metadata.ComplexTemplateItem;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import com.yy.cloud.common.service.SecurityService;
@@ -102,8 +103,8 @@ public class AssessMgmtController {
 	@ApiOperation(value = "依据考卷ID来检索该考卷下的试题列表")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralContentResult<List<AssessMenuItem>> getAssessByAssessPaperId(@ApiParam(value = "Assess Profile")
-																				   @RequestBody String _assessPaperId){
+	public GeneralContentResult<List<AssessMenuItem>> getAssessByAssessPaperId(@ApiParam(value = "考卷ID")
+																				   @PathVariable(value = "_id") String _assessPaperId){
 		GeneralContentResult<List<AssessMenuItem>> result = new GeneralContentResult<List<AssessMenuItem>>();
 		try {
 			log.info("Is going to retrieve the assess menu list for Assess Paper [{}]", _assessPaperId);
@@ -521,8 +522,8 @@ public class AssessMgmtController {
 	@ApiOperation(value = "获取某个试题的模板")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralContentResult<List<SimpleTemplateItem>> getAssessTemplateItemByTemplate(@ApiParam(value = "试题模板的ID") @PathVariable(value = "_id") String _id) {
-		GeneralContentResult<List<SimpleTemplateItem>> result = new GeneralContentResult<>();
+	public GeneralContentResult<List<ComplexTemplateItem>> getAssessTemplateItemByTemplate(@ApiParam(value = "试题模板的ID") @PathVariable(value = "_id") String _id) {
+		GeneralContentResult<List<ComplexTemplateItem>> result = new GeneralContentResult<>();
 		try {
 			log.info("Going to get template [{}]'s templateItem.", _id);
 			result = this.assessService.getAssessTemplateItemByTemplate(_id);

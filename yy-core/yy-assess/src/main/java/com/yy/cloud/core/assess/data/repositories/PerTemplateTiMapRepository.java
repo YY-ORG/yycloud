@@ -13,7 +13,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerTemplateTiMap;
-import org.springframework.security.access.method.P;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * ClassName:PerTemplateTiMapRepository <br/>
@@ -27,6 +29,10 @@ import org.springframework.security.access.method.P;
  */
 @RepositoryRestResource(collectionResourceRel = "perTemplateTiMap", path = "perTemplateTiMap")
 public interface PerTemplateTiMapRepository extends JpaRepository<PerTemplateTiMap, String> {
-    void deletePerTemplateTiMapsByTemplateItemId(String _templateItemId);
+    List<PerTemplateTiMap> findByTemplateId(String _templateId);
+
+    void deleteByTemplateItemId(String _templateItemId);
+    @Transactional
+    void deleteByTemplateId(String _templateId);
 }
 

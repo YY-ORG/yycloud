@@ -32,7 +32,7 @@ import java.util.List;
  */
 @RepositoryRestResource(collectionResourceRel = "perTemplate", path = "perTemplate")
 public interface PerTemplateRepository extends JpaRepository<PerTemplate, String> {
-    @Query(value = "SELECT p.id, p.code, p.name, p.status, p.type FROM PerTemplate p, PerAssessTemplateMap ptm where p.id = ptm.templateId and ptm.assessId = :assessId")
+    @Query(value = "SELECT p FROM PerTemplate p, PerAssessTemplateMap ptm where p.id = ptm.templateId and ptm.assessId = :assessId")
     List<PerTemplate> getListByAssess(@Param("assessId") String _assess);
 
     Page<PerTemplate> findByType(Byte _type, Pageable _page);

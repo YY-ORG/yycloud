@@ -28,7 +28,7 @@ public class PerAssessCategory implements Serializable {
 	@Column(name="CODE")
 	private String code;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="CREATOR_ID")
@@ -40,7 +40,7 @@ public class PerAssessCategory implements Serializable {
 	@Column(name="STATUS")
 	private byte status;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerApAcMap
