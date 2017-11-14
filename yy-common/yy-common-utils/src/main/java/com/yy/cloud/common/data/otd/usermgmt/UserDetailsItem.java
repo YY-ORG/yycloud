@@ -52,6 +52,9 @@ public class UserDetailsItem implements Serializable, Principal {
     private String ldapId;
 
     private String ldapName;
+    
+    
+    private String birthday;
 
     private Byte status;
 

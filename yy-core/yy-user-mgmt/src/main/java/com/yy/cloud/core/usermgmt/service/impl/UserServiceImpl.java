@@ -542,6 +542,8 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setPhone(foxUser.getUserInfo().getPhone());
         userDetailsItem.setStatus(foxUser.getStatus());
         userDetailsItem.setDescription(foxUser.getDescription());
+        
+        userDetailsItem.setBirthday(foxUser.getUserInfo().getBirthiday());
 
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取角色信息：{}", loginNameOrId);
         List<RoleItem> roleItems = new ArrayList<>();
