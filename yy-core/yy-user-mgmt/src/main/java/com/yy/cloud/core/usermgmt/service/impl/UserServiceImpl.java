@@ -370,6 +370,7 @@ public class UserServiceImpl implements UserService {
          userDetailsItem.setPhone(yyUser.getUserInfo().getPhone());
          userDetailsItem.setStatus(yyUser.getStatus());
          userDetailsItem.setDescription(yyUser.getDescription());
+         userDetailsItem.setBirthday(yyUser.getUserInfo().getBirthiday());
     	
          userDetailsItem.setAdministrativePost(yyUser.getUserInfo().getAdministrativePost());
          userDetailsItem.setGender(yyUser.getUserInfo().getGender());
