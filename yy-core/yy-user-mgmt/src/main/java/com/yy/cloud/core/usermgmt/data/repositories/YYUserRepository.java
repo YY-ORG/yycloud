@@ -28,7 +28,7 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 
 
 
-	YYUser findByLoginName(String _loginName);
+	YYUser findByLoginNameAndStatusLessThan(String _loginName,Byte status);
 
 
 	Page<YYUser> findByIdInAndStatusLessThan(List<String> ids, Byte status, Pageable pageable);
@@ -36,7 +36,7 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 	@Query(value = "SELECT U.* FROM YY_USER_ROLE UR LEFT JOIN YY_USER U ON UR.USER_ID = U.ID LEFT JOIN YY_ROLE R ON UR.ROLE_ID = R.ID WHERE R.ROLE_NAME IN ?1  AND U.STATUS < 4", nativeQuery = true)
 	List<YYUser> findAdmUserByRoleList(List<String> roleNames);
 
-	YYUser findByLoginNameOrId(String _loginName, String _id);
+	YYUser findByLoginNameOrIdAndStatusLessThan(String _loginName, String _id,Byte status);
 	
 	Page<YYUser> findByStatusLessThan( Byte status, Pageable pageable);
 	

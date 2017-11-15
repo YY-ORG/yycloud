@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public String createUser(UserProfile _userProfile) {
     	
-        YYUser foxUserExist = foxUserRepository.findByLoginName(_userProfile.getLoginName());
+        YYUser foxUserExist = foxUserRepository.findByLoginNameAndStatusLessThan(_userProfile.getLoginName() , CommonConstant.DIC_GLOBAL_STATUS_DELETED);
         if(null != foxUserExist){
             log.info(CommonConstant.LOG_DEBUG_TAG + "该用户名已存在：" + _userProfile.getLoginName());
             throw new UserExistException();
@@ -454,7 +454,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailsItem loadUserByLoginName(String _loginName) {
         UserDetailsItem userDetailsItem = new UserDetailsItem();
-        YYUser foxUser = foxUserRepository.findByLoginName(_loginName);
+        YYUser foxUser = foxUserRepository.findByLoginNameAndStatusLessThan(_loginName , CommonConstant.DIC_GLOBAL_STATUS_DELETED);
         
         if(foxUser==null){
         	throw new NoRecordFoundException(String.format("user with login name %s not exist.", _loginName));
@@ -531,7 +531,7 @@ public class UserServiceImpl implements UserService {
     public UserDetailsItem loadUserByLoginNameOrId(String loginNameOrId){
         UserDetailsItem userDetailsItem = new UserDetailsItem();
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息：{}", loginNameOrId);
-        YYUser foxUser = foxUserRepository.findByLoginNameOrId(loginNameOrId.trim(), loginNameOrId.trim());
+        YYUser foxUser = foxUserRepository.findByLoginNameOrIdAndStatusLessThan(loginNameOrId.trim(), loginNameOrId.trim(),CommonConstant.DIC_GLOBAL_STATUS_DELETED);
         if(null == foxUser){
             throw new NoRecordFoundException(String.format("user %s not exist.", loginNameOrId));
         }
@@ -544,6 +544,7 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setPhone(foxUser.getUserInfo().getPhone());
         userDetailsItem.setStatus(foxUser.getStatus());
         userDetailsItem.setDescription(foxUser.getDescription());
+        userDetailsItem.setOrganizationId(foxUser.getUserInfo().getDeptId());
         
         userDetailsItem.setBirthday(foxUser.getUserInfo().getBirthiday());
 
@@ -561,12 +562,12 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setRoles(roleItems);
 
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取机构/部门信息：{}", loginNameOrId);
-        List<YYOrganization> organizationItems = yyOrganzationRepository.findOrganizationByUserId(foxUser.getId());
+       /* List<YYOrganization> organizationItems = yyOrganzationRepository.findOrganizationByUserId(foxUser.getId());
        
         if(organizationItems!=null && organizationItems.size()>0){
         	YYOrganization yyOrganization = organizationItems.get(0);
         	userDetailsItem.setOrganizationId(yyOrganization.getId());
-        }
+        }*/
         userDetailsItem.setIsAD(false);     //TODO 这里可能有问题，需要确认
         if (foxUser.getType() != null && foxUser.getType().byteValue() == AdUserMgmtConstants.USER_TYPE_AD) {
         }
@@ -595,7 +596,7 @@ public class UserServiceImpl implements UserService {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "验证登录名是否存在：{}", loginName);
         GeneralContentResult<String> generalContentResult = new GeneralContentResult<String>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        YYUser foxUser = foxUserRepository.findByLoginName(loginName);
+        YYUser foxUser = foxUserRepository.findByLoginNameAndStatusLessThan(loginName, CommonConstant.DIC_GLOBAL_STATUS_DELETED);
         if(null != foxUser){
             log.debug(CommonConstant.LOG_DEBUG_TAG + "登录名已存在：{}", loginName);
             generalContentResult.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
