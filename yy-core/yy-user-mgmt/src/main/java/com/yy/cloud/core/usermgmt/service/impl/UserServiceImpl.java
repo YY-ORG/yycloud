@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
 			String passwordTem=_userProfile.getPassword();
 			String password = null;
 			if(AssertHelper.notEmpty(passwordTem)){
-				password=passwordTem;
+				password=  encoder.encode(_userProfile.getPassword());;
 			}else{
 				password = foxUser.getPassword();
 			}
