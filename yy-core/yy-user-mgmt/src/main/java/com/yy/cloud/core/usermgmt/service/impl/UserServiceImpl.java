@@ -254,7 +254,7 @@ public class UserServiceImpl implements UserService {
 			if (AssertHelper.notEmpty(_userProfile.getProfessionalTitle())) {
 				yyUserInfo.setProfessionalTitle(_userProfile.getProfessionalTitle());
 			}
-			
+			yyUserInfo.setBirthiday( DateUtils.formatDate(_userProfile.getBirthday(), "yyyy-MM-dd") );
 			
 
 			yyUserInfo.setUser(foxUser);
