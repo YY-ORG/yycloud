@@ -468,6 +468,8 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setPhone(foxUser.getUserInfo().getPhone());
         userDetailsItem.setStatus(foxUser.getStatus());
         userDetailsItem.setDescription(foxUser.getDescription());
+        
+        userDetailsItem.setOrganizationId(foxUser.getUserInfo().getDeptId());
 
         List<RoleItem> roleItems = new ArrayList<>();
         foxUserRoleRepository.findByUserId(foxUser.getId()).forEach(foxUserRole -> {
