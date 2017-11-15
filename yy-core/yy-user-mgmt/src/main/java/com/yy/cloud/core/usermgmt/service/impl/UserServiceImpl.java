@@ -191,7 +191,14 @@ public class UserServiceImpl implements UserService {
 					() -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
 
 			String userId = _userProfile.getId();
-			String password = foxUser.getPassword();
+			String passwordTem=_userProfile.getPassword();
+			String password = null;
+			if(AssertHelper.notEmpty(passwordTem)){
+				password=passwordTem;
+			}else{
+				password = foxUser.getPassword();
+			}
+			
 			Byte status = foxUser.getStatus();
 			Byte type = foxUser.getType();
 			String loginName = foxUser.getLoginName();
