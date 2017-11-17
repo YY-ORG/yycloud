@@ -14,7 +14,7 @@ spring:
 logging:
   path: /yy/logs/yy_micro/baseplatform/
   level:
-    org.springframework.security: DEBUG
+    org.springframework.security: INFO
 zuul:
   sensitive-headers: '' #Distribute headers cookies to children
   add-proxy-headers: true
@@ -39,8 +39,8 @@ zuul:
       serviceId: sysbase
 #      url: http://localhost:9303
     productmgmt:
-      path: /productmgmt/**
-      serviceId: productmgmt
+      path: /filesys/**
+      serviceId: filesys
     submgmt:
       path: /submgmt/**
       serviceId: submgmt

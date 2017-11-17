@@ -48,7 +48,7 @@
 			<timezone>+8</timezone>
 		</developer>
 	</developers>
-	<dependencies>
+	<dependencies><!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-rest</artifactId>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
@@ -82,5 +82,6 @@
 		<module>yy-sysbase</module>
 		<module>yy-user-mgmt</module>
 		<module>yy-assess</module>
+		<module>yy-filesys</module>
 	</modules>
 </project>

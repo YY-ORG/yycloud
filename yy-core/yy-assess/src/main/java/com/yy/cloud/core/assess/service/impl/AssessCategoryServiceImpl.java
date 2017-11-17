@@ -132,6 +132,7 @@ public class AssessCategoryServiceImpl implements AssessCategoryService {
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 
+        this.perApAcMapRepository.deleteByAssessPaperId(_assessPaper);
         List<PerApAcMap> tempApAcMapList = new ArrayList<>();
         if(_categoryList != null && _categoryList.size() > 0){
             for(String tempCategoryId : _categoryList) {

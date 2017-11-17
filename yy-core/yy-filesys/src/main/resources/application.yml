@@ -1,0 +1,65 @@
+
+server:
+  port: 9025
+logging:
+  path: /yy/logs/yy_micro/core/
+  
+ribbon:
+  eureka:
+    enabled: true
+
+security:
+  basic:
+    enabled: false
+  ignored: /noauth/**, /swagger**,/swagger**/**,/webjars/**,/v2/**, /js/**, /css/**
+  oauth2:
+    client:
+      client-id: fox-service
+      client-secret: secret
+      access-token-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/token
+      grant-type: client_credentials
+    resource:
+      token-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/check_token
+      user-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/user
+
+---
+spring:
+  profiles: cloud
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://pro-discovery:8761/eureka/
+  instance:
+    preferIpAddress: true
+    
+---
+spring:
+  profiles: development
+  data:
+    mongodb:
+      uri: mongodb://admin:abcd1234@172.16.112.95/yy
+    #  username: admin
+    #  password: abcd1234
+      
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.16.112.91:8761/eureka/
+  instance:
+    preferIpAddress: true
+    
+---
+spring:
+  profiles: test
+      
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://test-discovery:8761/eureka/
+  instance:
+    preferIpAddress: true
+
+    
+
+    
