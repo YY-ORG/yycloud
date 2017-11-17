@@ -554,6 +554,8 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setDescription(foxUser.getDescription());
         userDetailsItem.setOrganizationId(foxUser.getUserInfo().getDeptId());
         
+        userDetailsItem.setGender(foxUser.getUserInfo().getGender());
+        
         userDetailsItem.setBirthday(foxUser.getUserInfo().getBirthiday());
 
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取角色信息：{}", loginNameOrId);
