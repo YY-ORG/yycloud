@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 public class SystemDictionary implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String id;
+	private Long id;
 
 	private String code;
 
@@ -27,11 +27,6 @@ public class SystemDictionary implements Serializable {
 
 	private String value;
 
-	private String displayValue;
-	
-	private String tenantId;
-	
-	
 	private String text;
 
 	private Timestamp createDate;

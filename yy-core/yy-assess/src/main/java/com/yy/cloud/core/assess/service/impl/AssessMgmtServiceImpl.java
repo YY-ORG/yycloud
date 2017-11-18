@@ -249,7 +249,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setStatus(_tempPTI.getStatus());
 		tempItem.setTip(_tempPTI.getTip());
 		tempItem.setType(_tempPTI.getType());
-		tempItem.setValueSource(_tempPTI.getValueSource());
+		tempItem.setValueOwner(_tempPTI.getValueOwner());
+		tempItem.setValueField(_tempPTI.getValueField());
 		tempItem.setCreateDate(_tempPTI.getCreateDate());
 		tempItem.setUpdateDate(_tempPTI.getUpdateDate());
 		return tempItem;
@@ -271,7 +272,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempItem.setStatus(_tempPTI.getStatus());
         tempItem.setTip(_tempPTI.getTip());
         tempItem.setType(_tempPTI.getType());
-        tempItem.setValueSource(_tempPTI.getValueSource());
+        tempItem.setValueField(_tempPTI.getValueField());
+        tempItem.setValueOwner(_tempPTI.getValueOwner());
         return tempItem;
     }
 
@@ -531,7 +533,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempTemplateItem.setPlaceholderTip(_req.getPlaceHolder());
         tempTemplateItem.setTip(_req.getTip());
         tempTemplateItem.setDefaultValue(_req.getDefaultValue());
-        tempTemplateItem.setValueSource(_req.getValueSource());
+        tempTemplateItem.setValueOwner(_req.getValueOwner());
+        tempTemplateItem.setValueField(_req.getValueField());
         tempTemplateItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 
         PerTemplateItem templateItem = this.perTemplateItemRepository.save(tempTemplateItem);
@@ -541,7 +544,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         resultTemplateItem.setLabel(templateItem.getLabel());
         resultTemplateItem.setName(templateItem.getName());
         resultTemplateItem.setDefaultValue(templateItem.getDefaultValue());
-        resultTemplateItem.setValueSource(templateItem.getValueSource());
+        resultTemplateItem.setValueOwner(templateItem.getValueOwner());
+        resultTemplateItem.setValueField(templateItem.getValueField());
         resultTemplateItem.setPlaceholderTip(templateItem.getPlaceholderTip());
         resultTemplateItem.setTip(templateItem.getTip());
         resultTemplateItem.setStatus(templateItem.getStatus());
@@ -563,7 +567,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempTemplateItem.setPlaceholderTip(_req.getPlaceHolder());
         tempTemplateItem.setTip(_req.getTip());
         tempTemplateItem.setDefaultValue(_req.getDefaultValue());
-        tempTemplateItem.setValueSource(_req.getValueSource());
+        tempTemplateItem.setValueOwner(_req.getValueOwner());
+        tempTemplateItem.setValueField(_req.getValueField());
         tempTemplateItem.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 
         PerTemplateItem templateItem = this.perTemplateItemRepository.save(tempTemplateItem);
@@ -573,7 +578,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         resultTemplateItem.setLabel(templateItem.getLabel());
         resultTemplateItem.setName(templateItem.getName());
         resultTemplateItem.setDefaultValue(templateItem.getDefaultValue());
-        resultTemplateItem.setValueSource(templateItem.getValueSource());
+        resultTemplateItem.setValueOwner(templateItem.getValueOwner());
+        resultTemplateItem.setValueField(templateItem.getValueField());
         resultTemplateItem.setPlaceholderTip(templateItem.getPlaceholderTip());
         resultTemplateItem.setTip(templateItem.getTip());
         resultTemplateItem.setStatus(templateItem.getStatus());
@@ -640,7 +646,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempItem.setStatus(tempTemplateItem.getStatus());
         tempItem.setTip(tempTemplateItem.getTip());
         tempItem.setType(tempTemplateItem.getType());
-        tempItem.setValueSource(tempTemplateItem.getValueSource());
+        tempItem.setValueField(tempTemplateItem.getValueField());
+        tempItem.setValueOwner(tempTemplateItem.getValueOwner());
         return tempItem;
     }
     @Transactional

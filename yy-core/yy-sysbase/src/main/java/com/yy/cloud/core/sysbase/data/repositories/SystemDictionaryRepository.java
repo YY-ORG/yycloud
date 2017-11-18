@@ -12,6 +12,7 @@ package com.yy.cloud.core.sysbase.data.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
@@ -38,5 +39,10 @@ public interface SystemDictionaryRepository extends JpaRepository<YYSystemdictio
 
 //	@Cacheable(value = "sysdicidcache", keyGenerator = "wiselyKeyGenerator")
 	List<YYSystemdictionary> findByOwnerAndFieldAndCode(@Param("_owner") String _owner, @Param("_field") String _field, @Param("_code") String _code);
-	
+
+	@Query(value ="select distinct y.owner from YYSystemdictionary y")
+	List<String> getOwnerList();
+
+	@Query(value ="select y.field from YYSystemdictionary y where y.owner= :_owner")
+	List<String> getFieldListByOwner(@Param("_owner") String _owner);
 }

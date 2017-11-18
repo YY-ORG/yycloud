@@ -64,6 +64,18 @@
 		<appender-ref ref="LOGSTASH" />
 	</root>
 
+	<logger name="javax">
+		<level value="ERROR" />
+	</logger>
+	<logger name="com.sun">
+		<level value="ERROR" />
+	</logger>
+	<logger name="sun.net">
+		<level value="ERROR" />
+	</logger>
+	<logger name="springfox">
+		<level value="ERROR" />
+	</logger>
 	<logger name="net.sf.ehcache">
 		<level value="ERROR" />
 	</logger>

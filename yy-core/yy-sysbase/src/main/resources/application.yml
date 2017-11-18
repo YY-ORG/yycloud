@@ -7,7 +7,21 @@ logging:
 ribbon:
   eureka:
     enabled: true
-    
+
+
+security:
+  basic:
+    enabled: false
+  ignored: /noauth/**, /swagger**,/swagger**/**,/webjars/**,/v2/**, /js/**, /css/**, /sysdic/**
+  oauth2:
+    client:
+      client-id: fox-service
+      client-secret: secret
+      access-token-uri:  http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/token
+      grant-type: client_credentials
+    resource:
+      token-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/check_token
+
 ---
 spring:
   profiles: cloud

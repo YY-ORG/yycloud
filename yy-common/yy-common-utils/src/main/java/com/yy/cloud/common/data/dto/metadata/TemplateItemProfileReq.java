@@ -20,7 +20,8 @@ public class TemplateItemProfileReq implements Serializable {
     private String code;
     private Byte type;
     private String defaultValue;
-    private String valueSource;
+    private String valueOwner;
+    private String valueField;
     private String placeHolder;
     private String tip;
 }

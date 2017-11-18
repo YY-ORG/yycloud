@@ -70,11 +70,11 @@ public class PerTemplateItem implements Serializable {
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
-	@Column(name="VALUE_DOMAIN")
-	private Byte valueDomain;
+	@Column(name="VALUE_OWNER")
+	private String valueOwner;
 
-	@Column(name="VALUE_SOURCE")
-	private String valueSource;
+	@Column(name="VALUE_FIELD")
+	private String valueField;
 
 	//bi-directional many-to-one association to PerTemplateTiMap
 	@OneToMany(mappedBy="perTemplateItem")
@@ -211,20 +211,20 @@ public class PerTemplateItem implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public Byte getValueDomain() {
-		return this.valueDomain;
+	public String getValueOwner() {
+		return this.valueOwner;
 	}
 
-	public void setValueDomain(Byte valueDomain) {
-		this.valueDomain = valueDomain;
+	public void setValueOwner(String valueOwner) {
+		this.valueOwner = valueOwner;
 	}
 
-	public String getValueSource() {
-		return this.valueSource;
+	public String getValueField() {
+		return this.valueField;
 	}
 
-	public void setValueSource(String valueSource) {
-		this.valueSource = valueSource;
+	public void setValueField(String valueSource) {
+		this.valueField = valueSource;
 	}
 
 	public List<PerTemplateTiMap> getPerTemplateTiMaps() {

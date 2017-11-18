@@ -22,7 +22,8 @@ public class SimpleTemplateItem implements Serializable {
     private Byte type;
     private Byte status;
     private String defaultValue;
-    private String valueSource;
+    private String valueOwner;
+    private String valueField;
     private String placeholderTip;
     private String tip;
 }
