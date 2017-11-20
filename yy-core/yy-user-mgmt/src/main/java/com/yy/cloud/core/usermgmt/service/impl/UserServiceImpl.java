@@ -539,7 +539,9 @@ public class UserServiceImpl implements UserService {
     public UserDetailsItem loadUserByLoginNameOrId(String loginNameOrId){
         UserDetailsItem userDetailsItem = new UserDetailsItem();
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息：{}", loginNameOrId);
-        YYUser foxUser = foxUserRepository.findByLoginNameOrIdAndStatusLessThan(loginNameOrId.trim(), loginNameOrId.trim(),CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        YYUser foxUser = foxUserRepository.findByLoginNameAndStatusLessThan(loginNameOrId.trim(),CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "foxUser：{}", loginNameOrId);
         if(null == foxUser){
             throw new NoRecordFoundException(String.format("user %s not exist.", loginNameOrId));
         }
