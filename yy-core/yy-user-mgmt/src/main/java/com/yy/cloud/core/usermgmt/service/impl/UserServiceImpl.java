@@ -315,12 +315,12 @@ public class UserServiceImpl implements UserService {
 		Page<YYUser> foxUsers;
 		List<UserDetailsItem> UserDetailsItems = new ArrayList<UserDetailsItem>();
 		if (StringUtils.isBlank(_userName)) {
-			foxUsers = foxUserRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+			foxUsers = foxUserRepository.findByStatusLessThanAndLoginNameIsNotLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED,UserMgmtConstants.ACCOUNT_SYSADMIN,
 					pageRequest);
 		} else {
-			foxUsers = foxUserRepository.findByStatusLessThanAndUserInfoUserNameLike(
+			foxUsers = foxUserRepository.findByStatusLessThanAndUserInfoUserNameLikeAndLoginNameNotLike(
 					 CommonConstant.DIC_GLOBAL_STATUS_DELETED,
-					"%" + _userName + "%", pageRequest);
+					"%" + _userName + "%", UserMgmtConstants.ACCOUNT_SYSADMIN,pageRequest);
 		}
 		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
 		foxUsers.forEach(foxUser -> {

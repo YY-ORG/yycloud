@@ -43,9 +43,9 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 	
 	YYUser findByLoginNameOrIdAndStatus(String _loginName, String _id,Byte status);
 	
-	Page<YYUser> findByStatusLessThan( Byte status, Pageable pageable);
+	Page<YYUser> findByStatusLessThanAndLoginNameIsNotLike( Byte status, String loginname,Pageable pageable);
 	
-	Page<YYUser> findByStatusLessThanAndUserInfoUserNameLike( Byte status, String username,
+	Page<YYUser> findByStatusLessThanAndUserInfoUserNameLikeAndLoginNameNotLike( Byte status, String username,String loginName,
 			Pageable pageable);
 	
 	
