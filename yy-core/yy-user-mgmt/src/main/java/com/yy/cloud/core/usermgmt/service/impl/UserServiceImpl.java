@@ -256,6 +256,8 @@ public class UserServiceImpl implements UserService {
 			}
 			yyUserInfo.setBirthiday( DateUtils.formatDate(_userProfile.getBirthday(), "yyyy-MM-dd") );
 			
+			yyUserInfo.setUserName(_userProfile.getUserName());
+			
 
 			yyUserInfo.setUser(foxUser);
 			foxUser.setUserInfo(yyUserInfo);
