@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.yy.cloud.core.usermgmt.data.domain.YYUser;
 import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
+import java.lang.String;
 
 /**
  * ClassName: AcmeUser UserRepository <br/>
@@ -28,7 +29,6 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 
 
 
-	YYUser findByLoginNameAndStatusLessThan(String _loginName,Byte status);
 
 
 	Page<YYUser> findByIdInAndStatusLessThan(List<String> ids, Byte status, Pageable pageable);
@@ -38,9 +38,14 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 
 	YYUser findByLoginNameOrIdAndStatusLessThan(String _loginName, String _id,Byte status);
 	
-	Page<YYUser> findByStatusLessThan( Byte status, Pageable pageable);
 	
-	Page<YYUser> findByStatusLessThanAndUserInfoUserNameLike( Byte status, String username,
+	YYUser findByLoginNameAndStatusLessThan(String loginname,Byte status);
+	
+	YYUser findByLoginNameOrIdAndStatus(String _loginName, String _id,Byte status);
+	
+	Page<YYUser> findByStatusLessThanAndLoginNameIsNotLike( Byte status, String loginname,Pageable pageable);
+	
+	Page<YYUser> findByStatusLessThanAndUserInfoUserNameLikeAndLoginNameNotLike( Byte status, String username,String loginName,
 			Pageable pageable);
 	
 	

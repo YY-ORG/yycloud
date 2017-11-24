@@ -256,6 +256,8 @@ public class UserServiceImpl implements UserService {
 			}
 			yyUserInfo.setBirthiday( DateUtils.formatDate(_userProfile.getBirthday(), "yyyy-MM-dd") );
 			
+			yyUserInfo.setUserName(_userProfile.getUserName());
+			
 
 			yyUserInfo.setUser(foxUser);
 			foxUser.setUserInfo(yyUserInfo);
@@ -315,12 +317,12 @@ public class UserServiceImpl implements UserService {
 		Page<YYUser> foxUsers;
 		List<UserDetailsItem> UserDetailsItems = new ArrayList<UserDetailsItem>();
 		if (StringUtils.isBlank(_userName)) {
-			foxUsers = foxUserRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+			foxUsers = foxUserRepository.findByStatusLessThanAndLoginNameIsNotLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED,UserMgmtConstants.ACCOUNT_SYSADMIN,
 					pageRequest);
 		} else {
-			foxUsers = foxUserRepository.findByStatusLessThanAndUserInfoUserNameLike(
+			foxUsers = foxUserRepository.findByStatusLessThanAndUserInfoUserNameLikeAndLoginNameNotLike(
 					 CommonConstant.DIC_GLOBAL_STATUS_DELETED,
-					"%" + _userName + "%", pageRequest);
+					"%" + _userName + "%", UserMgmtConstants.ACCOUNT_SYSADMIN,pageRequest);
 		}
 		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
 		foxUsers.forEach(foxUser -> {
@@ -539,7 +541,9 @@ public class UserServiceImpl implements UserService {
     public UserDetailsItem loadUserByLoginNameOrId(String loginNameOrId){
         UserDetailsItem userDetailsItem = new UserDetailsItem();
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息：{}", loginNameOrId);
-        YYUser foxUser = foxUserRepository.findByLoginNameOrIdAndStatusLessThan(loginNameOrId.trim(), loginNameOrId.trim(),CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        YYUser foxUser = foxUserRepository.findByLoginNameAndStatusLessThan(loginNameOrId.trim(),CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "foxUser：{}", loginNameOrId);
         if(null == foxUser){
             throw new NoRecordFoundException(String.format("user %s not exist.", loginNameOrId));
         }
@@ -557,6 +561,16 @@ public class UserServiceImpl implements UserService {
         userDetailsItem.setGender(foxUser.getUserInfo().getGender());
         
         userDetailsItem.setBirthday(foxUser.getUserInfo().getBirthiday());
+        
+        
+        userDetailsItem.setOccupationType(foxUser.getUserInfo().getOccupationType());
+        
+        userDetailsItem.setAdministrativePost(foxUser.getUserInfo().getAdministrativePost());
+        
+        userDetailsItem.setAdministrativeRank(foxUser.getUserInfo().getAdministrativeRank());
+        userDetailsItem.setProfessionalTitle(foxUser.getUserInfo().getProfessionalTitle());
+        
+        
 
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取角色信息：{}", loginNameOrId);
         List<RoleItem> roleItems = new ArrayList<>();
