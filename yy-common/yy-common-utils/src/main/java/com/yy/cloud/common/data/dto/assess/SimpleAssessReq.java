@@ -17,5 +17,6 @@ import java.io.Serializable;
 public class SimpleAssessReq implements Serializable {
     private static final long serialVersionUID = -4209340246280892382L;
     private String assessId;
+    private String assessCategoryId;
     private Integer seqNo;
 }

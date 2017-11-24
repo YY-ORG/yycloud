@@ -43,6 +43,6 @@ public interface SystemDictionaryRepository extends JpaRepository<YYSystemdictio
 	@Query(value ="select distinct y.owner from YYSystemdictionary y")
 	List<String> getOwnerList();
 
-	@Query(value ="select y.field from YYSystemdictionary y where y.owner= :_owner")
+	@Query(value ="select distinct y.field from YYSystemdictionary y where y.owner= :_owner")
 	List<String> getFieldListByOwner(@Param("_owner") String _owner);
 }

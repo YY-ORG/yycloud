@@ -96,16 +96,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
 		PerAssessPaper tempAssessPaper = tempAssessPaperList.get(0);//默认获取第一个
 		List<PerAssessAspMap> tempAssessAspMapList = tempAssessPaper.getPerAssessAspMaps();
+		tempAssessMenuItemList = tempAssessAspMapList.stream().map(this::convertToAssessMenuOTD).collect(Collectors.toList());
 
-		for(PerAssessAspMap tempAssessAspMapItem : tempAssessAspMapList){
-			PerAssess tempAssess = tempAssessAspMapItem.getPerAssess();
-			AssessMenuItem tempAssessMenuItem = new AssessMenuItem();
-			tempAssessMenuItem.setAssessId(tempAssess.getId());
-			tempAssessMenuItem.setAssessCode(tempAssess.getCode());
-			tempAssessMenuItem.setAssessName(tempAssess.getName());
-			tempAssessMenuItem.setSeqNo(tempAssessAspMapItem.getSeqNo());
-			tempAssessMenuItemList.add(tempAssessMenuItem);
-		}
 		GeneralContentResult<List<AssessMenuItem>> tempResult = new GeneralContentResult<List<AssessMenuItem>>();
 		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 		tempResult.setResultContent(tempAssessMenuItemList);
@@ -115,21 +107,33 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	@Override
 	public GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperId(String _assessPaperId) {
 		List<PerAssessAspMap> tempAssessAspMapList = this.perAssessAspMapRepository.findByAssessPaperIdAndStatus(_assessPaperId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		List<AssessMenuItem> tempAssessMenuItemList = tempAssessAspMapList.stream().map(this::convertToAssessMenuOTD).collect(Collectors.toList());
 
-		List<AssessMenuItem> tempAssessMenuItemList = new ArrayList<>();
-		for(PerAssessAspMap tempAssessAspMapItem : tempAssessAspMapList){
-			PerAssess tempAssess = tempAssessAspMapItem.getPerAssess();
-			AssessMenuItem tempAssessMenuItem = new AssessMenuItem();
-			tempAssessMenuItem.setAssessId(tempAssess.getId());
-			tempAssessMenuItem.setAssessCode(tempAssess.getCode());
-			tempAssessMenuItem.setAssessName(tempAssess.getName());
-			tempAssessMenuItem.setSeqNo(tempAssessAspMapItem.getSeqNo());
-			tempAssessMenuItemList.add(tempAssessMenuItem);
-		}
 		GeneralContentResult<List<AssessMenuItem>> tempResult = new GeneralContentResult<List<AssessMenuItem>>();
 		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 		tempResult.setResultContent(tempAssessMenuItemList);
 		return tempResult;
+	}
+
+	@Override
+	public GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperIdAndGroup(String _assessPaperId, String _groupId) {
+		return null;
+	}
+
+	/**
+	 * 转换考卷分组
+	 *
+	 * @param _tempMap
+	 * @return
+	 */
+	private AssessMenuItem convertToAssessMenuOTD(PerAssessAspMap _tempMap){
+		PerAssess tempAssess = _tempMap.getPerAssess();
+		AssessMenuItem tempAssessMenuItem = new AssessMenuItem();
+		tempAssessMenuItem.setAssessId(tempAssess.getId());
+		tempAssessMenuItem.setAssessCode(tempAssess.getCode());
+		tempAssessMenuItem.setAssessName(tempAssess.getName());
+		tempAssessMenuItem.setSeqNo(_tempMap.getSeqNo());
+		return tempAssessMenuItem;
 	}
 
 	@Override
@@ -493,7 +497,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
     @Override
     public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(Byte _type, Pageable _page) {
-        Page<PerTemplate> templatePage = this.perTemplateRepository.findByType(_type, _page);
+        Page<PerTemplate> templatePage = this.perTemplateRepository.findByTypeAndStatusOrderByNameAsc(_type, CommonConstant.DIC_GLOBAL_STATUS_ENABLE, _page);
 
         List<SimpleTemplate> tempTemplateList = templatePage.getContent().stream().map(this::convertToSTIOTD).collect(Collectors.toList());
         GeneralPagingResult<List<SimpleTemplate>> tempResult = new GeneralPagingResult<>();
@@ -731,18 +735,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempPAP.setOrgId(_req.getOrgId());
         tempPAP.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
         tempPAP.setTitleType(_req.getTitle());
-        List<PerAssessAspMap> tempPAAMapList = new ArrayList<>();
-        if(_req.getAssessList() != null && _req.getAssessList().size() > 0) {
-            for(SimpleAssessReq tempAssessReq : _req.getAssessList()) {
-                PerAssessAspMap tempPAAM = new PerAssessAspMap();
-                tempPAAM.setAssessId(tempAssessReq.getAssessId());
-                tempPAAM.setSeqNo(tempAssessReq.getSeqNo());
-                tempPAAM.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
-                tempPAAM.setPerAssessPaper(tempPAP);
-
-                tempPAAMapList.add(tempPAAM);
-            }
-        }
+        List<PerAssessAspMap> tempPAAMapList = _req.getAssessList().stream().map(tempItem -> this.convertToAssessAspDTO(tempItem, tempPAP)).collect(Collectors.toList());
         tempPAP.setPerAssessAspMaps(tempPAAMapList);
 
         PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
@@ -765,40 +758,50 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         if(_req == null)
             return tempResult;
 
-        PerAssessPaper tempPAP = this.perAssessPaperRepository.findOne(_req.getId());
-        tempPAP.setCode(_req.getCode());
-        tempPAP.setName(_req.getName());
-        tempPAP.setOrgId(_req.getOrgId());
-        tempPAP.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
-        tempPAP.setTitleType(_req.getTitle());
 
-        this.perAssessAspMapRepository.deletePerAssessAspMapsByAssessPaperId(_req.getId());
-
-        List<PerAssessAspMap> tempPAAMapList = new ArrayList<>();
-        if(_req.getAssessList() != null && _req.getAssessList().size() > 0) {
-            for(SimpleAssessReq tempAssessReq : _req.getAssessList()) {
-                PerAssessAspMap tempPAAM = new PerAssessAspMap();
-                tempPAAM.setAssessId(tempAssessReq.getAssessId());
-                tempPAAM.setSeqNo(tempAssessReq.getSeqNo());
-                tempPAAM.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
-                tempPAAM.setPerAssessPaper(tempPAP);
-                tempPAAMapList.add(tempPAAM);
-            }
-        }
-        tempPAP.setPerAssessAspMaps(tempPAAMapList);
+		this.perAssessAspMapRepository.deletePerAssessAspMapsByAssessPaperId(_req.getId());
+        for(String tempOrg : _req.getOrgId()){
+        	for(Byte tempTitle : _req.getTitle()){
+				PerAssessPaper tempPAP = this.perAssessPaperRepository.findOne(_req.getId());
+				tempPAP.setCode(_req.getCode());
+				tempPAP.setName(_req.getName());
+				tempPAP.setOrgId(tempOrg);
+				tempPAP.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+				tempPAP.setTitleType(tempTitle);
+				List<PerAssessAspMap> tempPAAMapList = _req.getAssessList().stream().map(tempItem -> this.convertToAssessAspDTO(tempItem, tempPAP)).collect(Collectors.toList());
+				tempPAP.setPerAssessAspMaps(tempPAAMapList);
+			}
+		}
 
         PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
         SimpleAssessPaperItem tempASPI = new SimpleAssessPaperItem();
         tempASPI.setId(resultPAP.getId());
         tempASPI.setCode(resultPAP.getCode());
         tempASPI.setName(resultPAP.getName());
-        tempASPI.setOrgId(resultPAP.getOrgId());
+        tempASPI.setOrgId(_req.getOrgId());
         tempASPI.setStatus(resultPAP.getStatus());
-        tempASPI.setTitle(resultPAP.getTitleType());
+        tempASPI.setTitle(_req.getTitle());
         tempResult.setResultContent(tempASPI);
 
         return tempResult;
 	}
+
+	/**
+	 * 转换题和卷子及卷子分组的关系
+	 *
+	 * @param _assessReq
+	 * @return
+	 */
+	private PerAssessAspMap convertToAssessAspDTO(SimpleAssessReq _assessReq, PerAssessPaper _pap){
+		PerAssessAspMap tempPAAM = new PerAssessAspMap();
+		tempPAAM.setAssessId(_assessReq.getAssessId());
+		tempPAAM.setAssessCategoryId(_assessReq.getAssessCategoryId());
+		tempPAAM.setSeqNo(_assessReq.getSeqNo());
+		tempPAAM.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		tempPAAM.setPerAssessPaper(_pap);
+		return tempPAAM;
+	}
+
     @Transactional
 	@Override
 	public GeneralResult deleteAssessPaper(String _assessPaperId) {
@@ -863,6 +866,14 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         return tempItem;
     }
 
-
+	@Override
+	public GeneralContentResult<List<SimpleTemplate>> getTemplateListByType(Byte _type) {
+		List<PerTemplate> templateList = this.perTemplateRepository.findByTypeAndStatusOrderByNameAsc(_type, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		List<SimpleTemplate> tempTemplateList = templateList.stream().map(this::convertToSTIOTD).collect(Collectors.toList());
+		GeneralContentResult<List<SimpleTemplate>> tempResult = new GeneralContentResult<>();
+		tempResult.setResultContent(tempTemplateList);
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		return tempResult;
+	}
 }
 

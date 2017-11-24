@@ -31,6 +31,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import com.yy.cloud.common.constant.ResultCode;
@@ -354,7 +356,7 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索题库中的试题")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleAssessItem>> getAssessList(Pageable _page){
+	public GeneralPagingResult<List<SimpleAssessItem>> getAssessList(@PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessItem>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load assess by page [{}].", _page);
@@ -372,7 +374,8 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索某个考卷的试题")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleAssessItem>> getAssessListByAssessPaper(@ApiParam(value = "考卷的ID") @PathVariable(value = "_id") String _assessPaperId, Pageable _page){
+	public GeneralPagingResult<List<SimpleAssessItem>> getAssessListByAssessPaper(@ApiParam(value = "考卷的ID") @PathVariable(value = "_id") String _assessPaperId,
+																				  @PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessItem>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load assess list by assess paper [{}] and page [{}].", _assessPaperId, _page);
@@ -390,7 +393,7 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索所有的考卷")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperList(Pageable _page){
+	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperList(@PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessPaperItem>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load assess paper list by page [{}].", _page);
@@ -408,7 +411,7 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索当前登录用户所在部门的考卷列表")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperListByOrg(Pageable _page){
+	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperListByOrg(@PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessPaperItem>> result = new GeneralPagingResult<>();
 		try {
 			String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
@@ -427,7 +430,8 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索某个部门的考卷列表")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperListByOrg(@ApiParam(value = "部门的ID") @PathVariable(value = "_orgId") String _orgId, Pageable _page){
+	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperListByOrg(@ApiParam(value = "部门的ID") @PathVariable(value = "_orgId") String _orgId,
+																						  @PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessPaperItem>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load assess paper list by org [{}] page [{}].", _orgId, _page);
@@ -464,7 +468,8 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索所有的某个类型的考题模板")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(@RequestParam(value = "_type", required = false) Byte _type, Pageable _page){
+	public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateListByPage(@RequestParam(value = "_type", required = false) Byte _type,
+																				 @PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleTemplate>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load all of the assess's template, type=[{}] Page=[{}].", _type, _page);
@@ -472,6 +477,25 @@ public class AssessMgmtController {
 				result = this.assessService.getAssessTemplateList(_page);
 			else
 				result = this.assessService.getAssessTemplateList(_type, _page);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+
+	@RequestMapping(value = "/authsec/templates", method = RequestMethod.GET)
+	@ApiOperation(value = "检索所有的某个类型的考题模板")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<List<SimpleTemplate>> getAssessTemplateList(@RequestParam(value = "_type", required = true) Byte _type){
+		GeneralContentResult<List<SimpleTemplate>> result = new GeneralContentResult<>();
+		try {
+			log.info("Going to load all of the assess's template, type=[{}].", _type);
+			result = this.assessService.getTemplateListByType(_type);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);
@@ -504,7 +528,7 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索所有的考题模板元素")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleTemplateItem>> getAssessTemplateItemList(Pageable _page){
+	public GeneralPagingResult<List<SimpleTemplateItem>> getAssessTemplateItemList(@PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleTemplateItem>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load all of the assess's templateItem.Page=[{}]", _page);
@@ -519,7 +543,7 @@ public class AssessMgmtController {
 	}
 
 	@RequestMapping(value = "/authsec/template/{_id}/templateitemlist", method = RequestMethod.GET)
-	@ApiOperation(value = "获取某个试题的模板")
+	@ApiOperation(value = "获取某个试题模板的元素列表")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
 	public GeneralContentResult<List<ComplexTemplateItem>> getAssessTemplateItemByTemplate(@ApiParam(value = "试题模板的ID") @PathVariable(value = "_id") String _id) {
@@ -535,4 +559,5 @@ public class AssessMgmtController {
 		}
 		return result;
 	}
+
 }

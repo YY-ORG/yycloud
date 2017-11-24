@@ -39,6 +39,9 @@ public class PerAssessAspMap implements Serializable {
 	@Column(name="ASSESS_ID")
 	private String assessId;
 
+	@Column(name="ASSESS_CATEGORY_ID")
+	private String assessCategoryId;
+
 	@Column(name="ASSESS_PAPER_ID", insertable = false, updatable = false)
 	private String assessPaperId;
 
@@ -51,6 +54,10 @@ public class PerAssessAspMap implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="ASSESS_PAPER_ID")
 	private PerAssessPaper perAssessPaper;
+
+	@ManyToOne
+	@JoinColumn(name="ASSESS_CATEGORY_ID", insertable = false, updatable = false)
+	private PerAssessPaper perAssessCategory;
 
 	public PerAssessAspMap() {
 	}
@@ -127,4 +134,19 @@ public class PerAssessAspMap implements Serializable {
 		this.perAssessPaper = perAssessPaper;
 	}
 
+	public String getAssessCategoryId() {
+		return assessCategoryId;
+	}
+
+	public void setAssessCategoryId(String assessCategoryId) {
+		this.assessCategoryId = assessCategoryId;
+	}
+
+	public PerAssessPaper getPerAssessCategory() {
+		return perAssessCategory;
+	}
+
+	public void setPerAssessCategory(PerAssessPaper perAssessCategory) {
+		this.perAssessCategory = perAssessCategory;
+	}
 }

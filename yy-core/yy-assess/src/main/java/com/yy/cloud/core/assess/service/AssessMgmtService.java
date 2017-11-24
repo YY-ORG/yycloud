@@ -9,6 +9,7 @@
 
 package com.yy.cloud.core.assess.service;
 
+import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
@@ -49,6 +50,8 @@ public interface AssessMgmtService {
 	public GeneralContentResult<List<AssessMenuItem>> getAssessMenu(String _userId, String _orgId);
 
 	public GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperId(String _assessPaperId);
+
+	public GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperIdAndGroup(String _assessPaperId, String _groupId);
 
 	public GeneralContentResult<List<AssessPaperItem>> getAssessPaperList(String _userId, String _orgId);
 
@@ -94,6 +97,6 @@ public interface AssessMgmtService {
 
     public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperListByOrg(String _orgId, Pageable _page);
 
-
+	public GeneralContentResult<List<SimpleTemplate>> getTemplateListByType(Byte _type);
 }
 

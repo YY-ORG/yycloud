@@ -35,6 +35,8 @@ public interface PerTemplateRepository extends JpaRepository<PerTemplate, String
     @Query(value = "SELECT p FROM PerTemplate p, PerAssessTemplateMap ptm where p.id = ptm.templateId and ptm.assessId = :assessId")
     List<PerTemplate> getListByAssess(@Param("assessId") String _assess);
 
-    Page<PerTemplate> findByType(Byte _type, Pageable _page);
+    Page<PerTemplate> findByTypeAndStatusOrderByNameAsc(Byte _type, Byte _status, Pageable _page);
+
+    List<PerTemplate> findByTypeAndStatusOrderByNameAsc(Byte _type, Byte _status);
 }
 
