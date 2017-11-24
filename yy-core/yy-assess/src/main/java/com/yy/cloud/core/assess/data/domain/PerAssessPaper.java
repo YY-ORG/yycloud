@@ -37,12 +37,6 @@ public class PerAssessPaper implements Serializable {
 	@Column(name="NAME")
 	private String name;
 
-	@Column(name="TITLE_TYPE")
-	private Byte titleType;
-
-	@Column(name="ORG_ID")
-	private String orgId;
-
 	@Column(name="STATUS")
 	private Byte status;
 
@@ -52,6 +46,10 @@ public class PerAssessPaper implements Serializable {
 	//bi-directional many-to-one association to PerAssessAspMap
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, mappedBy="perAssessPaper")
 	private List<PerAssessAspMap> perAssessAspMaps;
+	
+	//bi-directional many-to-one association to PerAssessOrgMap
+	@OneToMany(mappedBy="perAssessPaper")
+	private List<PerAssessOrgMap> perAssessOrgMaps;
 
 	public PerAssessPaper() {
 	}
@@ -96,14 +94,6 @@ public class PerAssessPaper implements Serializable {
 		this.name = name;
 	}
 
-	public String getOrgId() {
-		return this.orgId;
-	}
-
-	public void setOrgId(String orgId) {
-		this.orgId = orgId;
-	}
-
 	public Byte getStatus() {
 		return this.status;
 	}
@@ -142,11 +132,25 @@ public class PerAssessPaper implements Serializable {
 		return perAssessAspMap;
 	}
 
-	public Byte getTitleType() {
-		return titleType;
+	public List<PerAssessOrgMap> getPerAssessOrgMaps() {
+		return this.perAssessOrgMaps;
 	}
 
-	public void setTitleType(Byte titleType) {
-		this.titleType = titleType;
+	public void setPerAssessOrgMaps(List<PerAssessOrgMap> perAssessOrgMaps) {
+		this.perAssessOrgMaps = perAssessOrgMaps;
+	}
+
+	public PerAssessOrgMap addPerAssessOrgMap(PerAssessOrgMap perAssessOrgMap) {
+		getPerAssessOrgMaps().add(perAssessOrgMap);
+		perAssessOrgMap.setPerAssessPaper(this);
+
+		return perAssessOrgMap;
+	}
+
+	public PerAssessOrgMap removePerAssessOrgMap(PerAssessOrgMap perAssessOrgMap) {
+		getPerAssessOrgMaps().remove(perAssessOrgMap);
+		perAssessOrgMap.setPerAssessPaper(null);
+
+		return perAssessOrgMap;
 	}
 }
