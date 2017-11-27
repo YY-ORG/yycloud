@@ -32,5 +32,8 @@ import com.yy.cloud.core.assess.data.domain.PerAssess;
 public interface PerAssessRepository extends JpaRepository<PerAssess, String> {
     @Query(value = "SELECT pa FROM PerAssess pa, PerAssessAspMap pam where pa.id = pam.assessId and pam.assessPaperId = :assessPaperId")
     Page<PerAssess> getAssessByAsp(@Param("assessPaperId") String _assessPaperId, Pageable _page);
+
+    @Query(value = "SELECT pa FROM PerAssess pa, PerAssessAspMap pam where pa.id = pam.assessId and pam.assessPaperId = :assessPaperId and pam.assessCategoryId=:groupId")
+    Page<PerAssess> getAssessByAspAndGroup(@Param("assessPaperId") String _assessPaperId, @Param("groupId") String _groupId, Pageable _page);
 }
 

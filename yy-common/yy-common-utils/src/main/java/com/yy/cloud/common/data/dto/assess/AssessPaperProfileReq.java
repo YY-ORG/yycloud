@@ -19,7 +19,7 @@ public class AssessPaperProfileReq implements Serializable {
     private static final long serialVersionUID = 6974505426039942226L;
     private String code;
     private String name;
-    private List<Byte> title;
-    private List<String> orgId;
+    private List<Byte> titleList;
+    private List<String> orgIdList;
     private List<SimpleAssessReq> assessList;
 }

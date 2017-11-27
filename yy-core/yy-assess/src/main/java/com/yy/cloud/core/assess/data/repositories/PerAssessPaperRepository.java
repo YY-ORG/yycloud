@@ -30,7 +30,7 @@ import java.util.List;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssessPaper", path = "perAssessPaper")
 public interface PerAssessPaperRepository extends JpaRepository<PerAssessPaper, String> {
-    List<PerAssessPaper> findByOrgIdAndStatus(String _orgId, Byte _status);
-    Page<PerAssessPaper> findByOrgIdAndAndStatus(String _orgId, Byte _status, Pageable _page);
+    List<PerAssessPaper> findByStatus(Byte _status);
+    Page<PerAssessPaper> findByStatus(Byte _status, Pageable _page);
 }
 

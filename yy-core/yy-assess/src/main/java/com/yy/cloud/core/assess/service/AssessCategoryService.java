@@ -33,6 +33,4 @@ public interface AssessCategoryService {
     GeneralResult addCategoryToAssessPaper(String _creatorId, String _assessPaper, List<String> _categoryList);
 
     GeneralContentResult<List<SimpleAssessCategoryItem>> getCategoryListByAssessPaper(String _assessPaper);
-
-    GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperMap(String _groupMapId);
 }

@@ -11,6 +11,7 @@ package com.yy.cloud.common.data.assess;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.Data;
 
@@ -36,6 +37,6 @@ public class AssessPaperItem implements Serializable {
 	private Timestamp createDate;
 	private String creatorId;
 	private String name;
-	private String orgId;
+//	private List<String> orgIdList;
 	private Byte status;
 }

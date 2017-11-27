@@ -57,7 +57,7 @@ public class PerAssessAspMap implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name="ASSESS_CATEGORY_ID", insertable = false, updatable = false)
-	private PerAssessPaper perAssessCategory;
+	private PerAssessCategory perAssessCategory;
 
 	public PerAssessAspMap() {
 	}
@@ -142,11 +142,11 @@ public class PerAssessAspMap implements Serializable {
 		this.assessCategoryId = assessCategoryId;
 	}
 
-	public PerAssessPaper getPerAssessCategory() {
+	public PerAssessCategory getPerAssessCategory() {
 		return perAssessCategory;
 	}
 
-	public void setPerAssessCategory(PerAssessPaper perAssessCategory) {
+	public void setPerAssessCategory(PerAssessCategory perAssessCategory) {
 		this.perAssessCategory = perAssessCategory;
 	}
 }

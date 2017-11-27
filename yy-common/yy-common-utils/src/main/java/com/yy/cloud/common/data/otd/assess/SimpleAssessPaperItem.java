@@ -3,7 +3,7 @@ package com.yy.cloud.common.data.otd.assess;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Function: TODO ADD FUNCTION. <br/>
@@ -20,7 +20,7 @@ public class SimpleAssessPaperItem implements Serializable {
     private String id;
     private String code;
     private String name;
-    private List<Byte> title;
-    private List<String> orgId;
+    private Collection<Byte> titleList;
+    private Collection<String> orgIdList;
     private Byte status;
 }

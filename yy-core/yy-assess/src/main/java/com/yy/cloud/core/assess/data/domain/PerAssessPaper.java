@@ -48,7 +48,7 @@ public class PerAssessPaper implements Serializable {
 	private List<PerAssessAspMap> perAssessAspMaps;
 	
 	//bi-directional many-to-one association to PerAssessOrgMap
-	@OneToMany(mappedBy="perAssessPaper")
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, mappedBy="perAssessPaper")
 	private List<PerAssessOrgMap> perAssessOrgMaps;
 
 	public PerAssessPaper() {

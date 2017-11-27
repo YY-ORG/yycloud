@@ -47,6 +47,10 @@ public class PerAssessCategory implements Serializable {
 	@OneToMany(mappedBy="perAssessCategory")
 	private List<PerApAcMap> perApAcMaps;
 
+	//bi-directional many-to-one association to PerApAcMap
+	@OneToMany(mappedBy="perAssessCategory")
+	private List<PerAssessAspMap> perAssessAspMaps;
+
 	public PerAssessCategory() {
 	}
 
@@ -128,4 +132,25 @@ public class PerAssessCategory implements Serializable {
 		return perApAcMap;
 	}
 
+	public List<PerAssessAspMap> getPerAssessAspMaps() {
+		return perAssessAspMaps;
+	}
+
+	public void setPerAssessAspMaps(List<PerAssessAspMap> perAssessAspMaps) {
+		this.perAssessAspMaps = perAssessAspMaps;
+	}
+
+	public PerAssessAspMap addPerAssessAspMap(PerAssessAspMap perAssessAspMap) {
+		getPerAssessAspMaps().add(perAssessAspMap);
+		perAssessAspMap.setPerAssessCategory(this);
+
+		return perAssessAspMap;
+	}
+
+	public PerAssessAspMap removePerAssessAspMap(PerAssessAspMap perAssessAspMap) {
+		getPerAssessAspMaps().remove(perAssessAspMap);
+		perAssessAspMap.setPerAssessCategory(null);
+
+		return perAssessAspMap;
+	}
 }

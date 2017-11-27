@@ -5,8 +5,6 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.yy.cloud.core.assess.data.PerAssessPaper;
-
 import java.sql.Timestamp;
 
 
@@ -26,7 +24,7 @@ public class PerAssessOrgMap implements Serializable {
 	@Column(name="ID")
 	private String id;
 
-	@Column(name="CREATOR_DATE")
+	@Column(name="CREATOR_DATE", insertable = false, updatable = false)
 	private Timestamp creatorDate;
 
 	@Column(name="ORG_ID")
@@ -37,8 +35,12 @@ public class PerAssessOrgMap implements Serializable {
 	@Column(name="TITLE_TYPE")
 	private byte titleType;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
+
+
+	@Column(name="ASSESS_PAPER_ID", insertable = false, updatable = false)
+	private String assessPaperId;
 
 	//bi-directional many-to-one association to PerAssessPaper
 	@ManyToOne

@@ -13,6 +13,7 @@ import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.assess.AssessGroupItem;
 import com.yy.cloud.common.data.assess.AssessItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.assess.AssessPaperItem;
@@ -49,11 +50,11 @@ public interface AssessMgmtService {
 
 	public GeneralContentResult<List<AssessMenuItem>> getAssessMenu(String _userId, String _orgId);
 
-	public GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperId(String _assessPaperId);
+	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperId(String _assessPaperId);
 
-	public GeneralContentResult<List<AssessMenuItem>> getAssessMenuByAssessPaperIdAndGroup(String _assessPaperId, String _groupId);
+	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperIdAndGroup(String _assessPaperId, String _groupId);
 
-	public GeneralContentResult<List<AssessPaperItem>> getAssessPaperList(String _userId, String _orgId);
+	public GeneralContentResult<List<AssessPaperItem>> getAssessPaperList(String _userId, String _orgId, Byte _title);
 
 	public GeneralContentResult<SimpleAssessItem> createAssess(AssessProfileReq _profile);
 
@@ -87,6 +88,8 @@ public interface AssessMgmtService {
 
 	public GeneralPagingResult<List<SimpleAssessItem>> getAssessListByAssessPaper(String _assessPaperId, Pageable _page);
 
+	public GeneralPagingResult<List<SimpleAssessItem>> getAssessListByAssessPaper(String _assessPaperId, String _groupId, Pageable _page);
+
 	public GeneralContentResult<SimpleAssessPaperItem> createAssessPaper(AssessPaperProfileReq _req);
 
 	public GeneralContentResult<SimpleAssessPaperItem> updateAssessPaper(AssessPaperWithIDProfileReq _req);
@@ -95,7 +98,9 @@ public interface AssessMgmtService {
 
 	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperList(Pageable _page);
 
-    public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperListByOrg(String _orgId, Pageable _page);
+	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperListByOrg(String _orgId, Pageable _page);
+
+    public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperListByOrg(String _orgId, Byte _title, Pageable _page);
 
 	public GeneralContentResult<List<SimpleTemplate>> getTemplateListByType(Byte _type);
 }

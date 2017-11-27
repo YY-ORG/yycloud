@@ -11,6 +11,7 @@ package com.yy.cloud.core.assess.controller;
 
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.assess.AssessGroupItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.assess.AssessPaperItem;
 import com.yy.cloud.common.data.dto.assess.AssessPaperProfileReq;
@@ -90,8 +91,9 @@ public class AssessMgmtController {
 		try {
 			String tempUserId = this.securityService.getCurrentUser().getUserId();
 			String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
+			Byte tempTitle = this.securityService.getCurrentUser().getProfessionalTitle();
 			log.info("Is going to retrieve the assess menu list for [{}] -> [{}]", tempOrgId, tempUserId);
-			result = this.assessService.getAssessPaperList(tempUserId, tempOrgId);
+			result = this.assessService.getAssessPaperList(tempUserId, tempOrgId, tempTitle);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);
@@ -102,15 +104,21 @@ public class AssessMgmtController {
 	}
 
 	@RequestMapping(value = "/authsec/assesspaper/{_id}/assesslist", method = RequestMethod.GET)
-	@ApiOperation(value = "依据考卷ID来检索该考卷下的试题列表")
+	@ApiOperation(value = "依据考卷ID来检索该考卷下的某个组或全部试题列表")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralContentResult<List<AssessMenuItem>> getAssessByAssessPaperId(@ApiParam(value = "考卷ID")
-																				   @PathVariable(value = "_id") String _assessPaperId){
-		GeneralContentResult<List<AssessMenuItem>> result = new GeneralContentResult<List<AssessMenuItem>>();
+	public GeneralContentResult<List<AssessGroupItem>> getAssessByAssessPaperId(@ApiParam(value = "考卷ID")
+																				   @PathVariable(value = "_id") String _assessPaperId,
+																				@ApiParam(value = "考卷组的ID")
+																			   @RequestParam(value = "_groupId", required = false) String _groupId){
+		GeneralContentResult<List<AssessGroupItem>> result = new GeneralContentResult<>();
 		try {
-			log.info("Is going to retrieve the assess menu list for Assess Paper [{}]", _assessPaperId);
-			result = this.assessService.getAssessMenuByAssessPaperId(_assessPaperId);
+			log.info("Is going to retrieve the assess menu list for Assess Paper [{}] with Group [{}].", _assessPaperId, _groupId);
+			if(_groupId == null)
+				result = this.assessService.getAssessMenuByAssessPaperId(_assessPaperId);
+			else
+				result = this.assessService.getAssessMenuByAssessPaperIdAndGroup(_assessPaperId, _groupId);
+
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);
@@ -119,7 +127,6 @@ public class AssessMgmtController {
 		}
 		return result;
 	}
-
 
 	@RequestMapping(value = "/authsec/assesslist/orgnization", method = RequestMethod.GET)
 	@ApiOperation(value = "依据登录用户所属部门/组织机构来检索该部门下的考题")
@@ -375,11 +382,16 @@ public class AssessMgmtController {
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
 	public GeneralPagingResult<List<SimpleAssessItem>> getAssessListByAssessPaper(@ApiParam(value = "考卷的ID") @PathVariable(value = "_id") String _assessPaperId,
+																				  @ApiParam(value = "考卷组的ID")
+																					  @RequestParam(value = "_groupId", required = false) String _groupId,
 																				  @PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessItem>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load assess list by assess paper [{}] and page [{}].", _assessPaperId, _page);
-			result = this.assessService.getAssessListByAssessPaper(_assessPaperId, _page);
+			if(_groupId == null)
+				result = this.assessService.getAssessListByAssessPaper(_assessPaperId, _page);
+			else
+				result = this.assessService.getAssessListByAssessPaper(_assessPaperId, _groupId, _page);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);
@@ -411,12 +423,18 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索当前登录用户所在部门的考卷列表")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperListByOrg(@PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
+	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperListByOrg(
+			@ApiParam(value = "职称")
+			@RequestParam(value = "_title", required = false) Byte _title,
+			@PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessPaperItem>> result = new GeneralPagingResult<>();
 		try {
 			String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
 			log.info("Going to load assess paper list by org [{}] page [{}].", tempOrgId, _page);
-			result = this.assessService.getAssessPaperListByOrg(tempOrgId, _page);
+			if(_title == null)
+				result = this.assessService.getAssessPaperListByOrg(tempOrgId, _page);
+			else
+				result = this.assessService.getAssessPaperListByOrg(tempOrgId, _title, _page);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);
@@ -431,11 +449,16 @@ public class AssessMgmtController {
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
 	public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessAssessPaperListByOrg(@ApiParam(value = "部门的ID") @PathVariable(value = "_orgId") String _orgId,
+																						  @ApiParam(value = "职称", required = false)
+																						  @RequestParam(value = "_title") Byte _title,
 																						  @PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessPaperItem>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load assess paper list by org [{}] page [{}].", _orgId, _page);
-			result = this.assessService.getAssessPaperListByOrg(_orgId, _page);
+			if(_title == null)
+				result = this.assessService.getAssessPaperListByOrg(_orgId, _page);
+			else
+				result = this.assessService.getAssessPaperListByOrg(_orgId, _title, _page);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);
@@ -445,24 +468,6 @@ public class AssessMgmtController {
 		return result;
 	}
 
-//
-//	@RequestMapping(value = "/authsec/template/templatelist", method = RequestMethod.GET)
-//	@ApiOperation(value = "分页检索所有的考题模板")
-//	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
-//			value = "Token", defaultValue = "bearer ")
-//	public GeneralPagingResult<List<SimpleTemplate>> getAssessTemplateList(Pageable _page){
-//		GeneralPagingResult<List<SimpleTemplate>> result = new GeneralPagingResult<>();
-//		try {
-//			log.info("Going to load all of the assess's template.Page=[{}]", _page);
-//			result = this.assessService.getAssessTemplateList(_page);
-//			result.setResultCode(ResultCode.OPERATION_SUCCESS);
-//		} catch (Exception e) {
-//			log.error("Unexpected Error occured", e);
-//			result.setDetailDescription("Unexpected Error occured...");
-//			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
-//		}
-//		return result;
-//	}
 
 	@RequestMapping(value = "/authsec/template/templatelist", method = RequestMethod.GET)
 	@ApiOperation(value = "分页检索所有的某个类型的考题模板")
