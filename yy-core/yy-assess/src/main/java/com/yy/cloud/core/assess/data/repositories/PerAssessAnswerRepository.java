@@ -13,6 +13,8 @@ import com.yy.cloud.core.assess.data.domain.PerAssessAnswer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.Optional;
+
 /**
  * ClassName:PerAssessAnswerRepository <br/>
  * Function: TODO ADD FUNCTION. <br/>
@@ -25,6 +27,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssessAnswer", path = "perAssessAnswer")
 public interface PerAssessAnswerRepository extends JpaRepository<PerAssessAnswer, String> {
+    PerAssessAnswer findByAssessPaperIdAndAssessIdAndCreatorId(String _assessPaperId, String _assessId, String _creatorId);
 
 }
 

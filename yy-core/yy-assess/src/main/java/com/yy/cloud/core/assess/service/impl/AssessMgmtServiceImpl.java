@@ -397,6 +397,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	}
 
 	@Override
+	@Transactional
 	public GeneralContentResult<SimpleAssessItem> updateAssess(AssessWithIDProfileReq _profile) {
 		GeneralContentResult<SimpleAssessItem> tempResult = new GeneralContentResult<>();
 		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
@@ -470,6 +471,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	}
 
     @Override
+	@Transactional
     public GeneralContentResult<SimpleTemplate> updateAssessTemplate(TemplateWithIDProfileReq _req) {
         GeneralContentResult<SimpleTemplate> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
@@ -814,6 +816,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	}
 
 	@Override
+	@Transactional
 	public GeneralContentResult<SimpleAssessPaperItem> updateAssessPaper(AssessPaperWithIDProfileReq _req) {
         GeneralContentResult<SimpleAssessPaperItem> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);

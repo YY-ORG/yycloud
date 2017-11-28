@@ -31,6 +31,9 @@ public class PerAssessAnswerItem implements Serializable {
 	@Column(name="SEQ_NO")
 	private Short seqNo;
 
+	@Column(name="TYPE")
+	private Byte type;
+
 	@Column(name="TEMPLATE_ID")
 	private String templateId;
 
@@ -38,11 +41,11 @@ public class PerAssessAnswerItem implements Serializable {
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerAssessAnswerDetail
-	@OneToMany(cascade = { CascadeType.PERSIST }, mappedBy="perAssessAnswerItem")
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, mappedBy="perAssessAnswerItem")
 	private List<PerAssessAnswerDetail> perAssessAnswerDetails;
 
 	//bi-directional many-to-one association to PerAssessAnswer
-	@ManyToOne
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name="ASSESS_ANSWER_ID")
 	private PerAssessAnswer perAssessAnswer;
 
@@ -71,6 +74,14 @@ public class PerAssessAnswerItem implements Serializable {
 
 	public void setSeqNo(Short seqNo) {
 		this.seqNo = seqNo;
+	}
+
+	public Byte getType() {
+		return type;
+	}
+
+	public void setType(Byte type) {
+		this.type = type;
 	}
 
 	public String getTemplateId() {

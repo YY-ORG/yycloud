@@ -28,11 +28,11 @@ public class CommonConstant {
     public final static Byte DIC_GLOBAL_STATUS_DELETED = 4;
     public final static Byte DIC_GLOBAL_STATUS_DISABLE = 5;
 
-    public final static Byte DIC_SERVICE_STATUS_INITIAL = 0;
-    public final static Byte DIC_SERVICE_STATUS_ACTIVE = 1;
-    public final static Byte DIC_SERVICE_STATUS_SUSPEND = 2;
-    public final static Byte DIC_SERVICE_STATUS_CANCELLED = 3;
-    public final static Byte DIC_SERVICE_STATUS_DELETED = 4;
+    public final static Byte DIC_ASSESSANSWER_TYPE_SINGLEANSWER = 0;
+    public final static Byte DIC_ASSESSANSWER_TYPE_SINGLEWITHMULTISUBS_ANSWER = 1;
+    public final static Byte DIC_ASSESSANSWER_TYPE_MULTIANSWERS = 2;
+    public final static Byte DIC_ASSESSANSWERITEM_TYPE_PRIMARY = 0;
+    public final static Byte DIC_ASSESSANSWERITEM_TYPE_SUB = 1;
 
     public final static Byte DIC_GLOBAL_SYNC_TYPE_NEW = 0;
     public final static Byte DIC_GLOBAL_SYNC_TYPE_UPDATE = 1;

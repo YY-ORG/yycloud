@@ -40,11 +40,14 @@ public class PerAssessAnswer implements Serializable {
 	@Column(name="STATUS")
 	private Byte status;
 
+	@Column(name="TYPE")
+	private Byte type;
+
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerAssessAnswerItem
-	@OneToMany(cascade = { CascadeType.PERSIST }, mappedBy="perAssessAnswer")
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, mappedBy="perAssessAnswer")
 	private List<PerAssessAnswerItem> perAssessAnswerItems;
 
 	//bi-directional many-to-one association to PerAssessAnswer
@@ -93,6 +96,14 @@ public class PerAssessAnswer implements Serializable {
 
 	public void setCreatorId(String creatorId) {
 		this.creatorId = creatorId;
+	}
+
+	public Byte getType() {
+		return type;
+	}
+
+	public void setType(Byte type) {
+		this.type = type;
 	}
 
 	public Byte getStatus() {

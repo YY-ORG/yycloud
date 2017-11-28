@@ -1,9 +1,7 @@
 package com.yy.cloud.core.assess.controller;
 
 import com.yy.cloud.common.constant.ResultCode;
-import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralResult;
-import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.dto.assess.AssessAnswerReq;
 import com.yy.cloud.common.data.dto.assess.AssessTemplateReq;
 import com.yy.cloud.common.service.SecurityService;
@@ -38,7 +36,7 @@ public class DoingAssessController {
     private DoingAssessService doingAssessService;
 
     @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/{_assessId}/assessanswer", method = RequestMethod.POST)
-    @ApiOperation(value = "考生提交某个卷子某个题的答案")
+    @ApiOperation(value = "考生提交某个卷子某个题(单答案题)的答案")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralResult submitAssessAnswer(@ApiParam(value = "Assess Paper ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
@@ -54,7 +52,7 @@ public class DoingAssessController {
             tempAnswerReq.setAssessPaperId(_assessPaperId);
             tempAnswerReq.setAnswerList(_groupSummaryReq);
 
-            result = this.doingAssessService.submitAssessAnswer(tempUserId, tempAnswerReq);
+            result = this.doingAssessService.submitSingleAnswerAssessAnswer(tempUserId, tempAnswerReq);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
