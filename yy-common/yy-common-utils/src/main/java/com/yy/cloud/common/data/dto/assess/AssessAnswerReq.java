@@ -19,6 +19,7 @@ public class AssessAnswerReq implements Serializable {
     private static final long serialVersionUID = 2956254657119482596L;
 
     private String assessPaperId;
+    private String groupId;
     private String assessId;
     private List<AssessTemplateReq> answerList;
 }

@@ -50,9 +50,9 @@ public interface AssessMgmtService {
 
 	public GeneralContentResult<List<AssessMenuItem>> getAssessMenu(String _userId, String _orgId);
 
-	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperId(String _assessPaperId);
+	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperId(String _userId, String _assessPaperId);
 
-	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperIdAndGroup(String _assessPaperId, String _groupId);
+	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperIdAndGroup(String _userId, String _assessPaperId, String _groupId);
 
 	public GeneralContentResult<List<AssessPaperItem>> getAssessPaperList(String _userId, String _orgId, Byte _title);
 

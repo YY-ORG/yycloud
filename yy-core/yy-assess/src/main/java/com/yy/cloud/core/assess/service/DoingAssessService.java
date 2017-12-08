@@ -3,6 +3,9 @@ package com.yy.cloud.core.assess.service;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.dto.assess.AssessAnswerReq;
+import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerItem;
+import com.yy.cloud.common.data.otd.assess.SimpleAssessGroupAnswerItem;
+import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperAnswerItem;
 
 import java.util.List;
 
@@ -22,4 +25,9 @@ public interface DoingAssessService {
     GeneralContentResult<List<String>> addMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer);
     GeneralResult deleteMultiAnswerAssessAnswer(List<String> _answerId);
     GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer);
+    GeneralContentResult<List<SimpleAssessAnswerItem>> getAssessAnswerItemList(String _userId, String _assessPaperId, String _assessId);
+    GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAllAssessPaperAnswerSumListByUser(String _userId);
+    GeneralContentResult<SimpleAssessPaperAnswerItem> getAssessPaperAnswerSumByUser(String _userId, String _assessPaperId);
+    GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAllAssessPaperAnswerSumListByOrg(String _orgId);
+    GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAssessPaperAnswerSumListByOrg(String _orgId, String _assessPaperId);
 }

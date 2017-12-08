@@ -113,11 +113,12 @@ public class AssessMgmtController {
 																			   @RequestParam(value = "_groupId", required = false) String _groupId){
 		GeneralContentResult<List<AssessGroupItem>> result = new GeneralContentResult<>();
 		try {
+			String tempUserId = this.securityService.getCurrentUser().getUserId();
 			log.info("Is going to retrieve the assess menu list for Assess Paper [{}] with Group [{}].", _assessPaperId, _groupId);
 			if(_groupId == null)
-				result = this.assessService.getAssessMenuByAssessPaperId(_assessPaperId);
+				result = this.assessService.getAssessMenuByAssessPaperId(tempUserId, _assessPaperId);
 			else
-				result = this.assessService.getAssessMenuByAssessPaperIdAndGroup(_assessPaperId, _groupId);
+				result = this.assessService.getAssessMenuByAssessPaperIdAndGroup(tempUserId, _assessPaperId, _groupId);
 
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {

@@ -1,9 +1,12 @@
 package com.yy.cloud.core.assess.controller;
 
 import com.yy.cloud.common.constant.ResultCode;
+import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.dto.assess.AssessAnswerReq;
 import com.yy.cloud.common.data.dto.assess.AssessTemplateReq;
+import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerItem;
+import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperAnswerItem;
 import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.core.assess.service.DoingAssessService;
 import io.swagger.annotations.Api;
@@ -14,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,12 +39,14 @@ public class DoingAssessController {
     @Autowired
     private DoingAssessService doingAssessService;
 
-    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/{_assessId}/assessanswer", method = RequestMethod.POST)
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/group/{_groupId}/assess/{_assessId}/assessanswer", method = RequestMethod.POST)
     @ApiOperation(value = "考生提交某个卷子某个题(单答案题)的答案")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    public GeneralResult submitAssessAnswer(@ApiParam(value = "Assess Paper ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
-                                            @ApiParam(value = "Assess ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+    public GeneralResult submitAssessAnswer(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                            @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
+                                            @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                      //      @ApiParam(value = "答案的类型：0为单答案题的答案；1为单答案题的子项答案；2为多答案题的某个或者某些答案") @RequestParam(value = "_type", defaultValue = "0") Byte _type,
                                             @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
         GeneralResult result = new GeneralResult();
         try {
@@ -49,10 +55,219 @@ public class DoingAssessController {
 
             AssessAnswerReq tempAnswerReq = new AssessAnswerReq();
             tempAnswerReq.setAssessId(_assessId);
+            tempAnswerReq.setGroupId(_groupId);
             tempAnswerReq.setAssessPaperId(_assessPaperId);
             tempAnswerReq.setAnswerList(_groupSummaryReq);
 
             result = this.doingAssessService.submitSingleAnswerAssessAnswer(tempUserId, tempAnswerReq);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/group/{_groupId}/assess/{_assessId}/assessanswer/subanswer", method = RequestMethod.POST)
+    @ApiOperation(value = "考生增加某个卷子某个题的元素项答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<List<String>> addAssessAnswerSubAnser(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                      @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
+                                                                         @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                         @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
+        GeneralContentResult<List<String>> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("[{}]Is going to submit sub answer for AssessPaper [{}] -> assess [{}]", tempUserId, _assessPaperId, _assessId);
+
+            AssessAnswerReq tempAnswerReq = new AssessAnswerReq();
+            tempAnswerReq.setAssessId(_assessId);
+            tempAnswerReq.setGroupId(_groupId);
+            tempAnswerReq.setAssessPaperId(_assessPaperId);
+            tempAnswerReq.setAnswerList(_groupSummaryReq);
+
+            result = this.doingAssessService.addAssessSubAnswer(tempUserId, tempAnswerReq);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/assess/assessanswer/subanswer/{_subAnswerId}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "考生删除某个卷子某个题的子元素项的某个答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult deleteAssessAnswerSubAnser(@ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_subAnswerId", required = true) String _subAnswerId){
+        GeneralResult result = new GeneralResult();
+        try {
+            log.info("oing to delete sub answer [{}].", _subAnswerId);
+            List<String> subIdList = new ArrayList<>();
+            subIdList.add(_subAnswerId);
+            result = this.doingAssessService.deleteAssessSubAnswer(subIdList);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/assess/assessanswer/subanswers", method = RequestMethod.DELETE)
+    @ApiOperation(value = "考生删除某个卷子某个题的子元素项的多个答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult deleteAssessAnswerSubAnserInBatch(@ApiParam(value = "待删除的子项答案集") @RequestBody List<String> _subAnswerIdList){
+        GeneralResult result = new GeneralResult();
+        try {
+            log.info("oing to delete sub answer [{}] in batch.", _subAnswerIdList);
+            result = this.doingAssessService.deleteAssessSubAnswer(_subAnswerIdList);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/group/{_groupId}/assess/{_assessId}/assessanswer/answeritem", method = RequestMethod.POST)
+    @ApiOperation(value = "考生增加某个卷子某个多答案题的答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<List<String>> addMultiAssessAnswerItems(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                      @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
+                                                                      @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                      @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
+        GeneralContentResult<List<String>> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("[{}]Is going to submit sub answer for AssessPaper [{}] -> assess [{}]", tempUserId, _assessPaperId, _assessId);
+
+            AssessAnswerReq tempAnswerReq = new AssessAnswerReq();
+            tempAnswerReq.setAssessId(_assessId);
+            tempAnswerReq.setGroupId(_groupId);
+            tempAnswerReq.setAssessPaperId(_assessPaperId);
+            tempAnswerReq.setAnswerList(_groupSummaryReq);
+
+            result = this.doingAssessService.addMultiAnswerAssessAnswer(tempUserId, tempAnswerReq);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/group/{_groupId}/assess/{_assessId}/assessanswer", method = RequestMethod.PUT)
+    @ApiOperation(value = "考生提交某个多答案题（提交的时候无须再提交内容）")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult submitMultiAssessAnswer(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                        @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
+                                                                        @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId){
+        GeneralResult result = new GeneralResult();
+        try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("[{}]Is going to submit answer for AssessPaper [{}] -> assess [{}]", tempUserId, _assessPaperId, _assessId);
+
+            AssessAnswerReq tempAnswerReq = new AssessAnswerReq();
+            tempAnswerReq.setAssessId(_assessId);
+            tempAnswerReq.setGroupId(_groupId);
+            tempAnswerReq.setAssessPaperId(_assessPaperId);
+
+            result = this.doingAssessService.submitMultiAnswerAssessAnswer(tempUserId, tempAnswerReq);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/assess/assessanswer/{_answerItemId}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "考生删除某个卷子某个多答案题的某个答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult deleteMultiAnswersOneAssessAnswer(@ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_answerItemId", required = true) String _answerItemId){
+        GeneralResult result = new GeneralResult();
+        try {
+            log.info("oing to delete answer Item [{}].", _answerItemId);
+            List<String> subIdList = new ArrayList<>();
+            subIdList.add(_answerItemId);
+            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(subIdList);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/assess/assessanswers", method = RequestMethod.DELETE)
+    @ApiOperation(value = "考生删除某个卷子某个多答案题的多个答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult deleteMultiAnswersAssessAnswers(@ApiParam(value = "待删除的答案集") @RequestBody List<String> _answerItemIdList){
+        GeneralResult result = new GeneralResult();
+        try {
+            log.info("Going to delete sub answer [{}] in batch.", _answerItemIdList);
+            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(_answerItemIdList);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/{_assessId}/assessanswer", method = RequestMethod.GET)
+    @ApiOperation(value = "获取某个用户某个题的答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<List<SimpleAssessAnswerItem>> getAssessAnswerItemList(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                                      @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                                      @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId){
+        GeneralContentResult<List<SimpleAssessAnswerItem>> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = _userId;
+            if(_userId == null)
+                tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("Going to get current user's [{}]->[{}]'s answer.", _assessPaperId, _assessId);
+            result = this.doingAssessService.getAssessAnswerItemList(tempUserId, _assessPaperId, _assessId);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assessanswerlist", method = RequestMethod.GET)
+    @ApiOperation(value = "获取某个用户某个试卷的分组答案的答题详情")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<SimpleAssessPaperAnswerItem> getAssessPaperAnswerItemList(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                                          @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId){
+        GeneralContentResult<SimpleAssessPaperAnswerItem> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = _userId;
+            if(_userId == null)
+                tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("Going to get [{}] user's [{}]'s answer detail info.", tempUserId, _assessPaperId);
+            result = this.doingAssessService.getAssessPaperAnswerSumByUser(tempUserId, _assessPaperId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);

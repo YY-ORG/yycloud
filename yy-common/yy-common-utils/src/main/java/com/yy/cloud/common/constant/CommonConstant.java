@@ -34,14 +34,17 @@ public class CommonConstant {
     public final static Byte DIC_ASSESSANSWERITEM_TYPE_PRIMARY = 0;
     public final static Byte DIC_ASSESSANSWERITEM_TYPE_SUB = 1;
 
-    public final static Byte DIC_GLOBAL_SYNC_TYPE_NEW = 0;
-    public final static Byte DIC_GLOBAL_SYNC_TYPE_UPDATE = 1;
-    public final static Byte DIC_GLOBAL_SYNC_TYPE_DELETE = 2;
+    public final static Byte DIC_ASSESS_TYPE_SINGLE_ANSWER= 0;
+    public final static Byte DIC_ASSESS_TYPE_MULTI_ANSWERS = 1;
+    public final static Byte DIC_ASSESS_TYPE_TABLE_SINGLE_ANSWER = 2;
+    public final static Byte DIC_ASSESS_TYPE_TABLE_MULTI_ANSWERS = 3;
 
-    //platform type
-    public final static Byte DIC_PLATFORM_TYPE_OPENSTACK=0;
-    public final static Byte DIC_PLATFORM_TYPE_HOS=1;
-    public final static Byte DIC_PLATFORM_TYPE_VMWARE=2;
+    //ASSESS ANSWER STATUS
+    public final static Byte DIC_ASSESS_ANSWER_STATUS_NOT_STARTED=0;
+    public final static Byte DIC_ASSESS_ANSWER_STATUS_DOING=1;
+    public final static Byte DIC_ASSESS_ANSWER_STATUS_DONE=2;
+    public final static Byte DIC_ASSESS_ANSWER_STATUS_MARKED=3;
+    public final static Byte DIC_ASSESS_ANSWER_STATUS_AUDITED=4;
 
     // TENANT TYPE: 0: buyer(前台企业), 1: provider(后台企业)
     public final static Byte DIC_TENANT_TYPE_BUYER=0;

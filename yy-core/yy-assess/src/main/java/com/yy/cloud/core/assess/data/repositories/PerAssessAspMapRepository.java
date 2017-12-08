@@ -9,7 +9,10 @@
 
 package com.yy.cloud.core.assess.data.repositories;
 
+import com.yy.cloud.core.assess.data.domain.PerAPACCount;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessAspMap;
@@ -31,8 +34,11 @@ import java.util.List;
 public interface PerAssessAspMapRepository extends JpaRepository<PerAssessAspMap, String> {
     List<PerAssessAspMap> findByAssessPaperIdAndStatus(String _assessPaperId, Byte _status);
     List<PerAssessAspMap> findByAssessPaperIdAndAndAssessCategoryIdAndStatus(String _assessPaperId, String _groupId, Byte _status);
-
+    int countByAssessPaperIdAndAssessCategoryId(String _assessPaperId, String _groupId);
     @Transactional
     void deletePerAssessAspMapsByAssessPaperId(String _assessPaperId);
+
+    @Query(value = "SELECT p.assessCategoryId as groupId, count(p) as totalCount FROM PerAssessAspMap p where p.assessPaperId = :assessPaperId group by p.assessCategoryId")
+    List<PerAPACCount> getGroupCountByAssessPaper(@Param("assessPaperId") String _assessPaperId);
 }
 

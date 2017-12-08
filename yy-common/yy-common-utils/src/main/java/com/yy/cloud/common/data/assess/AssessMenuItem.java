@@ -20,4 +20,6 @@ public class AssessMenuItem implements Serializable {
     private String assessCode;
     private String assessName;
     private Integer seqNo;
+    private Byte status;
+    private Byte answerStatus;
 }
