@@ -11,6 +11,7 @@ import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerDetailItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessGroupAnswerItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperAnswerItem;
+import com.yy.cloud.common.utils.YYException;
 import com.yy.cloud.core.assess.data.domain.*;
 import com.yy.cloud.core.assess.data.repositories.*;
 import com.yy.cloud.core.assess.service.DoingAssessService;
@@ -329,10 +330,11 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             tempGroupItem.setGroupId(tempItem.getGroupId());
             tempGroupItem.setGroupCode(tempCategory.getCode());
             tempGroupItem.setGroupName(tempCategory.getName());
+            tempGroupItem.setUnstartedCount(tempItem.getTotalCount());//默认所有的题都未做
             tempGroupItem.setTotalCount(tempItem.getTotalCount());
             tempTotalCount += tempItem.getTotalCount();
             for(PerAspProcessOverview tempOverViewItem : answerCountList) {
-                if(tempOverViewItem.getCategoryId().equals(tempItem.getGroupId())) {
+                if(tempOverViewItem.getCategoryId().equals(tempItem.getGroupId())) {//如果题做过，则会在记录表中存在记录，重设未做数量
                     tempGroupItem.setUnstartedCount(tempItem.getTotalCount() - tempOverViewItem.getCompletedCount());
                     tempGroupItem.setDoneCount(tempOverViewItem.getCompletedCount());
                     tempDoneCount += tempOverViewItem.getCompletedCount();
@@ -357,6 +359,13 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
     @Override
     public GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAssessPaperAnswerSumListByOrg(String _orgId, String _assessPaperId) {
+        return null;
+    }
+
+    @Override
+    public GeneralResult submitAssessPaperAnswer(String _userId, String _assessPaperId) throws YYException {
+
+
         return null;
     }
 }

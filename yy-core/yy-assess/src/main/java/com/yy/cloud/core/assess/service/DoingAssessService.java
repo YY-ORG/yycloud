@@ -6,6 +6,7 @@ import com.yy.cloud.common.data.dto.assess.AssessAnswerReq;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessGroupAnswerItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperAnswerItem;
+import com.yy.cloud.common.utils.YYException;
 
 import java.util.List;
 
@@ -30,4 +31,5 @@ public interface DoingAssessService {
     GeneralContentResult<SimpleAssessPaperAnswerItem> getAssessPaperAnswerSumByUser(String _userId, String _assessPaperId);
     GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAllAssessPaperAnswerSumListByOrg(String _orgId);
     GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAssessPaperAnswerSumListByOrg(String _orgId, String _assessPaperId);
+    GeneralResult submitAssessPaperAnswer(String _userId, String _assessPaperId) throws YYException;
 }
