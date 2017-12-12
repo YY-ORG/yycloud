@@ -6,6 +6,7 @@ import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.otd.file.SimpleFileInfo;
 import com.yy.cloud.core.filesys.data.domain.YyFile;
 import com.yy.cloud.core.filesys.data.repositories.YyFileRepository;
 import com.yy.cloud.core.filesys.service.FileService;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,6 +76,24 @@ public class FileServiceImpl implements FileService {
         _pageInfo.setTotalPage(filePage.getTotalPages());
         _pageInfo.setTotalRecords(filePage.getTotalElements());
         tempResult.setPageInfo(_pageInfo);
+
+        return tempResult;
+    }
+
+    @Override
+    public List<SimpleFileInfo> getSimpleFileInfo(List<String> _idList) {
+        Iterable<YyFile> yyFileList = this.yyFileRepository.findAll(_idList);
+        List<SimpleFileInfo> tempResult = new ArrayList<>();
+        yyFileList.forEach(tempItem -> {
+            SimpleFileInfo tempInfo = new SimpleFileInfo();
+            tempInfo.setId(tempItem.getId());
+            tempInfo.setName(tempItem.getName());
+            tempInfo.setContentType(tempItem.getContentType());
+            tempInfo.setSize(tempItem.getSize());
+            tempInfo.setUploadDate(tempItem.getUploadDate());
+            tempInfo.setMd5(tempItem.getMd5());
+            tempResult.add(tempInfo);
+        });
 
         return tempResult;
     }

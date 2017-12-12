@@ -21,5 +21,6 @@ import java.util.List;
 public interface PerAssessOrgMapRepository extends JpaRepository<PerAssessOrgMap, String> {
     List<PerAssessOrgMap> findByOrgIdAndTitleTypeAndStatus(String _orgId, Byte _title, Byte _status);
     Page<PerAssessOrgMap> findByOrgIdAndTitleTypeAndStatus(String _orgId, Byte _title, Byte _status, Pageable _page);
+    PerAssessOrgMap findByAssessPaperIdAndOrgIdAndTitleTypeAndStatus(String _assessPaperId, String _orgId, Byte _title, Byte _status);
     void deleteByAssessPaperId(String _assessPaperId);
 }

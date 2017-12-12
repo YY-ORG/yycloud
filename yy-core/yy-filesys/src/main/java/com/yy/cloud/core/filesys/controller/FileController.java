@@ -4,6 +4,7 @@ import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.otd.file.SimpleFileInfo;
 import com.yy.cloud.common.utils.MD5Utils;
 import com.yy.cloud.core.filesys.data.domain.YyFile;
 import com.yy.cloud.core.filesys.service.FileService;
@@ -164,5 +165,30 @@ public class FileController {
             result.setResultCode(ResultCode.ASSESS_GET_FAILED);
         }
         return result;
+    }
+
+    /**
+     * 获取文件的摘要信息
+     * @param _idList
+     * @return
+     */
+    @RequestMapping(value = "/authsec/file/simpleinfo", method = RequestMethod.POST)
+    @ApiOperation(value = "批量获取文件的信息")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    @ResponseBody
+    public GeneralContentResult<List<SimpleFileInfo>> getSimpleFileInfo(@ApiParam(value = "文件ID列表") @RequestBody List<String> _idList) {
+        GeneralContentResult<List<SimpleFileInfo>> result = new GeneralContentResult<>();
+        try {
+            List<SimpleFileInfo> tempList = fileService.getSimpleFileInfo(_idList);
+            result.setResultContent(tempList);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+
     }
 }

@@ -51,10 +51,15 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     private PerAssessPaperRepository perAssessPaperRepository;
     @Autowired
     private PerAssessCategoryRepository perAssessCategoryRepository;
+    @Autowired
+    private PerAssessPaperExamineeMapRepository perAssessPaperExamineeMapRepository;
+    @Autowired
+    private PerAssessOrgMapRepository perAssessOrgMapRepository;
 
     @Override
     @Transactional
-    public GeneralResult submitSingleAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) {
+    public GeneralResult submitSingleAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
                 _answer.getAssessPaperId(), _answer.getAssessId(), _userId);
         if(tempAnswer == null) {
@@ -83,7 +88,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
-    public GeneralContentResult<List<String>> addAssessSubAnswer(String _userId, AssessAnswerReq _answer) {
+    public GeneralContentResult<List<String>> addAssessSubAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.
                 findByAssessPaperIdAndAssessIdAndCreatorId(_answer.getAssessPaperId(), _answer.getAssessId(), _userId);
 
@@ -136,7 +142,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
     @Override
     @Transactional
-    public GeneralResult deleteAssessSubAnswer(List<String> _answerItemId) {
+    public GeneralResult deleteAssessSubAnswer(String _userId, String _assessPaperId, List<String> _answerItemId) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
         this.perAssessAnswerItemRepository.deleteByIdIn(_answerItemId);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
@@ -145,7 +152,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
-    public GeneralContentResult<List<String>> addMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) {
+    public GeneralContentResult<List<String>> addMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
                 _answer.getAssessPaperId(), _answer.getAssessId(), _userId);
         if(tempAnswer == null) {
@@ -175,7 +183,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
     @Override
     @Transactional
-    public GeneralResult deleteMultiAnswerAssessAnswer(List<String> _answerIdList) {
+    public GeneralResult deleteMultiAnswerAssessAnswer(String _userId, String _assessPaperId, List<String> _answerIdList) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
         this.perAssessAnswerItemRepository.deleteByIdIn(_answerIdList);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
@@ -184,7 +193,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
-    public GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) {
+    public GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
         this.updateAssessPaperProcessOverview(_answer.getAssessPaperId(), _answer.getGroupId(), _userId);
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
                 _answer.getAssessPaperId(), _answer.getAssessId(), _userId);
@@ -363,9 +373,39 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
-    public GeneralResult submitAssessPaperAnswer(String _userId, String _assessPaperId) throws YYException {
+    public GeneralResult submitAssessPaperAnswer(String _userId, String _orgId, Byte _title, String _assessPaperId) throws YYException {
+        PerAssessOrgMap tempAssessPaper = this.perAssessOrgMapRepository.findByAssessPaperIdAndOrgIdAndTitleTypeAndStatus(_assessPaperId, _orgId, _title, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+        if(tempAssessPaper == null){
+            throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_NOTEXISTS, "该考核人员不在该考卷的考核人员列表中，请重新选择考卷答题！");
+        }
+        PerAssessPaperExamineeMap tempPAPEM = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
+        GeneralResult tempResult = new GeneralResult();
+        if(tempPAPEM == null) {
+            tempPAPEM = new PerAssessPaperExamineeMap();
+            tempPAPEM.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_SUBMITTED);
+            tempPAPEM.setAssessPaperId(_assessPaperId);
+            tempPAPEM.setCreatorId(_userId);
+            this.perAssessPaperExamineeMapRepository.save(tempPAPEM);
+            tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+            return tempResult;
+        } else if(tempPAPEM.getStatus() == CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT) {
+            tempPAPEM.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_SUBMITTED);
+            this.perAssessPaperExamineeMapRepository.save(tempPAPEM);
+            tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+            return tempResult;
+        } else {
+            throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_ALREADY, "你已提交该考卷，无法进行更改！");
+        }
+    }
 
-
-        return null;
+    private void checkAssessPaperAnswerStatus(String _userId, String _assessPaperId) throws YYException {
+//        PerAssessOrgMap tempAssessPaper = this.perAssessOrgMapRepository.findByAssessPaperIdAndOrgIdAndTitleTypeAndStatus(_assessPaperId, _orgId, _title, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+//        if(tempAssessPaper == null){
+//            throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_NOTEXISTS);
+//        }
+        PerAssessPaperExamineeMap tempPAPEM = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
+        if(tempPAPEM != null && tempPAPEM.getStatus() != CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT) {
+            throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_ALREADY);
+        }
     }
 }

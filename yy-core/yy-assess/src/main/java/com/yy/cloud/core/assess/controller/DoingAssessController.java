@@ -1,5 +1,7 @@
 package com.yy.cloud.core.assess.controller;
 
+import com.yy.cloud.common.constant.CommonConstant;
+import com.yy.cloud.common.constant.ExceptionCode;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralResult;
@@ -8,6 +10,7 @@ import com.yy.cloud.common.data.dto.assess.AssessTemplateReq;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperAnswerItem;
 import com.yy.cloud.common.service.SecurityService;
+import com.yy.cloud.common.utils.YYException;
 import com.yy.cloud.core.assess.service.DoingAssessService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -61,6 +64,10 @@ public class DoingAssessController {
 
             result = this.doingAssessService.submitSingleAnswerAssessAnswer(tempUserId, tempAnswerReq);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
             result.setDetailDescription("Unexpected Error occured...");
@@ -90,6 +97,10 @@ public class DoingAssessController {
 
             result = this.doingAssessService.addAssessSubAnswer(tempUserId, tempAnswerReq);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
             result.setDetailDescription("Unexpected Error occured...");
@@ -98,18 +109,24 @@ public class DoingAssessController {
         return result;
     }
 
-    @RequestMapping(value = "/authsec/assesspaper/assess/assessanswer/subanswer/{_subAnswerId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/assessanswer/subanswer/{_subAnswerId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "考生删除某个卷子某个题的子元素项的某个答案")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    public GeneralResult deleteAssessAnswerSubAnser(@ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_subAnswerId", required = true) String _subAnswerId){
+    public GeneralResult deleteAssessAnswerSubAnser(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                    @ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_subAnswerId", required = true) String _subAnswerId){
         GeneralResult result = new GeneralResult();
         try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
             log.info("oing to delete sub answer [{}].", _subAnswerId);
             List<String> subIdList = new ArrayList<>();
             subIdList.add(_subAnswerId);
-            result = this.doingAssessService.deleteAssessSubAnswer(subIdList);
+            result = this.doingAssessService.deleteAssessSubAnswer(tempUserId, _assessPaperId, subIdList);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
             result.setDetailDescription("Unexpected Error occured...");
@@ -118,16 +135,22 @@ public class DoingAssessController {
         return result;
     }
 
-    @RequestMapping(value = "/authsec/assesspaper/assess/assessanswer/subanswers", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/assessanswer/subanswers", method = RequestMethod.DELETE)
     @ApiOperation(value = "考生删除某个卷子某个题的子元素项的多个答案")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    public GeneralResult deleteAssessAnswerSubAnserInBatch(@ApiParam(value = "待删除的子项答案集") @RequestBody List<String> _subAnswerIdList){
+    public GeneralResult deleteAssessAnswerSubAnserInBatch(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                           @ApiParam(value = "待删除的子项答案集") @RequestBody List<String> _subAnswerIdList){
         GeneralResult result = new GeneralResult();
         try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
             log.info("oing to delete sub answer [{}] in batch.", _subAnswerIdList);
-            result = this.doingAssessService.deleteAssessSubAnswer(_subAnswerIdList);
+            result = this.doingAssessService.deleteAssessSubAnswer(tempUserId, _assessPaperId, _subAnswerIdList);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
             result.setDetailDescription("Unexpected Error occured...");
@@ -158,6 +181,10 @@ public class DoingAssessController {
 
             result = this.doingAssessService.addMultiAnswerAssessAnswer(tempUserId, tempAnswerReq);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
             result.setDetailDescription("Unexpected Error occured...");
@@ -186,6 +213,10 @@ public class DoingAssessController {
 
             result = this.doingAssessService.submitMultiAnswerAssessAnswer(tempUserId, tempAnswerReq);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
             result.setDetailDescription("Unexpected Error occured...");
@@ -194,18 +225,24 @@ public class DoingAssessController {
         return result;
     }
 
-    @RequestMapping(value = "/authsec/assesspaper/assess/assessanswer/{_answerItemId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/assessanswer/{_answerItemId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "考生删除某个卷子某个多答案题的某个答案")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    public GeneralResult deleteMultiAnswersOneAssessAnswer(@ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_answerItemId", required = true) String _answerItemId){
+    public GeneralResult deleteMultiAnswersOneAssessAnswer(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                           @ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_answerItemId", required = true) String _answerItemId){
         GeneralResult result = new GeneralResult();
         try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
             log.info("oing to delete answer Item [{}].", _answerItemId);
             List<String> subIdList = new ArrayList<>();
             subIdList.add(_answerItemId);
-            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(subIdList);
+            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(tempUserId, _assessPaperId, subIdList);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
             result.setDetailDescription("Unexpected Error occured...");
@@ -214,15 +251,17 @@ public class DoingAssessController {
         return result;
     }
 
-    @RequestMapping(value = "/authsec/assesspaper/assess/assessanswers", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/assessanswers", method = RequestMethod.DELETE)
     @ApiOperation(value = "考生删除某个卷子某个多答案题的多个答案")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    public GeneralResult deleteMultiAnswersAssessAnswers(@ApiParam(value = "待删除的答案集") @RequestBody List<String> _answerItemIdList){
+    public GeneralResult deleteMultiAnswersAssessAnswers(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                         @ApiParam(value = "待删除的答案集") @RequestBody List<String> _answerItemIdList){
         GeneralResult result = new GeneralResult();
         try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
             log.info("Going to delete sub answer [{}] in batch.", _answerItemIdList);
-            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(_answerItemIdList);
+            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(tempUserId, _assessPaperId, _answerItemIdList);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
@@ -269,6 +308,33 @@ public class DoingAssessController {
             log.info("Going to get [{}] user's [{}]'s answer detail info.", tempUserId, _assessPaperId);
             result = this.doingAssessService.getAssessPaperAnswerSumByUser(tempUserId, _assessPaperId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/paperanswer", method = RequestMethod.PUT)
+    @ApiOperation(value = "考生提交考卷")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult submitAssessPaperAnswer(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId){
+        GeneralResult result = new GeneralResult();
+        try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
+            String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
+            Byte tempTitle = this.securityService.getCurrentUser().getProfessionalTitle();
+            log.info("[{}]Is going to submit AssessPaper [{}].", tempUserId, _assessPaperId);
+
+            result = this.doingAssessService.submitAssessPaperAnswer(tempUserId, tempOrgId, tempTitle, _assessPaperId);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);
             result.setDetailDescription("Unexpected Error occured...");

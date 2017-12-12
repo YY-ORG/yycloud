@@ -33,7 +33,7 @@ public class PerAssessPaperExamineeMap implements Serializable {
 	@Column(name="CREATOR_ID")
 	private String creatorId;
 
-	private byte status;
+	private Byte status;
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
@@ -73,11 +73,11 @@ public class PerAssessPaperExamineeMap implements Serializable {
 		this.creatorId = creatorId;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 

@@ -52,31 +52,8 @@ public class ResultCode {
 	
 	public final static String USERMGMT_ORG_EXISTED = "10001003";
 
-	public final static String ORDERMGMT_UNEXPECTED_EXCEPTION = "10003001";
-
-	public final static String SUBINSTANCEMGMT_UNEXPECTED_EXCEPTION = "10004001";
-
-	public final static String WORKFLOW_UNEXPECTED_EXCEPTION = "10005001";
-	
-	public final static String ADUSERMGMT_UNEXPECTED_EXCEPTION = "10051001";
-
-	public final static String ADUSERMGMT_LDAP_CONNECT_EXCEPTION = "10051002";
-
-	public final static String ADUSERMGMT_ADUSER_DUPLICATED_EXCEPTION = "10051101";
-
-	public final static String ADUSERMGMT_LOGIN_NOT_EXIST_EXCEPTION = "10051201";
-
-	public final static String ADUSERMGMT_LOGIN_MULTI_LDAPS_EXCEPTION = "10051202";
-
-	public final static String ADUSERMGMT_LOGIN_LDAP_REJECT_EXCEPTION = "10051203";
-
-	public final static String ADUSERMGMT_LOGIN_INVALID_EXCEPTION = "10051204";
-
-    public final static String ENTERPRISE_QUOTA_VALIDATE_FAILED = "10007001";
-
-	public final static String ORGANIZATION_QUOTA_VALIDATE_FAILED = "10007002";
-
-	public final static String USERMGMT_ORGAN_CREATE_FAILED = "10008001";
+	public final static String ASSESS_ANSWER_SUBMIT_ALREADY = "10001";
+	public final static String ASSESS_ANSWER_SUBMIT_NOTEXISTS = "10002";
 	
 	public final static String ASSESS_GET_FAILED = "";
 }

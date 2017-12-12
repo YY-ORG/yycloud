@@ -20,16 +20,16 @@ import java.util.List;
  * @since JDK 1.8
  */
 public interface DoingAssessService {
-    GeneralResult submitSingleAnswerAssessAnswer(String _userId, AssessAnswerReq _answer);
-    GeneralContentResult<List<String>> addAssessSubAnswer(String _userId, AssessAnswerReq _answer);
-    GeneralResult deleteAssessSubAnswer(List<String> _answerItemId);
-    GeneralContentResult<List<String>> addMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer);
-    GeneralResult deleteMultiAnswerAssessAnswer(List<String> _answerId);
-    GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer);
+    GeneralResult submitSingleAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException;
+    GeneralContentResult<List<String>> addAssessSubAnswer(String _userId, AssessAnswerReq _answer) throws YYException;
+    GeneralResult deleteAssessSubAnswer(String _userId, String _assessPaperId, List<String> _answerItemId) throws YYException;
+    GeneralContentResult<List<String>> addMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException;
+    GeneralResult deleteMultiAnswerAssessAnswer(String _userId, String _assessPaperId, List<String> _answerId) throws YYException;
+    GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException;
     GeneralContentResult<List<SimpleAssessAnswerItem>> getAssessAnswerItemList(String _userId, String _assessPaperId, String _assessId);
     GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAllAssessPaperAnswerSumListByUser(String _userId);
     GeneralContentResult<SimpleAssessPaperAnswerItem> getAssessPaperAnswerSumByUser(String _userId, String _assessPaperId);
     GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAllAssessPaperAnswerSumListByOrg(String _orgId);
     GeneralContentResult<List<SimpleAssessGroupAnswerItem>> getAssessPaperAnswerSumListByOrg(String _orgId, String _assessPaperId);
-    GeneralResult submitAssessPaperAnswer(String _userId, String _assessPaperId) throws YYException;
+    GeneralResult submitAssessPaperAnswer(String _userId, String _orgId, Byte _title, String _assessPaperId) throws YYException;
 }

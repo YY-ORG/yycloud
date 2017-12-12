@@ -16,21 +16,26 @@ public class YYException extends Exception {
     private String code;
     public YYException(String _code) {
         super();
+        this.code = _code;
     }
 
     public YYException(String _code, String message) {
         super(message);
+        this.code = _code;
     }
 
     public YYException(String _code, String message, Throwable cause) {
         super(message, cause);
+        this.code = _code;
     }
 
     public YYException(String _code, Throwable cause) {
         super(cause);
+        this.code = _code;
     }
 
     protected YYException(String _code, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
+        this.code = _code;
     }
 }
