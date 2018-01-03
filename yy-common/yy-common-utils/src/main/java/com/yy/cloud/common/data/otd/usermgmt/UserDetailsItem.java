@@ -26,33 +26,9 @@ public class UserDetailsItem implements Serializable, Principal {
 
     private String phone;
 
-    private Boolean isAD;
-
     private String password;
 
     private String userName;
-
-    private String leaderId;
-
-    private String leaderName;
-
-    private String organizationId;
-
-    private String organizationName;
-
-    private String enterpriseId;
-
-    private String enterpriseName;
-
-    private Byte enterpriseType;
-
-    @ApiModelProperty(notes = "企业认证类型")
-    private Byte enterpriseAuthMode;
-
-    private String ldapId;
-
-    private String ldapName;
-    
     
     private String birthday;
 
@@ -63,8 +39,6 @@ public class UserDetailsItem implements Serializable, Principal {
     private List<OrganizationItem> organizations;
 
     private List<RoleItem> roles;
-    
-    
     
 	private byte gender;
 
@@ -88,12 +62,16 @@ public class UserDetailsItem implements Serializable, Principal {
 	 * 行政职务: 参考数据字典
 	 */
 	private byte administrativePost;
-	
-	
+
 	/**
 	 * 部门Id
 	 */
 	private String deptId;
+
+    /**
+     * 部门的名字
+     */
+	private String deptName;
 
 	@Override
 	public String getName() {

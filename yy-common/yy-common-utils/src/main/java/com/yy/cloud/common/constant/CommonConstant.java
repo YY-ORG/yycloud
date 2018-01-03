@@ -51,6 +51,11 @@ public class CommonConstant {
     public final static Byte DIC_ASSESSPAPER_STATUS_MARKED=2;
     public final static Byte DIC_ASSESSPAPER_STATUS_AUDITED=3;
 
+    public final static Byte DIC_USER_INFO_TITLE_ZG=0;
+    public final static Byte DIC_USER_INFO_TITLE_FG=1;
+    public final static Byte DIC_USER_INFO_TITLE_ZJ=2;
+    public final static Byte DIC_USER_INFO_TITLE_CJ=3;
+    public final static Byte DIC_USER_INFO_TITLE_W=4;
 
     // TENANT TYPE: 0: buyer(前台企业), 1: provider(后台企业)
     public final static Byte DIC_TENANT_TYPE_BUYER=0;

@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 
@@ -30,10 +31,21 @@ public class PerAssessPaperExamineeMap implements Serializable {
 	@Column(name="CREATE_DATE")
 	private Timestamp createDate;
 
+	@Column(name="DEPT_ID")
+	private String deptId;
+
 	@Column(name="CREATOR_ID")
 	private String creatorId;
 
 	private Byte status;
+
+	private Byte title;
+
+	@Column(name="MARKED_SCORE")
+	private BigDecimal markedScore;
+
+	@Column(name="AUDIT_SCORE")
+	private BigDecimal auditScore;
 
 	@Column(name="UPDATE_DATE")
 	private Timestamp updateDate;
@@ -77,8 +89,40 @@ public class PerAssessPaperExamineeMap implements Serializable {
 		return this.status;
 	}
 
+	public BigDecimal getMarkedScore() {
+		return markedScore;
+	}
+
+	public void setMarkedScore(BigDecimal markedScore) {
+		this.markedScore = markedScore;
+	}
+
+	public BigDecimal getAuditScore() {
+		return auditScore;
+	}
+
+	public void setAuditScore(BigDecimal auditScore) {
+		this.auditScore = auditScore;
+	}
+
 	public void setStatus(Byte status) {
 		this.status = status;
+	}
+
+	public String getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+
+	public Byte getTitle() {
+		return title;
+	}
+
+	public void setTitle(Byte title) {
+		this.title = title;
 	}
 
 	public Timestamp getUpdateDate() {

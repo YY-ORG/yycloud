@@ -107,11 +107,36 @@ public class DoingAssessServiceImpl implements DoingAssessService {
                         tempAnswerAA)).collect(Collectors.toList());
 
         List<PerAssessAnswerItem> tempItemList = this.perAssessAnswerItemRepository.save(tempAnswerItemList);
-        List<String> tempResultList = tempItemList.stream().map(tempItem -> {return tempItem.getId();}).collect(Collectors.toList());
+        List<String> tempResultList = tempItemList.stream().map(tempItem -> tempItem.getId()).collect(Collectors.toList());
 
         GeneralContentResult<List<String>> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         tempResult.setResultContent(tempResultList);
+        return tempResult;
+    }
+
+    @Override
+    @Transactional
+    public GeneralContentResult<String> updateAssessSubAnswer(String _userId, String _subAnswerId, AssessAnswerReq _answer) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+
+        if(_answer.getAnswerList() == null || _answer.getAnswerList().size() == 0){
+            throw new YYException(ResultCode.ASSESS_ANSWER_NOTEXISTS, "新的答案为空，还请重新提交！");
+        }
+
+        this.perAssessAnswerItemRepository.delete(_subAnswerId);
+
+        PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.
+                findByAssessPaperIdAndAssessIdAndCreatorId(_answer.getAssessPaperId(), _answer.getAssessId(), _userId);
+
+        PerAssessAnswerItem tempAnswerItem = this.packAssessAnswerItemDTO(_answer.getAnswerList().get(0), CommonConstant.DIC_ASSESSANSWERITEM_TYPE_SUB,
+                        tempAnswer);
+
+        PerAssessAnswerItem tempItemList = this.perAssessAnswerItemRepository.save(tempAnswerItem);
+
+        GeneralContentResult<String> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(tempItemList.getId());
         return tempResult;
     }
 
@@ -128,7 +153,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         PerAspProcessOverview tempOverview;
         if(tempOverviewOpt.isPresent()){
             tempOverview = tempOverviewOpt.get();
-            tempOverview.setCompletedCount(tempOverview.getAssessCount() + 1);
+            int tempCount = tempOverview.getCompletedCount() + 1;
+            tempOverview.setCompletedCount(tempCount > tempOverview.getAssessCount() ? tempOverview.getAssessCount(): tempCount);
         } else {
             tempOverview = new PerAspProcessOverview();
             tempOverview.setAssessPaperId(_assessPaperId);
@@ -139,6 +165,26 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         }
         this.perAspProcessOverviewRepository.save(tempOverview);
     }
+
+    /**
+     * 扣除已答个数
+     *
+     * @param _assessPaperId
+     * @param _groupId
+     * @param _userId
+     */
+    private void revertAssessPaperProcessOverview(String _assessPaperId, String _groupId, String _userId){
+        Optional<PerAspProcessOverview> tempOverviewOpt = this.perAspProcessOverviewRepository.findByAssessPaperIdAndCategoryIdAndCreatorId(
+                _assessPaperId, _groupId, _userId);
+        PerAspProcessOverview tempOverview;
+        if(tempOverviewOpt.isPresent()){
+            tempOverview = tempOverviewOpt.get();
+            int tempCount = tempOverview.getCompletedCount() - 1;
+            tempOverview.setCompletedCount(tempCount > 0 ? tempCount : 0);
+            this.perAspProcessOverviewRepository.save(tempOverview);
+        }
+    }
+
 
     @Override
     @Transactional
@@ -163,18 +209,13 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DOING);
             tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_MULTIANSWERS);
             tempAnswer.setCreatorId(_userId);
-//            PerAssessAnswer tempAnswerAA = tempAnswer;
-//            List<PerAssessAnswerItem> tempAnswerItemList = _answer.getAnswerList().stream().
-//                    map(tempTemplate -> this.packAssessAnswerItemDTO(tempTemplate, CommonConstant.DIC_ASSESSANSWER_TYPE_MULTIANSWERS, tempAnswerAA)).collect(Collectors.toList());
-//            tempAnswer.setPerAssessAnswerItems(tempAnswerItemList);
-//            this.perAssessAnswerRepository.save(tempAnswer);
         }
         PerAssessAnswer tempAnswerAA = tempAnswer;
         List<PerAssessAnswerItem> tempAnswerItemList = _answer.getAnswerList().stream().
                 map(tempTemplate -> this.packAssessAnswerItemDTO(tempTemplate, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY, tempAnswerAA)).collect(Collectors.toList());
         List<PerAssessAnswerItem> tempResultItemList = this.perAssessAnswerItemRepository.save(tempAnswerItemList);
 
-        List<String> tempResultContent = tempResultItemList.stream().map(tempItem -> {return tempItem.getId();}).collect(Collectors.toList());
+        List<String> tempResultContent = tempResultItemList.stream().map(tempItem -> tempItem.getId()).collect(Collectors.toList());
         GeneralContentResult<List<String>> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         tempResult.setResultContent(tempResultContent);
@@ -182,10 +223,46 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
+    public GeneralContentResult<String> updateMultiAnswerAssessAnswer(String _userId, String _answerItemId, AssessAnswerReq _answer) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+
+        if(_answer.getAnswerList() == null || _answer.getAnswerList().size() == 0){
+            throw new YYException(ResultCode.ASSESS_ANSWER_NOTEXISTS, "新的答案为空，还请重新提交！");
+        }
+
+        PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.
+                findByAssessPaperIdAndAssessIdAndCreatorId(_answer.getAssessPaperId(), _answer.getAssessId(), _userId);
+
+        this.perAssessAnswerItemRepository.delete(_answerItemId);
+
+        PerAssessAnswerItem tempAnswerItem = this.packAssessAnswerItemDTO(_answer.getAnswerList().get(0), CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY,
+                tempAnswer);
+
+        PerAssessAnswerItem tempItemList = this.perAssessAnswerItemRepository.save(tempAnswerItem);
+
+        GeneralContentResult<String> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(tempItemList.getId());
+        return tempResult;
+    }
+
+    @Override
     @Transactional
     public GeneralResult deleteMultiAnswerAssessAnswer(String _userId, String _assessPaperId, List<String> _answerIdList) throws YYException {
         this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
+        List<String> tempAssessAnswerIdList = this.perAssessAnswerItemRepository.getAssessAnswerList(_answerIdList);
         this.perAssessAnswerItemRepository.deleteByIdIn(_answerIdList);
+        for (String _tempAnswerId : tempAssessAnswerIdList){
+            PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.getOne(_tempAnswerId);
+            List<PerAssessAnswerItem> itemList = tempAnswer.getPerAssessAnswerItems();
+            if(itemList == null || itemList.size() == 0){//如果答案删除完了，则将该题置为"未开始"
+                tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_NOT_STARTED);
+            }
+            PerAssessAspMap tempAssessAspMap = this.perAssessAspMapRepository.findByAssessPaperIdAndAssessIdAndStatus(_assessPaperId, tempAnswer.getAssessId(), CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+            //将已做的统计减一
+            this.revertAssessPaperProcessOverview(_assessPaperId, tempAssessAspMap.getAssessCategoryId(), _userId);
+        }
+
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 
@@ -314,15 +391,17 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         tempPaperAnswerItem.setCode(tempAssessPaper.getCode());
         tempPaperAnswerItem.setName(tempAssessPaper.getName());
 
+
+        PerAssessPaperExamineeMap tempPAPEM = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
+        if(tempPAPEM != null) {
+            tempPaperAnswerItem.setStatus(tempPAPEM.getStatus());
+        } else {
+            tempPaperAnswerItem.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT);
+        }
+
         List<PerAPACCount> orgCountList = this.perAssessAspMapRepository.getGroupCountByAssessPaper(_assessPaperId);
 
         if(orgCountList == null) {
-//            tempPaperAnswerItem.setUnstartedCount(0);
-//            tempPaperAnswerItem.setDoingCount(0);
-//            tempPaperAnswerItem.setDoneCount(0);
-//            tempPaperAnswerItem.setMarkedCount(0);
-//            tempPaperAnswerItem.setAuditedCount(0);
-//            tempPaperAnswerItem.setTotalCount(0);
             tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
             tempResult.setResultContent(tempPaperAnswerItem);
             return tempResult;
@@ -384,6 +463,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             tempPAPEM = new PerAssessPaperExamineeMap();
             tempPAPEM.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_SUBMITTED);
             tempPAPEM.setAssessPaperId(_assessPaperId);
+            tempPAPEM.setDeptId(_orgId);
+            tempPAPEM.setTitle(_title);
             tempPAPEM.setCreatorId(_userId);
             this.perAssessPaperExamineeMapRepository.save(tempPAPEM);
             tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);

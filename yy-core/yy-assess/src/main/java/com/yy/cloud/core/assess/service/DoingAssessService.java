@@ -22,8 +22,10 @@ import java.util.List;
 public interface DoingAssessService {
     GeneralResult submitSingleAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException;
     GeneralContentResult<List<String>> addAssessSubAnswer(String _userId, AssessAnswerReq _answer) throws YYException;
+    GeneralContentResult<String> updateAssessSubAnswer(String _userId, String _subAnswerId, AssessAnswerReq _answer) throws YYException;
     GeneralResult deleteAssessSubAnswer(String _userId, String _assessPaperId, List<String> _answerItemId) throws YYException;
     GeneralContentResult<List<String>> addMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException;
+    GeneralContentResult<String> updateMultiAnswerAssessAnswer(String _userId, String _answerItemId, AssessAnswerReq _answer) throws YYException;
     GeneralResult deleteMultiAnswerAssessAnswer(String _userId, String _assessPaperId, List<String> _answerId) throws YYException;
     GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException;
     GeneralContentResult<List<SimpleAssessAnswerItem>> getAssessAnswerItemList(String _userId, String _assessPaperId, String _assessId);

@@ -20,7 +20,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @SpringBootApplication
 @ComponentScan({"com.yy.cloud"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.yy.cloud.core.usermgmt.clients","com.yy.cloud.common.clients"})
+@EnableFeignClients(basePackages = {"com.yy.cloud.common.clients"})
 @EnableResourceServer
 //@EnableZuulProxy
 //@EnableHystrix

@@ -9,6 +9,8 @@ import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.otd.usermgmt.AdLoginReq;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 
+import java.util.Map;
+
 @FeignClient("usermgmt")
 //@FeignClient(url = "http://localhost:9101", name = "user-mgmt")
 public interface SecurityClient {
@@ -25,5 +27,9 @@ public interface SecurityClient {
     @ResponseBody
     @RequestMapping(value = "/noauth/aduser/login", method = RequestMethod.POST)
     public GeneralContentResult<String> loginAdUser(@RequestBody AdLoginReq loginReq);
+
+
+    @RequestMapping(value = "/authsec/organization/{_orgId}/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public GeneralContentResult<Map<String, UserDetailsItem>> getAllMembersInOrganization(@PathVariable("_orgId") String _orgId);
 
 }

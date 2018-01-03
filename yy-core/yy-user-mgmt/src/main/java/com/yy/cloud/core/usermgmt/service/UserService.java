@@ -1,6 +1,7 @@
 package com.yy.cloud.core.usermgmt.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,13 +34,13 @@ public interface UserService {
 
     List<UserDetailsItem> listUsersInOrganization(String _organizationId, PageInfo pageinfo);
 
+    Map<String, UserDetailsItem> listUsersInOrganization(String _organizationId);
+
     List<UserItem> listNonOrganizationMembers(PageInfo _pageInfo);
 
     UserDetailsItem loadUserByLoginName(String _loginName);
 
     UserDetailsItem loadUserByUserId(String _userId);
-
-    boolean isProviderUser();
 
     UserDetailsItem loadUserByLoginNameOrId(String loginNameOrId);
 

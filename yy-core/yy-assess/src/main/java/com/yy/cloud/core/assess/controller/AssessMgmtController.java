@@ -90,7 +90,7 @@ public class AssessMgmtController {
 		GeneralContentResult<List<AssessPaperItem>> result = new GeneralContentResult<List<AssessPaperItem>>();
 		try {
 			String tempUserId = this.securityService.getCurrentUser().getUserId();
-			String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
+			String tempOrgId = this.securityService.getCurrentUser().getDeptId();
 			Byte tempTitle = this.securityService.getCurrentUser().getProfessionalTitle();
 			log.info("Is going to retrieve the assess menu list for [{}] -> [{}]", tempOrgId, tempUserId);
 			result = this.assessService.getAssessPaperList(tempUserId, tempOrgId, tempTitle);
@@ -137,7 +137,7 @@ public class AssessMgmtController {
 		GeneralContentResult<List<AssessMenuItem>> result = new GeneralContentResult<List<AssessMenuItem>>();
 		try {
 			String tempUserId = this.securityService.getCurrentUser().getUserId();
-			String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
+			String tempOrgId = this.securityService.getCurrentUser().getDeptId();
 			log.info("Is going to retrieve the assess menu list for [{}] -> [{}]", tempOrgId, tempUserId);
 			result = this.assessService.getAssessMenu(tempUserId, tempOrgId);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
@@ -430,7 +430,7 @@ public class AssessMgmtController {
 			@PageableDefault(sort = { "code" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<SimpleAssessPaperItem>> result = new GeneralPagingResult<>();
 		try {
-			String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
+			String tempOrgId = this.securityService.getCurrentUser().getDeptId();
 			log.info("Going to load assess paper list by org [{}] page [{}].", tempOrgId, _page);
 			if(_title == null)
 				result = this.assessService.getAssessPaperListByOrg(tempOrgId, _page);

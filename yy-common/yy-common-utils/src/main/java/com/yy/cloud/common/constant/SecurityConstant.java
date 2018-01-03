@@ -21,5 +21,8 @@ package com.yy.cloud.common.constant;
 public class SecurityConstant {
 	public final static short SEC_USER_STATUS_INITIAL = 0;
 	public final static short SEC_USER_STATUS_ACTIVE = 1;
+
+	public final static String ROLE_MARK_SCORE = "KYKHCP";
+	public final static String ROLE_AUDIT_SCORE = "KYKHFH";
 }
 

@@ -20,6 +20,7 @@ public class SimpleAssessPaperAnswerItem implements Serializable {
     private String id;
     private String code;
     private String name;
+    private Byte status;
     private Integer unstartedCount = 0;
     private Integer doingCount = 0;
     private Integer doneCount = 0;

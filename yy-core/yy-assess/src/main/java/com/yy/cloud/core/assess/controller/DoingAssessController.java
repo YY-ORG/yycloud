@@ -109,6 +109,40 @@ public class DoingAssessController {
         return result;
     }
 
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/group/{_groupId}/assess/{_assessId}/assessanswer/subanswer/{_subAnswerId}", method = RequestMethod.PUT)
+    @ApiOperation(value = "考生更新某个卷子某个题的元素项的某个答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<String> updateAssessAnswerSubAnser(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                      @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
+                                                                      @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                         @ApiParam(value = "待更新的子项的答案的ID") @PathVariable(value = "_subAnswerId", required = true) String _subAnswerId,
+                                                                      @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
+        GeneralContentResult<String> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("[{}]Is going to update sub answer for AssessPaper [{}] -> assess [{}]", tempUserId, _assessPaperId, _assessId);
+
+            AssessAnswerReq tempAnswerReq = new AssessAnswerReq();
+            tempAnswerReq.setAssessId(_assessId);
+            tempAnswerReq.setGroupId(_groupId);
+            tempAnswerReq.setAssessPaperId(_assessPaperId);
+            tempAnswerReq.setAnswerList(_groupSummaryReq);
+
+            result = this.doingAssessService.updateAssessSubAnswer(tempUserId, _subAnswerId, tempAnswerReq);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
     @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/assessanswer/subanswer/{_subAnswerId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "考生删除某个卷子某个题的子元素项的某个答案")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
@@ -193,6 +227,40 @@ public class DoingAssessController {
         return result;
     }
 
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/group/{_groupId}/assess/{_assessId}/assessanswer/answeritem/{_answerItemId}", method = RequestMethod.PUT)
+    @ApiOperation(value = "考生更新某个卷子某个多答案题的答案")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<String> updateMultiAssessAnswerItems(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                        @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
+                                                                        @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                           @ApiParam(value = "要更改的答案ID") @PathVariable(value = "_answerItemId", required = true) String _answerItemId,
+                                                                        @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
+        GeneralContentResult<String> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("[{}]Is going to update answer item for AssessPaper [{}] -> assess [{}]", tempUserId, _assessPaperId, _assessId);
+
+            AssessAnswerReq tempAnswerReq = new AssessAnswerReq();
+            tempAnswerReq.setAssessId(_assessId);
+            tempAnswerReq.setGroupId(_groupId);
+            tempAnswerReq.setAssessPaperId(_assessPaperId);
+            tempAnswerReq.setAnswerList(_groupSummaryReq);
+
+            result = this.doingAssessService.updateMultiAnswerAssessAnswer(tempUserId, _answerItemId, tempAnswerReq);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ex){
+            log.info("The Exception Code is: {}", ex.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ex.getCode()));
+            result.setResultCode(ex.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
 
     @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/group/{_groupId}/assess/{_assessId}/assessanswer", method = RequestMethod.PUT)
     @ApiOperation(value = "考生提交某个多答案题（提交的时候无须再提交内容）")
@@ -325,7 +393,7 @@ public class DoingAssessController {
         GeneralResult result = new GeneralResult();
         try {
             String tempUserId = this.securityService.getCurrentUser().getUserId();
-            String tempOrgId = this.securityService.getCurrentUser().getOrganizationId();
+            String tempOrgId = this.securityService.getCurrentUser().getDeptId();
             Byte tempTitle = this.securityService.getCurrentUser().getProfessionalTitle();
             log.info("[{}]Is going to submit AssessPaper [{}].", tempUserId, _assessPaperId);
 

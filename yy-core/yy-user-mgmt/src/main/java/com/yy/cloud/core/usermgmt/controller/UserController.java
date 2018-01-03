@@ -1,6 +1,7 @@
 package com.yy.cloud.core.usermgmt.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -237,7 +238,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/authsec/users/organization/{organization_id}/page/{page}/size/{size}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
+    @ApiOperation(value = "用户中心-账户管理，分页获得属于指定机构下所有用户")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
     })
@@ -253,6 +254,21 @@ public class UserController {
         List<UserDetailsItem> userItems = userService.listUsersInOrganization(_organizationId,pageInfo );
         result.setResultContent(userItems);
         result.setPageInfo(pageInfo);
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/organization/{_orgId}/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "用户中心-账户管理，获得属于指定机构下所有用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<Map<String, UserDetailsItem>> getAllMembersInOrganization(
+            @PathVariable("_orgId") String _orgId) {
+        GeneralContentResult<Map<String, UserDetailsItem>> result = new GeneralContentResult<>();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        Map<String, UserDetailsItem> tempResult = userService.listUsersInOrganization(_orgId);
+        result.setResultContent(tempResult);
         return result;
     }
 

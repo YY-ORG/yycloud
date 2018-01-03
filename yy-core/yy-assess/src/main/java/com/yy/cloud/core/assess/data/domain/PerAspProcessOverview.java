@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 
@@ -35,6 +36,18 @@ public class PerAspProcessOverview implements Serializable {
 
 	@Column(name="COMPLETED_COUNT")
 	private int completedCount;
+
+	@Column(name="MARKED_COUNT")
+	private int markedCount;
+
+	@Column(name="AUDIT_COUNT")
+	private int auditCount;
+
+	@Column(name="MARKED_SCORE")
+	private BigDecimal markedScore;
+
+	@Column(name="AUDIT_SCORE")
+	private BigDecimal auditScore;
 
 	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
@@ -86,6 +99,38 @@ public class PerAspProcessOverview implements Serializable {
 
 	public void setCompletedCount(int completedCount) {
 		this.completedCount = completedCount;
+	}
+
+	public int getMarkedCount() {
+		return markedCount;
+	}
+
+	public void setMarkedCount(int markedCount) {
+		this.markedCount = markedCount;
+	}
+
+	public int getAuditCount() {
+		return auditCount;
+	}
+
+	public void setAuditCount(int auditCount) {
+		this.auditCount = auditCount;
+	}
+
+	public BigDecimal getMarkedScore() {
+		return markedScore;
+	}
+
+	public void setMarkedScore(BigDecimal markedScore) {
+		this.markedScore = markedScore;
+	}
+
+	public BigDecimal getAuditScore() {
+		return auditScore;
+	}
+
+	public void setAuditScore(BigDecimal auditScore) {
+		this.auditScore = auditScore;
 	}
 
 	public Timestamp getCreateDate() {

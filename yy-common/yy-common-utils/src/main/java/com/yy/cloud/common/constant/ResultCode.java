@@ -36,7 +36,7 @@ public class ResultCode {
 	 * "001" FOR THE ERROR CODE FOR EACH EXCEPTION
 	 *
 	 */
-	public final static String USERMGMT_RETRIEVE_FAILED = "10002001";
+	public final static String ORG_USER_RETRIEVE_FAILED = "10002001";
 
 	public final static String PLATFORMACCESS_UNEXPECTED_EXCEPTION = "10006001";
 
@@ -54,6 +54,10 @@ public class ResultCode {
 
 	public final static String ASSESS_ANSWER_SUBMIT_ALREADY = "10001";
 	public final static String ASSESS_ANSWER_SUBMIT_NOTEXISTS = "10002";
+
+	public final static String ASSESS_ANSWER_NOTEXISTS = "10003";
 	
 	public final static String ASSESS_GET_FAILED = "";
+
+	public final static String ACCESS_LIMITED = "999999";
 }
