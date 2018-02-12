@@ -4,17 +4,16 @@ import java.io.Serializable;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
 
 
 /**
- * The persistent class for the per_assess_paper_examinee_map database table.
+ * The persistent class for the per_apac_examinee_map database table.
  * 
  */
 @Entity
-@Table(name="per_assess_paper_examinee_map")
-@NamedQuery(name="PerAssessPaperExamineeMap.findAll", query="SELECT p FROM PerAssessPaperExamineeMap p")
-public class PerAssessPaperExamineeMap implements Serializable {
+@Table(name="per_apac_examinee_map")
+@NamedQuery(name="PerApacExamineeMap.findAll", query="SELECT p FROM PerApacExamineeMap p")
+public class PerApacExamineeMap implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -23,11 +22,11 @@ public class PerAssessPaperExamineeMap implements Serializable {
 	@Column(name="ID")
 	private String id;
 
-	@Column(name="ASSESS_PAPER_ID")
-	private String assessPaperId;
+	@Column(name="AP_AC_MAP_ID")
+	private String apAcMapId;
 
 	@Column(name="AUDIT_SCORE")
-	private BigDecimal auditScore;
+	private BigDecimal auditScore = BigDecimal.ZERO;
 
 	private String auditor;
 
@@ -37,26 +36,25 @@ public class PerAssessPaperExamineeMap implements Serializable {
 	@Column(name="CREATOR_ID")
 	private String creatorId;
 
-	@Column(name="DEPT_ID")
-	private String deptId;
-
 	@Column(name="MARKED_SCORE")
-	private BigDecimal markedScore;
+	private BigDecimal markedScore = BigDecimal.ZERO;
 
 	private String marker;
 
 	private Byte status;
 
-	private Byte title;
-
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
-	//bi-directional many-to-one association to PerApacExamineeMap
-	@OneToMany(mappedBy="perAssessPaperExamineeMap")
-	private List<PerApacExamineeMap> perApacExamineeMaps;
+	@Column(name="APEM_ID")
+	private String apemId;
 
-	public PerAssessPaperExamineeMap() {
+	//bi-directional many-to-one association to PerAssessPaperExamineeMap
+	@ManyToOne
+	@JoinColumn(name="APEM_ID", insertable = false, updatable = false)
+	private PerAssessPaperExamineeMap perAssessPaperExamineeMap;
+
+	public PerApacExamineeMap() {
 	}
 
 	public String getId() {
@@ -67,12 +65,12 @@ public class PerAssessPaperExamineeMap implements Serializable {
 		this.id = id;
 	}
 
-	public String getAssessPaperId() {
-		return this.assessPaperId;
+	public String getApAcMapId() {
+		return this.apAcMapId;
 	}
 
-	public void setAssessPaperId(String assessPaperId) {
-		this.assessPaperId = assessPaperId;
+	public void setApAcMapId(String apAcMapId) {
+		this.apAcMapId = apAcMapId;
 	}
 
 	public BigDecimal getAuditScore() {
@@ -107,14 +105,6 @@ public class PerAssessPaperExamineeMap implements Serializable {
 		this.creatorId = creatorId;
 	}
 
-	public String getDeptId() {
-		return this.deptId;
-	}
-
-	public void setDeptId(String deptId) {
-		this.deptId = deptId;
-	}
-
 	public BigDecimal getMarkedScore() {
 		return this.markedScore;
 	}
@@ -139,12 +129,12 @@ public class PerAssessPaperExamineeMap implements Serializable {
 		this.status = status;
 	}
 
-	public Byte getTitle() {
-		return this.title;
+	public String getApemId() {
+		return apemId;
 	}
 
-	public void setTitle(Byte title) {
-		this.title = title;
+	public void setApemId(String apemId) {
+		this.apemId = apemId;
 	}
 
 	public Timestamp getUpdateDate() {
@@ -155,26 +145,12 @@ public class PerAssessPaperExamineeMap implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public List<PerApacExamineeMap> getPerApacExamineeMaps() {
-		return this.perApacExamineeMaps;
+	public PerAssessPaperExamineeMap getPerAssessPaperExamineeMap() {
+		return this.perAssessPaperExamineeMap;
 	}
 
-	public void setPerApacExamineeMaps(List<PerApacExamineeMap> perApacExamineeMaps) {
-		this.perApacExamineeMaps = perApacExamineeMaps;
-	}
-
-	public PerApacExamineeMap addPerApacExamineeMap(PerApacExamineeMap perApacExamineeMap) {
-		getPerApacExamineeMaps().add(perApacExamineeMap);
-		perApacExamineeMap.setPerAssessPaperExamineeMap(this);
-
-		return perApacExamineeMap;
-	}
-
-	public PerApacExamineeMap removePerApacExamineeMap(PerApacExamineeMap perApacExamineeMap) {
-		getPerApacExamineeMaps().remove(perApacExamineeMap);
-		perApacExamineeMap.setPerAssessPaperExamineeMap(null);
-
-		return perApacExamineeMap;
+	public void setPerAssessPaperExamineeMap(PerAssessPaperExamineeMap perAssessPaperExamineeMap) {
+		this.perAssessPaperExamineeMap = perAssessPaperExamineeMap;
 	}
 
 }
