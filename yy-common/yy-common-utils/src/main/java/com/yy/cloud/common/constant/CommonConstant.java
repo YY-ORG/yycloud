@@ -57,14 +57,12 @@ public class CommonConstant {
     public final static Byte DIC_USER_INFO_TITLE_CJ=3;
     public final static Byte DIC_USER_INFO_TITLE_W=4;
 
-    // TENANT TYPE: 0: buyer(前台企业), 1: provider(后台企业)
-    public final static Byte DIC_TENANT_TYPE_BUYER=0;
-    public final static Byte DIC_TENANT_TYPE_PROVIDER=1;
-    /**
-     * 鉴权类型
-     */
-    public final static Byte DIC_AUTHENTICATION_MODE_NORMAL = 0;
-    public final static Byte DIC_AUTHENTICATION_MODE_LDAP = 1;
+    public final static Byte DIC_SCORING_TYPE_NORMAL = 0;
+    public final static Byte DIC_SCORING_TYPE_NORMAL_SUM = 1;
+    public final static Byte DIC_SCORING_TYPE_NORMAL_SUM_THREHOLD = 2;
+    public final static Byte DIC_SCORING_TYPE_RATIO = 3;
+    public final static Byte DIC_SCORING_TYPE_RATIO_SUM = 4;
+    public final static Byte DIC_SCORING_TYPE_RATIO_SUM_THREHOLD = 5;
 
     /**
      * 前台部门
@@ -78,38 +76,4 @@ public class CommonConstant {
     public final static String LOG_DEBUG_TAG = "################### ";
     public final static String LOG_ERROR_TAG = "%%%%%%%%%%%%%%%%%%% ";
 
-	//审批中心--拒绝/同意
-    public final static byte ORDER_AUDIT_REFUSAL = 0;
-    public final static byte ORDER_AUDIT_CONSENT = 1;
-
-	//IMAGETYPE
-	public static final byte IMAGETYPE_PUBLIC = 0; //标准镜像
-	public static final byte IMAGETYPE_PRIVATE = 1; //私有镜像
-	public static final byte IMAGETYPE_ENT = 2; //企业镜像
-	
-    public final static Byte UI_RELY_TYPE_NO = 0;
-    public final static Byte UI_RELY_TYPE_HAVE = 1;
-
-    public static final String DATE_FOTMAT_STYLE = "yyyyMMddHHmmssSSS";
-
-    //used_quota action type
-    public final static byte RES_QUOTA_ACTION_TYPE_DECREASE = 0;
-    public final static byte RES_QUOTA_ACTION_TYPE_INCREASE = 1;
-
-    public final static String DEFAULT_ADMIN_DEPARTMENT_OF_ENTERPRISE_CODE="ADMIN_DEPARTMENT";
-    public final static String DEFAULT_NORMAL_DEPARTMENT_OF_ENTERPRISE_CODE="NORMAL_DEPARTMENT";
-    public final static String DEFAULT_ADMIN_DEPARTMENT_OF_ENTERPRISE_NAME="管理员部门";
-    public final static String DEFAULT_NORMAL_DEPARTMENT_OF_ENTERPRISE_NAME="普通用户部门";
-    public final static String DEFAULT_ADMIN_ORGANIZATION_CODE="ADMIN_ORGANIZATION";
-    public final static String DEFAULT_ADMIN_ORGANIZATION_NAME="云平台管理部门";
-    public final static byte DEPARTMENT_TYPE=0;
-    public final static byte ORGANIZATION_TYPE=1;
-    public final static String ROLE_ENTERPRISE_ADMIN="ENTERPRISE_ADMIN";
-
-    // 前台MPP用户
-    public final static Byte USER_TYPE_BUYER=0;
-    // 后台ADM用户
-    public final static Byte USER_TYPE_PROVIDER=1;
-    // 登录名不存在
-    public final static Byte USER_NOT_FOUND=2;
 }

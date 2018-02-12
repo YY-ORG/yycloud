@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 
@@ -29,6 +30,15 @@ public class PerAssessAspMap implements Serializable {
 
 	@Column(name="STATUS")
 	private Byte status;
+
+	@Column(name="SCORING_TYPE")
+	private Byte scoringType;
+
+	@Column(name="SCORING_RATIO")
+	private BigDecimal scoringRatio = BigDecimal.ONE;
+
+	@Column(name="SCORING_THRESHOLD")
+	private BigDecimal scoringThreshold = BigDecimal.valueOf(100);
 
 	@Column(name="SEQ_NO")
 	private Integer seqNo;
@@ -84,6 +94,30 @@ public class PerAssessAspMap implements Serializable {
 
 	public void setStatus(Byte status) {
 		this.status = status;
+	}
+
+	public Byte getScoringType() {
+		return scoringType;
+	}
+
+	public void setScoringType(Byte scoringType) {
+		this.scoringType = scoringType;
+	}
+
+	public BigDecimal getScoringRatio() {
+		return scoringRatio;
+	}
+
+	public void setScoringRatio(BigDecimal scoringRatio) {
+		this.scoringRatio = scoringRatio;
+	}
+
+	public BigDecimal getScoringThreshold() {
+		return scoringThreshold;
+	}
+
+	public void setScoringThreshold(BigDecimal scoringThreshold) {
+		this.scoringThreshold = scoringThreshold;
 	}
 
 	public Integer getSeqNo() {

@@ -38,7 +38,7 @@ spring:
   profiles: development
   data:
     mongodb:
-      uri: mongodb://admin:abcd1234@172.16.112.95/yy
+      uri: mongodb://yyadmin:abcd1234@172.16.112.95/yy
     #  username: admin
     #  password: abcd1234
       

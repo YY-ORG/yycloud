@@ -3,8 +3,6 @@ server:
   port: 9101
 logging:
   path: /yy/logs/yy_micro/core/
-  level:
-    org.springframework.security: DEBUG
 
 feign:
   hystrix:

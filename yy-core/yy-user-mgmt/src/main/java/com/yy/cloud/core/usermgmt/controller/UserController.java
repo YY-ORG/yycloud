@@ -265,10 +265,16 @@ public class UserController {
     public GeneralContentResult<Map<String, UserDetailsItem>> getAllMembersInOrganization(
             @PathVariable("_orgId") String _orgId) {
         GeneralContentResult<Map<String, UserDetailsItem>> result = new GeneralContentResult<>();
-        result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
-        Map<String, UserDetailsItem> tempResult = userService.listUsersInOrganization(_orgId);
-        result.setResultContent(tempResult);
+        try {
+            Map<String, UserDetailsItem> tempResult = userService.listUsersInOrganization(_orgId);
+            result.setResultContent(tempResult);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
         return result;
     }
 

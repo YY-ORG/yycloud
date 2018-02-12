@@ -32,5 +32,6 @@ import java.util.List;
 public interface PerTemplateItemRepository extends JpaRepository<PerTemplateItem, String> {
     @Query(value = "SELECT pti FROM PerTemplateItem pti, PerTemplateTiMap pttm where pti.id = pttm.templateItemId and pttm.templateId = :templateId")
     List<PerTemplateItem> getTemplateItemByTemplate(@Param("templateId") String _templateId);
+
 }
 

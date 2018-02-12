@@ -1,5 +1,6 @@
 package com.yy.cloud.core.assess.data.repositories;
 
+import com.yy.cloud.core.assess.data.domain.PerAPAAScore;
 import com.yy.cloud.core.assess.data.domain.PerAssessAnswerItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,8 @@ public interface PerAssessAnswerItemRepository extends JpaRepository<PerAssessAn
     void deleteByTypeAndTemplateIdIn(Byte _type, List<String> _templateIdList);
     @Query(value = "SELECT pi.perAssessAnswer.id FROM PerAssessAnswerItem pi where pi in (:itemIdList)")
     List<String> getAssessAnswerList(@Param("itemIdList") List<String> _itemIdList);
+
+    @Query(value = "SELECT sum(pi.markedScore) as markedScore, sum(pi.auditScore) as auditScore FROM PerAssessAnswerItem pi " +
+            " where pi.id <> :assessAnswerItemId and pi.assessAnswerId = :assessAnswerId")
+    PerAPAAScore getAssessAnswerScore(@Param("assessAnswerId") String _assessAnswerId, @Param("assessAnswerItemId") String _assessAnswerItemId);
 }

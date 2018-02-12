@@ -3,9 +3,12 @@ package com.yy.cloud.core.assess.controller;
 import com.yy.cloud.common.constant.ExceptionCode;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.constant.SecurityConstant;
+import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.dto.assess.AssessAnswerScoringReq;
 import com.yy.cloud.common.data.otd.assess.AssessPaperExamineeMapItem;
+import com.yy.cloud.common.data.otd.assess.MarkedAssessAnswer;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperAnswerItem;
 import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
 import com.yy.cloud.common.service.SecurityService;
@@ -59,7 +62,7 @@ public class MarkScoreController {
                 throw new YYException(ResultCode.ACCESS_LIMITED);
             boolean tempFlag = false;
             for(RoleItem tempItem : tempRuleList){
-                if(tempItem.getRoleName().equals(SecurityConstant.ROLE_MARK_SCORE)){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_MARK_SCORE)){
                     tempFlag = true;
                     break;
                 }
@@ -84,7 +87,7 @@ public class MarkScoreController {
 
 
     @RequestMapping(value = "/authsec/assesspaper/assessanswer/unauditlist", method = RequestMethod.GET)
-    @ApiOperation(value = "获取当前用户所在部门的未评分的试卷列表")
+    @ApiOperation(value = "获取当前用户所在部门的未复核的试卷列表")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnAuditAssessPaperAnswerItemList(
@@ -100,7 +103,7 @@ public class MarkScoreController {
                 throw new YYException(ResultCode.ACCESS_LIMITED);
             boolean tempFlag = false;
             for(RoleItem tempItem : tempRuleList){
-                if(tempItem.getRoleName().equals(SecurityConstant.ROLE_AUDIT_SCORE)){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_AUDIT_SCORE)){
                     tempFlag = true;
                     break;
                 }
@@ -122,4 +125,131 @@ public class MarkScoreController {
         return result;
     }
 
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/{_assessId}/markassessanswer", method = RequestMethod.GET)
+    @ApiOperation(value = "获取某个用户某个题的答案及答案的评分详情")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<MarkedAssessAnswer> getUnAuditAssessPaperAnswerItemList(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                                        @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                                        @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId){
+        GeneralContentResult<MarkedAssessAnswer> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = _userId;
+            if(_userId == null)
+                tempUserId = this.securityService.getCurrentUser().getUserId();
+            String tempOrgId = this.securityService.getCurrentUser().getDeptId();
+            log.info("Going to retrieve the [{}]'s un-marked assess answer.", tempUserId);
+            List<RoleItem> tempRuleList = this.securityService.getCurrentUser().getRoles();
+
+            if(tempRuleList == null || tempRuleList.size() == 0)
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            boolean tempFlag = false;
+            for(RoleItem tempItem : tempRuleList){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_MARK_SCORE)){
+                    tempFlag = true;
+                    break;
+                }
+            }
+            if(!tempFlag){
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            }
+            result = this.markedScoreService.getUnMarkedAssessAnswer(tempUserId, _assessPaperId, _assessId);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/{_assessId}/markassessanswer", method = RequestMethod.POST)
+    @ApiOperation(value = "给某个用户某个题的答案初评分")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<MarkedAssessAnswer> markSocoreForAssessPaperAnswerItem(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                                        @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                                        @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId,
+                                                                                       @ApiParam(value = "评分详情") @RequestBody AssessAnswerScoringReq _req){
+        GeneralContentResult<MarkedAssessAnswer> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = _userId;
+            if(_userId == null)
+                tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("Going to scoring the [{}]'s [{}]-[{}] un-marked assess answer.", tempUserId, _assessPaperId, _assessId);
+            List<RoleItem> tempRuleList = this.securityService.getCurrentUser().getRoles();
+
+            if(tempRuleList == null || tempRuleList.size() == 0)
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            boolean tempFlag = false;
+            for(RoleItem tempItem : tempRuleList){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_MARK_SCORE)){
+                    tempFlag = true;
+                    break;
+                }
+            }
+            if(!tempFlag){
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            }
+            result = this.markedScoreService.markScoreAssessAnswer(tempUserId, _assessPaperId, _assessId, _req);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/assess/{_assessId}/auditassessanswer", method = RequestMethod.POST)
+    @ApiOperation(value = "给某个用户某个题的答案复核评分")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<MarkedAssessAnswer> auditSocoreForAssessPaperAnswerItem(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                                       @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                                       @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId,
+                                                                                       @ApiParam(value = "评分详情") @RequestBody AssessAnswerScoringReq _req){
+        GeneralContentResult<MarkedAssessAnswer> result = new GeneralContentResult<>();
+        try {
+            String tempUserId = _userId;
+            if(_userId == null)
+                tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("Going to scoring the [{}]'s [{}]-[{}] un-audit assess answer.", tempUserId, _assessPaperId, _assessId);
+            List<RoleItem> tempRuleList = this.securityService.getCurrentUser().getRoles();
+
+            if(tempRuleList == null || tempRuleList.size() == 0)
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            boolean tempFlag = false;
+            for(RoleItem tempItem : tempRuleList){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_AUDIT_SCORE)){
+                    tempFlag = true;
+                    break;
+                }
+            }
+            if(!tempFlag){
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            }
+            result = this.markedScoreService.auditScoreAssessAnswer(tempUserId, _assessPaperId, _assessId, _req);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
 }

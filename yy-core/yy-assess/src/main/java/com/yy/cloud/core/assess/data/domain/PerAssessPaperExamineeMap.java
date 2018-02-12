@@ -28,7 +28,7 @@ public class PerAssessPaperExamineeMap implements Serializable {
 	@Column(name="ASSESS_PAPER_ID")
 	private String assessPaperId;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="DEPT_ID")
@@ -42,12 +42,12 @@ public class PerAssessPaperExamineeMap implements Serializable {
 	private Byte title;
 
 	@Column(name="MARKED_SCORE")
-	private BigDecimal markedScore;
+	private BigDecimal markedScore = new BigDecimal(0);
 
 	@Column(name="AUDIT_SCORE")
-	private BigDecimal auditScore;
+	private BigDecimal auditScore = new BigDecimal(0);
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	public PerAssessPaperExamineeMap() {

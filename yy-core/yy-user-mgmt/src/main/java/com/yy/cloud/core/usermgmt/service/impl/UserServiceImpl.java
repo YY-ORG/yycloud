@@ -1,6 +1,7 @@
 package com.yy.cloud.core.usermgmt.service.impl;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -130,7 +131,7 @@ public class UserServiceImpl implements UserService {
     	List<OrganizationItem> orglis= new ArrayList<OrganizationItem>();
     	List<YYOrganization> items=yyOrganzationRepository.findAll();
     	
-    	log.debug("The value of items is \'"+items+"\'");
+    	log.debug("The value of items is [{}]", items.size());
     	
     	if(items!=null && items.size()>0){
     		for(YYOrganization yyOrganization :items){
@@ -153,7 +154,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
 	public void modifyUser(UserProfile _userProfile) {
 			log.debug("The method modifyUser is begin");
-			YYUser foxUser = Optional.ofNullable(yyUserRepository.findOne(_userProfile.getId())).orElseThrow(
+			YYUser yyUser = Optional.ofNullable(yyUserRepository.findOne(_userProfile.getId())).orElseThrow(
 					() -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
 
 			String userId = _userProfile.getId();
@@ -162,24 +163,24 @@ public class UserServiceImpl implements UserService {
 			if(AssertHelper.notEmpty(passwordTem)){
 				password=  encoder.encode(_userProfile.getPassword());;
 			}else{
-				password = foxUser.getPassword();
+				password = yyUser.getPassword();
 			}
 			
-			Byte status = foxUser.getStatus();
-			Byte type = foxUser.getType();
-			String loginName = foxUser.getLoginName();
+			Byte status = yyUser.getStatus();
+			Byte type = yyUser.getType();
+			String loginName = yyUser.getLoginName();
 
-			foxUser = modelMapper.map(_userProfile, YYUser.class);
+			yyUser = modelMapper.map(_userProfile, YYUser.class);
 			
-			log.debug("The value foxUser.loginName is \'"+foxUser.getLoginName()+"\'");
-			foxUser.setStatus(status);
-			foxUser.setPassword(password);
-			foxUser.setType(type);
-			foxUser.setLoginName(loginName);
+			log.debug("The value yyUser.loginName is \'"+yyUser.getLoginName()+"\'");
+			yyUser.setStatus(status);
+			yyUser.setPassword(password);
+			yyUser.setType(type);
+			yyUser.setLoginName(loginName);
 			UserDetailsItem userDetailItem = securityService.getCurrentUser();
 			log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem);
 
-			YYUserInfo yyUserInfo = yyUserInfoRepository.findByUser(foxUser);
+			YYUserInfo yyUserInfo = yyUserInfoRepository.findByUser(yyUser);
 			
 			log.debug(CommonConstant.LOG_DEBUG_TAG + "获取用户Info",  yyUserInfo);
 			
@@ -225,9 +226,9 @@ public class UserServiceImpl implements UserService {
 			yyUserInfo.setUserName(_userProfile.getUserName());
 			
 
-			yyUserInfo.setUser(foxUser);
-			foxUser.setUserInfo(yyUserInfo);
-			yyUserRepository.save(foxUser);
+			yyUserInfo.setUser(yyUser);
+			yyUser.setUserInfo(yyUserInfo);
+			yyUserRepository.save(yyUser);
 			// 绑定角色
 			if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
 				List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
@@ -343,6 +344,7 @@ public class UserServiceImpl implements UserService {
             YYRole foxRole = foxRoleRepository.findOne(foxUserRole.getRoleId());
             RoleItem roleItem = new RoleItem();
             roleItem.setId(foxRole.getId());
+            roleItem.setCode(foxRole.getCode());
             roleItem.setName(foxRole.getName());
             roleItem.setRoleName(foxRole.getRoleName());
             roleItem.setStatus(foxRole.getStatus());
@@ -379,7 +381,7 @@ public class UserServiceImpl implements UserService {
 		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
 
         Page<YYUser> yyUsersPage = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId, pageRequest);
-		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", yyUsersPage);
+		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", yyUsersPage.getTotalElements());
 
         List<UserDetailsItem> UserDetailsItems = yyUsersPage.getContent().stream().map(this::restructUserBean).collect(Collectors.toList());
 
@@ -392,12 +394,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String, UserDetailsItem> listUsersInOrganization(String _organizationId) {
         Map<String, UserDetailsItem> tempUserMap = new HashMap<>();
-        List<YYUser> foxUsers = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId);
-        log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", foxUsers);
-        foxUsers.forEach(foxUser -> {
-            UserDetailsItem userDetailTemp = restructUserBean(foxUser);
-            tempUserMap.put(foxUser.getId(), userDetailTemp);
-        });
+       // List<YYUser> yyUsers = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId);
+        List<YYUser> yyUsers = yyUserRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", yyUsers.size());
+
+        tempUserMap = yyUsers.stream().collect(Collectors.toMap(YYUser::getId, this::restructUserBean));
+
         return tempUserMap;
     }
 

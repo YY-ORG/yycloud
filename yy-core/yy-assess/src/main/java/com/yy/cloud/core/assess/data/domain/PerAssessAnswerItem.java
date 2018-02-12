@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -34,11 +35,35 @@ public class PerAssessAnswerItem implements Serializable {
 	@Column(name="TYPE")
 	private Byte type;
 
+	@Column(name="AUXILIARY_SCORE")
+	private BigDecimal auxiliaryScore;
+
+	@Column(name="MARKED_SCORE")
+	private BigDecimal markedScore;
+
+	@Column(name="AUDIT_SCORE")
+	private BigDecimal auditScore;
+
+	@Column(name="R_MARKED_SCORE")
+	private BigDecimal rMarkedScore;
+
+	@Column(name="R_AUDIT_SCORE")
+	private BigDecimal rAuditScore;
+
+	@Column(name="MARKED_COMMENT")
+	private String markedComment;
+
+	@Column(name="AUDIT_COMMENT")
+	private String auditComment;
+
 	@Column(name="TEMPLATE_ID")
 	private String templateId;
 
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
+
+	@Column(name="ASSESS_ANSWER_ID", insertable = false, updatable = false)
+	private String assessAnswerId;
 
 	//bi-directional many-to-one association to PerAssessAnswerDetail
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, mappedBy="perAssessAnswerItem")
@@ -90,6 +115,62 @@ public class PerAssessAnswerItem implements Serializable {
 
 	public void setTemplateId(String templateId) {
 		this.templateId = templateId;
+	}
+
+	public BigDecimal getMarkedScore() {
+		return markedScore;
+	}
+
+	public void setMarkedScore(BigDecimal markedScore) {
+		this.markedScore = markedScore;
+	}
+
+	public BigDecimal getAuditScore() {
+		return auditScore;
+	}
+
+	public void setAuditScore(BigDecimal auditScore) {
+		this.auditScore = auditScore;
+	}
+
+	public BigDecimal getAuxiliaryScore() {
+		return auxiliaryScore;
+	}
+
+	public void setAuxiliaryScore(BigDecimal auxiliaryScore) {
+		this.auxiliaryScore = auxiliaryScore;
+	}
+
+	public BigDecimal getRMarkedScore() {
+		return rMarkedScore;
+	}
+
+	public void setRMarkedScore(BigDecimal rMarkedScore) {
+		this.rMarkedScore = rMarkedScore;
+	}
+
+	public BigDecimal getRAuditScore() {
+		return rAuditScore;
+	}
+
+	public void setRAuditScore(BigDecimal rAuditScore) {
+		this.rAuditScore = rAuditScore;
+	}
+
+	public String getMarkedComment() {
+		return markedComment;
+	}
+
+	public void setMarkedComment(String markedComment) {
+		this.markedComment = markedComment;
+	}
+
+	public String getAuditComment() {
+		return auditComment;
+	}
+
+	public void setAuditComment(String auditComment) {
+		this.auditComment = auditComment;
 	}
 
 	public Timestamp getUpdateDate() {

@@ -14,6 +14,9 @@ public class RoleItem implements Serializable {
 	@ApiModelProperty(notes = "角色ID")
     private String id;
 
+    @ApiModelProperty(notes = "角色编码")
+    private String code;
+
     @ApiModelProperty(notes = "角色名")
     private String name;
 
