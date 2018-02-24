@@ -19,5 +19,9 @@ public final class ExceptionCode {
         EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_NOTEXISTS, "新的答案为空，还请重新提交！");
         EXCEPTION_MSG.put(ResultCode.ORG_USER_RETRIEVE_FAILED, "查询部门员工失败！");
         EXCEPTION_MSG.put(ResultCode.ACCESS_LIMITED, "权限不足，请申请开通该权限！");
+        EXCEPTION_MSG.put(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION, "获取考生信息异常！");
+        EXCEPTION_MSG.put(ResultCode.SCORING_RATIO_EXCEED_MIN, "评分计分比率不能小于等于0！");
+        EXCEPTION_MSG.put(ResultCode.SCORING_RATIO_EXCEED_MAX, "评分计分比率不能大于100%！");
+        EXCEPTION_MSG.put(ResultCode.SCORING_THRESHOLD_EXCEED_MIN, "评分计分限额不能小于等于0！");
     }
 }

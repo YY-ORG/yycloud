@@ -46,6 +46,10 @@
 			<groupId>com.yy.cloud</groupId>
 			<artifactId>yy-common-utils</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.yy.cloud</groupId>
+			<artifactId>yy-common-security</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

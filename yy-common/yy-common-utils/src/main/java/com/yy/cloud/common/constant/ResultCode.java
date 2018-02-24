@@ -60,4 +60,8 @@ public class ResultCode {
 	public final static String ASSESS_GET_FAILED = "";
 
 	public final static String ACCESS_LIMITED = "999999";
+
+	public final static String SCORING_RATIO_EXCEED_MIN = "10004001";
+	public final static String SCORING_RATIO_EXCEED_MAX = "10004002";
+	public final static String SCORING_THRESHOLD_EXCEED_MIN = "10004003";
 }

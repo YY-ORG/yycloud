@@ -40,6 +40,9 @@ public class PerAssessAspMap implements Serializable {
 	@Column(name="SCORING_THRESHOLD")
 	private BigDecimal scoringThreshold = BigDecimal.valueOf(100);
 
+	@Column(name="ITEM_THRESHOLD")
+	private BigDecimal itemThreshold = BigDecimal.ZERO;
+
 	@Column(name="SEQ_NO")
 	private Integer seqNo;
 
@@ -118,6 +121,14 @@ public class PerAssessAspMap implements Serializable {
 
 	public void setScoringThreshold(BigDecimal scoringThreshold) {
 		this.scoringThreshold = scoringThreshold;
+	}
+
+	public BigDecimal getItemThreshold() {
+		return itemThreshold;
+	}
+
+	public void setItemThreshold(BigDecimal itemThreshold) {
+		this.itemThreshold = itemThreshold;
 	}
 
 	public Integer getSeqNo() {

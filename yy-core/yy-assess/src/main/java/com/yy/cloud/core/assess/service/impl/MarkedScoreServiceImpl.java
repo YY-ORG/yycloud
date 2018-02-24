@@ -5,13 +5,12 @@ import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
-import com.yy.cloud.common.data.assess.ScoreDetail;
+import com.yy.cloud.common.data.dto.assess.ApAcScoringReq;
+import com.yy.cloud.common.data.dto.assess.ApAssessScoringReq;
 import com.yy.cloud.common.data.dto.assess.AssessAnswerScoringReq;
-import com.yy.cloud.common.data.otd.assess.AssessPaperExamineeMapItem;
-import com.yy.cloud.common.data.otd.assess.MarkedAssessAnswer;
-import com.yy.cloud.common.data.otd.assess.MarkedAssessAnswerItem;
-import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerDetailItem;
+import com.yy.cloud.common.data.otd.assess.*;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.utils.YYException;
 import com.yy.cloud.core.assess.data.domain.*;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.xml.transform.Result;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +53,10 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
     private PerAssessAspMapRepository perAssessAspMapRepository;
     @Autowired
     private PerAssessAnswerItemRepository perAssessAnswerItemRepository;
+    @Autowired
+    private PerApacExamineeMapRepository perApacExamineeMapRepository;
+    @Autowired
+    private PerApAcMapRepository perApAcMapRepository;
 
     private static Map<String, PerAssessPaper> assessPaperMap;
     @Override
@@ -221,47 +223,57 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
 
     @Override
     public GeneralContentResult<MarkedAssessAnswer> markScoreAssessAnswer(String _userId, String _assessPaperId, String _assessId, AssessAnswerScoringReq _req) throws YYException {
-        return this.calculateScore(_userId, _assessPaperId, _assessId, _req, Boolean.TRUE);
+        return this.calculateAnswerScore(_userId, _assessPaperId, _assessId, _req, Boolean.TRUE);
     }
 
     @Override
     public GeneralContentResult<MarkedAssessAnswer> auditScoreAssessAnswer(String _userId, String _assessPaperId, String _assessId, AssessAnswerScoringReq _req) throws YYException {
-        return this.calculateScore(_userId, _assessPaperId, _assessId, _req, Boolean.FALSE);
+        return this.calculateAnswerScore(_userId, _assessPaperId, _assessId, _req, Boolean.FALSE);
     }
 
-    private GeneralContentResult<MarkedAssessAnswer> calculateScore(String _userId, String _assessPaperId, String _assessId, AssessAnswerScoringReq _req, Boolean _maFlag){
+    private GeneralContentResult<MarkedAssessAnswer> calculateAnswerScore(String _userId, String _assessPaperId, String _assessId, AssessAnswerScoringReq _req, Boolean _maFlag){
         PerAssessAspMap tempPerAssessAspMap = this.perAssessAspMapRepository.findByAssessPaperIdAndAssessIdAndStatus(_assessPaperId, _assessId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
         PerAPAAScore tempScore = this.perAssessAnswerItemRepository.getAssessAnswerScore(_req.getAssessAnswerId(), _req.getAssessAnswerItemId());
         BigDecimal tempTotalMarkedScore = BigDecimal.ZERO;
         BigDecimal tempTotalAuditScore = BigDecimal.ZERO;
+        BigDecimal tempItemMarkedScore = BigDecimal.ZERO;
+        BigDecimal tempItemAuditScore = BigDecimal.ZERO;
+
         if(tempScore != null) {
             if(tempScore.getMarkedScore() != null)
                 tempTotalMarkedScore = tempScore.getMarkedScore();
             if(tempScore.getAuditScore() != null)
                 tempTotalAuditScore = tempScore.getAuditScore();
         }
-
+        if(tempPerAssessAspMap.getItemThreshold().compareTo(BigDecimal.ZERO) == 0) {
+            tempItemMarkedScore = _req.getScore();
+            tempItemAuditScore = _req.getScore();
+        } else {// 答案的总计分值不超过阈值（积分比率折算前的总分值），
+            //    log.info("tempTotalMarkedScore={}, _req.score={}, tempPerAssessAspMap={}", tempTotalMarkedScore, _req, tempPerAssessAspMap);
+            tempItemMarkedScore = _req.getScore().compareTo(tempPerAssessAspMap.getItemThreshold()) > 0 ? tempPerAssessAspMap.getItemThreshold() : _req.getScore();
+            tempItemAuditScore = _req.getScore().compareTo(tempPerAssessAspMap.getItemThreshold()) > 0 ? tempPerAssessAspMap.getItemThreshold() : _req.getScore();
+        }
         if(tempPerAssessAspMap.getScoringThreshold().compareTo(BigDecimal.ZERO) == 0) {
-            tempTotalMarkedScore = tempTotalMarkedScore.add(_req.getScore());
-            tempTotalAuditScore = tempTotalAuditScore.add(_req.getScore());
-        } else {
+            tempTotalMarkedScore = tempTotalMarkedScore.add(tempItemMarkedScore);
+            tempTotalAuditScore = tempTotalAuditScore.add(tempItemAuditScore);
+        } else {// 答案的总计分值不超过阈值（积分比率折算前的总分值），
         //    log.info("tempTotalMarkedScore={}, _req.score={}, tempPerAssessAspMap={}", tempTotalMarkedScore, _req, tempPerAssessAspMap);
-            tempTotalMarkedScore = (tempTotalMarkedScore.add(_req.getScore())).compareTo(tempPerAssessAspMap.getScoringThreshold()) > 0 ? tempPerAssessAspMap.getScoringThreshold() : tempTotalMarkedScore.add(_req.getScore());
-            tempTotalAuditScore = (tempTotalAuditScore.add(_req.getScore())).compareTo(tempPerAssessAspMap.getScoringThreshold()) > 0 ? tempPerAssessAspMap.getScoringThreshold() : tempTotalAuditScore.add(_req.getScore());
+            tempTotalMarkedScore = (tempTotalMarkedScore.add(tempItemMarkedScore)).compareTo(tempPerAssessAspMap.getScoringThreshold()) > 0 ? tempPerAssessAspMap.getScoringThreshold() : tempTotalMarkedScore.add(tempItemMarkedScore);
+            tempTotalAuditScore = (tempTotalAuditScore.add(tempItemAuditScore)).compareTo(tempPerAssessAspMap.getScoringThreshold()) > 0 ? tempPerAssessAspMap.getScoringThreshold() : tempTotalAuditScore.add(tempItemAuditScore);
         }
 
         PerAssessAnswerItem tempPerAssessAnswerItem = this.perAssessAnswerItemRepository.findOne(_req.getAssessAnswerItemId());
         if(_maFlag) { // first mark scoring.
-            tempPerAssessAnswerItem.setMarkedScore(_req.getScore());
-            tempPerAssessAnswerItem.setRMarkedScore(_req.getScore().multiply(tempPerAssessAspMap.getScoringRatio()));
+            tempPerAssessAnswerItem.setMarkedScore(tempItemMarkedScore);
+            tempPerAssessAnswerItem.setRMarkedScore(tempItemMarkedScore.multiply(tempPerAssessAspMap.getScoringRatio()));
             tempPerAssessAnswerItem.setMarkedComment(_req.getComments());
             tempPerAssessAnswerItem.getPerAssessAnswer().setMarkedScore(tempTotalMarkedScore);
             tempPerAssessAnswerItem.getPerAssessAnswer().setRMarkedScore(tempTotalMarkedScore.multiply(tempPerAssessAspMap.getScoringRatio()));
             tempPerAssessAnswerItem.getPerAssessAnswer().setMarkedComment(_req.getComments());
             tempPerAssessAnswerItem.getPerAssessAnswer().setMarker(_userId);
         } else {
-            tempPerAssessAnswerItem.setAuditScore(_req.getScore());
-            tempPerAssessAnswerItem.setRAuditScore(_req.getScore().multiply(tempPerAssessAspMap.getScoringRatio()));
+            tempPerAssessAnswerItem.setAuditScore(tempItemAuditScore);
+            tempPerAssessAnswerItem.setRAuditScore(tempItemAuditScore.multiply(tempPerAssessAspMap.getScoringRatio()));
             tempPerAssessAnswerItem.setAuditComment(_req.getComments());
             tempPerAssessAnswerItem.getPerAssessAnswer().setAuditScore(tempTotalAuditScore);
             tempPerAssessAnswerItem.getPerAssessAnswer().setRAuditScore(tempTotalAuditScore.multiply(tempPerAssessAspMap.getScoringRatio()));
@@ -299,5 +311,187 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
         }
 
         return tempResult;
+    }
+
+    @Override
+    public GeneralResult submitAssessPaperScoring(String _userId, String _assessPaperId, String _markerId) throws YYException {
+        this.calculateSummaryScore(_userId, _assessPaperId, true, _markerId);
+        GeneralResult tempResult = new GeneralResult();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        return tempResult;
+    }
+
+    @Override
+    public GeneralResult submitAssessPaperAuditScore(String _userId, String _assessPaperId, String _auditorId) throws YYException {
+        this.calculateSummaryScore(_userId, _assessPaperId, false, _auditorId);
+        GeneralResult tempResult = new GeneralResult();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        return tempResult;
+    }
+
+    private void calculateSummaryScore(String _userId, String _assessPaperId, Boolean _maFlag, String _currentUserId) throws YYException{
+        List<PerApacExamineeMap> tempApacExamineeMapList = this.perApacExamineeMapRepository.getApacExamineeMapItems(_assessPaperId, _userId);
+        BigDecimal tempScore = BigDecimal.ZERO;
+
+        PerAssessPaperExamineeMap tempPaperExamineeMap = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
+        if(tempPaperExamineeMap == null) {
+            tempPaperExamineeMap = new PerAssessPaperExamineeMap();
+            UserDetailsItem tempUserInfo = this.getUserDetailInfo(_userId);
+            tempPaperExamineeMap.setTitle(tempUserInfo.getProfessionalTitle());
+            tempPaperExamineeMap.setDeptId(tempUserInfo.getDeptId());
+            tempPaperExamineeMap.setAssessPaperId(_assessPaperId);
+        }
+        if(tempApacExamineeMapList != null){
+            for(PerApacExamineeMap tempItem : tempApacExamineeMapList) {
+                PerApAcMap tempApAcMap = this.perApAcMapRepository.findOne(tempItem.getApAcMapId());
+                BigDecimal tempRatio = BigDecimal.ONE;
+                if(tempApAcMap != null && tempApAcMap.getScoringRatio() != null){
+                    tempRatio = tempApAcMap.getScoringRatio();
+                }
+
+                BigDecimal tempThreshold = BigDecimal.ZERO;
+                if(tempApAcMap != null && tempApAcMap.getScoringThreshold() != null){
+                    tempThreshold = tempApAcMap.getScoringThreshold();
+                }
+                //计分比率折算后的阈值
+                if(_maFlag) {
+                    BigDecimal tempItemScore = tempItem.getMarkedScore();
+                    if(tempItemScore == null)
+                        tempItemScore = BigDecimal.ZERO;
+                    tempItemScore = tempItemScore.multiply(tempRatio);
+                    if(tempThreshold.compareTo(BigDecimal.ZERO) > 0){
+                        tempItemScore = tempItemScore.compareTo(tempThreshold) >0? tempThreshold : tempItemScore;
+                    }
+                    tempScore = tempScore.add(tempItemScore);
+                } else {
+                    BigDecimal tempItemScore = tempItem.getAuditScore();
+                    if(tempItemScore == null)
+                        tempItemScore = BigDecimal.ZERO;
+                    tempItemScore = tempItemScore.multiply(tempRatio);
+                    if(tempThreshold.compareTo(BigDecimal.ZERO) > 0){
+                        tempItemScore = tempItemScore.compareTo(tempThreshold) >0? tempThreshold : tempItemScore;
+                    }
+                    tempScore = tempScore.add(tempItemScore);
+                }
+                tempItem.setPerAssessPaperExamineeMap(tempPaperExamineeMap);
+            }
+            tempPaperExamineeMap.setPerApacExamineeMaps(tempApacExamineeMapList);
+        }
+        if(_maFlag) {
+            tempPaperExamineeMap.setMarkedScore(tempScore);
+            tempPaperExamineeMap.setMarker(_currentUserId);
+            tempPaperExamineeMap.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_MARKED);
+        } else {
+            tempPaperExamineeMap.setAuditScore(tempScore);
+            tempPaperExamineeMap.setAuditor(_currentUserId);
+            tempPaperExamineeMap.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_AUDITED);
+        }
+
+        this.perAssessPaperExamineeMapRepository.save(tempPaperExamineeMap);
+    }
+
+    private UserDetailsItem getUserDetailInfo(String _userId) throws YYException {
+        GeneralContentResult<UserDetailsItem> tempResult = this.securityClient.loadUserById(_userId);
+//        log.info("The result is: {}", tempResult);
+        if(tempResult.getResultCode().equals(ResultCode.OPERATION_SUCCESS)){
+            log.info("the user is: {}", tempResult.getResultContent().getLoginName());
+            return tempResult.getResultContent();
+        }
+        throw new YYException(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
+    }
+
+    @Override
+    public GeneralContentResult<List<ApAcScoringItem>> getScoringCategoryListForPaper(String _assessPaperId) throws YYException {
+        List<ApAcScoringItem> tempApAcScoringItemList = this.perApAcMapRepository.getApAcMapListByAssessPaperId(_assessPaperId);
+        GeneralContentResult<List<ApAcScoringItem>> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(tempApAcScoringItemList);
+        return tempResult;
+    }
+
+    @Override
+    public GeneralPagingResult<List<ApAssessScoringItem>> getScoringAssessListForPaper(String _assessPaperId, String _categoryId, Pageable _page) throws YYException {
+        Page<ApAssessScoringItem> tempScoringItemPage = this.perAssessAspMapRepository.getAssessScoringForAssessPaper(_assessPaperId, _categoryId, _page);
+        GeneralPagingResult<List<ApAssessScoringItem>> tempResult = new GeneralPagingResult<>();
+        if(tempScoringItemPage != null){
+            tempResult.setResultContent(tempScoringItemPage.getContent());
+            PageInfo tempPage = new PageInfo();
+            tempPage.setCurrentPage(tempScoringItemPage.getNumber());
+            tempPage.setPageSize(tempScoringItemPage.getSize());
+            tempPage.setTotalPage(tempScoringItemPage.getTotalPages());
+            tempPage.setTotalRecords(tempScoringItemPage.getTotalElements());
+            tempResult.setPageInfo(tempPage);
+        }
+        return tempResult;
+    }
+
+    @Override
+    public GeneralResult commitScoringForApAc(String _userId, List<ApAcScoringReq> _apAcList) throws YYException {
+        GeneralResult tempResult = new GeneralResult();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        if(_apAcList == null || _apAcList.size() == 0)
+            return tempResult;
+        List<PerApAcMap> tempApAcMapList = new ArrayList<>();
+        for(ApAcScoringReq tempReq : _apAcList){
+            PerApAcMap tempItem = this.perApAcMapRepository.findOne(tempReq.getApacId());
+            tempItem.setScoringRatio(this.checkRatio(tempReq.getRatio()));
+            tempItem.setScoringThreshold(this.checkThreshold(tempReq.getThreshold()));
+            tempApAcMapList.add(tempItem);
+        }
+        this.perApAcMapRepository.save(tempApAcMapList);
+
+        return tempResult;
+    }
+
+    @Override
+    public GeneralResult commitScoringForApAssess(String _userId, List<ApAssessScoringReq> _apAssessList) throws YYException {
+        GeneralResult tempResult = new GeneralResult();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        if(_apAssessList == null || _apAssessList.size() == 0)
+            return tempResult;
+        List<PerAssessAspMap> tempAssessAspMapList = new ArrayList<>();
+        for(ApAssessScoringReq tempReq : _apAssessList){
+            PerAssessAspMap tempItem = this.perAssessAspMapRepository.findOne(tempReq.getApAssessId());
+            tempItem.setScoringRatio(this.checkRatio(tempReq.getRatio()));
+            tempItem.setScoringThreshold(this.checkThreshold(tempReq.getThreshold()));
+            tempItem.setItemThreshold(this.checkThreshold(tempReq.getItemThreshold()));
+            tempAssessAspMapList.add(tempItem);
+        }
+        this.perAssessAspMapRepository.save(tempAssessAspMapList);
+        return tempResult;
+    }
+
+    /**
+     * Check Ratio 0<ratio<=1
+     *
+     * @param _ratio
+     * @return
+     * @throws YYException
+     */
+    private BigDecimal checkRatio(BigDecimal _ratio) throws YYException {
+        if(_ratio == null)
+            return BigDecimal.ONE;
+        if(_ratio.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new YYException(ResultCode.SCORING_RATIO_EXCEED_MIN);
+        }
+        if(_ratio.compareTo(BigDecimal.ONE) > 0) {
+            throw new YYException(ResultCode.SCORING_RATIO_EXCEED_MAX);
+        }
+        return _ratio;
+    }
+
+    /**
+     * Check the threshold 0<threshold
+     *
+     * @param _threshold
+     * @return
+     * @throws YYException
+     */
+    private BigDecimal checkThreshold(BigDecimal _threshold) throws YYException {
+        if(_threshold == null)
+            return BigDecimal.ZERO;
+        if(_threshold.compareTo(BigDecimal.ZERO) <= 0)
+            throw new YYException(ResultCode.SCORING_THRESHOLD_EXCEED_MIN);
+        return _threshold;
     }
 }

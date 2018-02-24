@@ -1,5 +1,7 @@
 package com.yy.cloud.core.assess.data.domain;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -53,7 +55,7 @@ public class PerAssessPaperExamineeMap implements Serializable {
 	private Timestamp updateDate;
 
 	//bi-directional many-to-one association to PerApacExamineeMap
-	@OneToMany(mappedBy="perAssessPaperExamineeMap")
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy="perAssessPaperExamineeMap")
 	private List<PerApacExamineeMap> perApacExamineeMaps;
 
 	public PerAssessPaperExamineeMap() {

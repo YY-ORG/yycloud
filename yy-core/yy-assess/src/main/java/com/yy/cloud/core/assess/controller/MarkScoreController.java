@@ -6,10 +6,11 @@ import com.yy.cloud.common.constant.SecurityConstant;
 import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.dto.assess.ApAcScoringReq;
+import com.yy.cloud.common.data.dto.assess.ApAssessScoringReq;
 import com.yy.cloud.common.data.dto.assess.AssessAnswerScoringReq;
-import com.yy.cloud.common.data.otd.assess.AssessPaperExamineeMapItem;
-import com.yy.cloud.common.data.otd.assess.MarkedAssessAnswer;
-import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperAnswerItem;
+import com.yy.cloud.common.data.otd.assess.*;
 import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
 import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.common.utils.YYException;
@@ -240,6 +241,185 @@ public class MarkScoreController {
                 throw new YYException(ResultCode.ACCESS_LIMITED);
             }
             result = this.markedScoreService.auditScoreAssessAnswer(tempUserId, _assessPaperId, _assessId, _req);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/markassessanswer", method = RequestMethod.POST)
+    @ApiOperation(value = "提交某个用户某个卷子的答案初评总分")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult submitMarkSocoreForAssessPaper(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                            @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId){
+        GeneralResult result = new GeneralResult();
+        try {
+            String tempUserId = _userId;
+            String currentUserId = this.securityService.getCurrentUser().getUserId();
+            if(_userId == null)
+                tempUserId = currentUserId;
+            log.info("Going to submit the scoring of [{}]'s [{}] assess paper.", tempUserId, _assessPaperId);
+            List<RoleItem> tempRuleList = this.securityService.getCurrentUser().getRoles();
+
+            if(tempRuleList == null || tempRuleList.size() == 0)
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            boolean tempFlag = false;
+            for(RoleItem tempItem : tempRuleList){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_MARK_SCORE)){
+                    tempFlag = true;
+                    break;
+                }
+            }
+            if(!tempFlag){
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            }
+            result = this.markedScoreService.submitAssessPaperScoring(_userId, _assessPaperId, currentUserId);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/auditassessanswer", method = RequestMethod.POST)
+    @ApiOperation(value = "提交某个用户某个卷子的答案复核总分")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult submitAuditScoreForAssessPaper(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                            @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId){
+        GeneralResult result = new GeneralResult();
+        try {
+            String tempUserId = _userId;
+            String currentUserId = this.securityService.getCurrentUser().getUserId();
+            if(_userId == null)
+                tempUserId = currentUserId;
+            log.info("Going to submit the audit Score of [{}]'s [{}] assess paper.", tempUserId, _assessPaperId);
+            List<RoleItem> tempRuleList = this.securityService.getCurrentUser().getRoles();
+
+            if(tempRuleList == null || tempRuleList.size() == 0)
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            boolean tempFlag = false;
+            for(RoleItem tempItem : tempRuleList){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_MARK_SCORE)){
+                    tempFlag = true;
+                    break;
+                }
+            }
+            if(!tempFlag){
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            }
+            result = this.markedScoreService.submitAssessPaperAuditScore(_userId, _assessPaperId, currentUserId);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/category/scoring", method = RequestMethod.GET)
+    @ApiOperation(value = "获取某个卷子的分组评分设置列表")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralContentResult<List<ApAcScoringItem>> getScoringCategoryListForAssessPaper(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId){
+        GeneralContentResult<List<ApAcScoringItem>> result = new GeneralContentResult<>();
+        try {
+            log.info("Going to get the Category Scoring List for [{}] assess paper.", _assessPaperId);
+            result = this.markedScoreService.getScoringCategoryListForPaper(_assessPaperId);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/category/{_categoryId}/scoring", method = RequestMethod.GET)
+    @ApiOperation(value = "分页获取某个卷子的某个分组下试题的评分设置列表")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralPagingResult<List<ApAssessScoringItem>> getScoringAssessListForAssessPaper(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                                             @ApiParam(value = "分组的ID") @PathVariable(value = "_categoryId", required = true) String _categoryId,
+                                                                                             @PageableDefault(sort = { "seqNo" }, direction = Sort.Direction.ASC) Pageable _page){
+        GeneralPagingResult<List<ApAssessScoringItem>> result = new GeneralPagingResult<>();
+        try {
+            log.info("Going to get the [{}]'s Assess Scoring List for [{}] assess paper.", _categoryId, _assessPaperId);
+            result = this.markedScoreService.getScoringAssessListForPaper(_assessPaperId, _categoryId, _page);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/category/scoring", method = RequestMethod.POST)
+    @ApiOperation(value = "提交某个卷子的分组评分设置详情")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult submitCategoryScoringForAssessPaper(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                             @ApiParam(value = "评分设置详情") @RequestBody List<ApAcScoringReq> _reqList){
+        GeneralResult result = new GeneralResult();
+        try {
+            String currentUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("Going to submit the Scoring Settings for [{}] assess paper.", _assessPaperId);
+            result = this.markedScoreService.commitScoringForApAc(currentUserId, _reqList);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/category/{_categoryId}/scoring", method = RequestMethod.POST)
+    @ApiOperation(value = "提交某个卷子某个分组的试题评分设置详情")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult submitAssessScoringForAssessPaper(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                           @ApiParam(value = "分组的ID") @PathVariable(value = "_categoryId", required = true) String _categoryId,
+                                                             @ApiParam(value = "评分设置详情") @RequestBody List<ApAssessScoringReq> _reqList){
+        GeneralResult result = new GeneralResult();
+        try {
+            String currentUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("Going to submit the [{}]'s Scoring Settings for [{}] assess paper.", _categoryId, _assessPaperId);
+            result = this.markedScoreService.commitScoringForApAssess(currentUserId, _reqList);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ye) {
             log.error("YYException occured: {}", ye.getCode());

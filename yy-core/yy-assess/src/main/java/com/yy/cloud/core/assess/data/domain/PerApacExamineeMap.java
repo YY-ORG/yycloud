@@ -1,5 +1,7 @@
 package com.yy.cloud.core.assess.data.domain;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -46,12 +48,12 @@ public class PerApacExamineeMap implements Serializable {
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
-	@Column(name="APEM_ID")
+	@Column(name="APEM_ID", insertable = false, updatable = false)
 	private String apemId;
 
 	//bi-directional many-to-one association to PerAssessPaperExamineeMap
 	@ManyToOne
-	@JoinColumn(name="APEM_ID", insertable = false, updatable = false)
+	@JoinColumn(name="APEM_ID")
 	private PerAssessPaperExamineeMap perAssessPaperExamineeMap;
 
 	public PerApacExamineeMap() {
