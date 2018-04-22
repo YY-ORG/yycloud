@@ -16,10 +16,6 @@ public interface ApAcScoringItem{
     String getApAcId();
     String getCode();
     String getName();
-    default BigDecimal getRatio(){
-        return BigDecimal.ONE;
-    }
-    default BigDecimal getThreshold(){
-        return BigDecimal.ZERO;
-    }
+    BigDecimal getRatio();
+    BigDecimal getThreshold();
 }

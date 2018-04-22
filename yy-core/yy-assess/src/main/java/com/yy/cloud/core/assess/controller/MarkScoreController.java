@@ -180,10 +180,10 @@ public class MarkScoreController {
                                                                                        @ApiParam(value = "评分详情") @RequestBody AssessAnswerScoringReq _req){
         GeneralContentResult<MarkedAssessAnswer> result = new GeneralContentResult<>();
         try {
-            String tempUserId = _userId;
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
             if(_userId == null)
-                tempUserId = this.securityService.getCurrentUser().getUserId();
-            log.info("Going to scoring the [{}]'s [{}]-[{}] un-marked assess answer.", tempUserId, _assessPaperId, _assessId);
+                _userId = tempUserId;
+            log.info("Going to scoring the [{}]'s [{}]-[{}] un-marked assess answer.", _userId, _assessPaperId, _assessId);
             List<RoleItem> tempRuleList = this.securityService.getCurrentUser().getRoles();
 
             if(tempRuleList == null || tempRuleList.size() == 0)
@@ -222,10 +222,10 @@ public class MarkScoreController {
                                                                                        @ApiParam(value = "评分详情") @RequestBody AssessAnswerScoringReq _req){
         GeneralContentResult<MarkedAssessAnswer> result = new GeneralContentResult<>();
         try {
-            String tempUserId = _userId;
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
             if(_userId == null)
-                tempUserId = this.securityService.getCurrentUser().getUserId();
-            log.info("Going to scoring the [{}]'s [{}]-[{}] un-audit assess answer.", tempUserId, _assessPaperId, _assessId);
+                _userId = tempUserId;
+            log.info("Going to scoring the [{}]'s [{}]-[{}] un-audit assess answer.", _userId, _assessPaperId, _assessId);
             List<RoleItem> tempRuleList = this.securityService.getCurrentUser().getRoles();
 
             if(tempRuleList == null || tempRuleList.size() == 0)

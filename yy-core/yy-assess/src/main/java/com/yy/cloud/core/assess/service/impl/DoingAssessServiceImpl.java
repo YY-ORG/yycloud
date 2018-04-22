@@ -308,6 +308,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         SimpleAssessAnswerItem tempItem = new SimpleAssessAnswerItem();
         tempItem.setId(_item.getId());
         tempItem.setTemplateId(_item.getId());
+        tempItem.setAnswerId(_item.getPerAssessAnswer().getId());
         tempItem.setSeqNo(_item.getSeqNo());
         tempItem.setType(_item.getType());
         tempItem.setDetailList(

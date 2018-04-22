@@ -190,6 +190,7 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
         MarkedAssessAnswerItem tempItem = new MarkedAssessAnswerItem();
         tempItem.setId(_item.getId());
         tempItem.setTemplateId(_item.getId());
+        tempItem.setAnswerId(_item.getPerAssessAnswer().getId());
         tempItem.setSeqNo(_item.getSeqNo());
         tempItem.setType(_item.getType());
         tempItem.setDetailList(
@@ -238,7 +239,9 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
         BigDecimal tempTotalAuditScore = BigDecimal.ZERO;
         BigDecimal tempItemMarkedScore = BigDecimal.ZERO;
         BigDecimal tempItemAuditScore = BigDecimal.ZERO;
-
+        BigDecimal tempScoringRatio = tempPerAssessAspMap.getScoringRatio();
+//        BigDecimal tempAnswerScore = BigDecimal.ZERO;
+        log.info("Loaded Score is:[{}] - [{}]", tempScore.getMarkedScore(), tempScore.getAuditScore());
         if(tempScore != null) {
             if(tempScore.getMarkedScore() != null)
                 tempTotalMarkedScore = tempScore.getMarkedScore();
@@ -261,29 +264,35 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
             tempTotalMarkedScore = (tempTotalMarkedScore.add(tempItemMarkedScore)).compareTo(tempPerAssessAspMap.getScoringThreshold()) > 0 ? tempPerAssessAspMap.getScoringThreshold() : tempTotalMarkedScore.add(tempItemMarkedScore);
             tempTotalAuditScore = (tempTotalAuditScore.add(tempItemAuditScore)).compareTo(tempPerAssessAspMap.getScoringThreshold()) > 0 ? tempPerAssessAspMap.getScoringThreshold() : tempTotalAuditScore.add(tempItemAuditScore);
         }
-
+        log.info("The total Marked Score is: [{}] and Audit Score is:[{}], Marker is:[{}]", tempTotalMarkedScore, tempTotalAuditScore, _userId);
+//        tempAnswerScore = tempTotalMarkedScore.multiply(tempScoringRatio);
         PerAssessAnswerItem tempPerAssessAnswerItem = this.perAssessAnswerItemRepository.findOne(_req.getAssessAnswerItemId());
+        PerAssessAnswer tempAnswer = tempPerAssessAnswerItem.getPerAssessAnswer();
         if(_maFlag) { // first mark scoring.
             tempPerAssessAnswerItem.setMarkedScore(tempItemMarkedScore);
-            tempPerAssessAnswerItem.setRMarkedScore(tempItemMarkedScore.multiply(tempPerAssessAspMap.getScoringRatio()));
+            tempPerAssessAnswerItem.setRMarkedScore(tempItemMarkedScore.multiply(tempScoringRatio));
             tempPerAssessAnswerItem.setMarkedComment(_req.getComments());
-            tempPerAssessAnswerItem.getPerAssessAnswer().setMarkedScore(tempTotalMarkedScore);
-            tempPerAssessAnswerItem.getPerAssessAnswer().setRMarkedScore(tempTotalMarkedScore.multiply(tempPerAssessAspMap.getScoringRatio()));
-            tempPerAssessAnswerItem.getPerAssessAnswer().setMarkedComment(_req.getComments());
-            tempPerAssessAnswerItem.getPerAssessAnswer().setMarker(_userId);
+            tempAnswer.setMarkedScore(tempTotalMarkedScore);
+            tempAnswer.setRMarkedScore(tempTotalMarkedScore.multiply(tempScoringRatio));
+            tempAnswer.setMarkedComment(_req.getComments());
+            tempAnswer.setMarker(_userId);
         } else {
             tempPerAssessAnswerItem.setAuditScore(tempItemAuditScore);
-            tempPerAssessAnswerItem.setRAuditScore(tempItemAuditScore.multiply(tempPerAssessAspMap.getScoringRatio()));
+            tempPerAssessAnswerItem.setRAuditScore(tempItemAuditScore.multiply(tempScoringRatio));
             tempPerAssessAnswerItem.setAuditComment(_req.getComments());
-            tempPerAssessAnswerItem.getPerAssessAnswer().setAuditScore(tempTotalAuditScore);
-            tempPerAssessAnswerItem.getPerAssessAnswer().setRAuditScore(tempTotalAuditScore.multiply(tempPerAssessAspMap.getScoringRatio()));
-            tempPerAssessAnswerItem.getPerAssessAnswer().setAuditComment(_req.getComments());
-            tempPerAssessAnswerItem.getPerAssessAnswer().setAuditor(_userId);
+            tempAnswer.setAuditScore(tempTotalAuditScore);
+//            tempAnswerScore = tempTotalAuditScore.multiply(tempScoringRatio);
+            tempAnswer.setRAuditScore(tempTotalAuditScore.multiply(tempScoringRatio));
+            tempAnswer.setAuditComment(_req.getComments());
+            tempAnswer.setAuditor(_userId);
         }
-        this.perAssessAnswerItemRepository.save(tempPerAssessAnswerItem);
+//        log.info("Going to update assess answer[{}] and assess answer item[{}]",
+//                tempAnswer, tempPerAssessAnswerItem);
+//        this.perAssessAnswerItemRepository.save(tempPerAssessAnswerItem);
+        tempAnswer = this.perAssessAnswerRepository.save(tempAnswer);
         GeneralContentResult<MarkedAssessAnswer> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-        PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findOne(_req.getAssessAnswerId());
+//        tempAnswer = this.perAssessAnswerRepository.findOne(_req.getAssessAnswerId());
         if(tempAnswer != null) {
             MarkedAssessAnswer tempMarkAnswer = new MarkedAssessAnswer();
             List<MarkedAssessAnswerItem> tempItemList = null;
@@ -490,7 +499,7 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
     private BigDecimal checkThreshold(BigDecimal _threshold) throws YYException {
         if(_threshold == null)
             return BigDecimal.ZERO;
-        if(_threshold.compareTo(BigDecimal.ZERO) <= 0)
+        if(_threshold.compareTo(BigDecimal.ZERO) < 0)
             throw new YYException(ResultCode.SCORING_THRESHOLD_EXCEED_MIN);
         return _threshold;
     }

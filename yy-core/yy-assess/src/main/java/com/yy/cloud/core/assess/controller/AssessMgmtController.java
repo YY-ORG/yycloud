@@ -9,6 +9,7 @@
 
 package com.yy.cloud.core.assess.controller;
 
+import com.yy.cloud.common.constant.ExceptionCode;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.assess.AssessGroupItem;
@@ -28,6 +29,7 @@ import com.yy.cloud.common.data.otd.metadata.ComplexTemplateItem;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import com.yy.cloud.common.service.SecurityService;
+import com.yy.cloud.common.utils.YYException;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -315,6 +317,10 @@ public class AssessMgmtController {
 		try {
 			result = this.assessService.createAssessPaper(_profile);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (YYException ye) {
+			log.error("YYException occured: {}", ye.getCode());
+			result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+			result.setResultCode(ye.getCode());
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);
 			result.setDetailDescription("Unexpected Error occured...");
@@ -334,6 +340,10 @@ public class AssessMgmtController {
 			log.info("Going to update assess paper [{}].", _profile.getId());
 			result = this.assessService.updateAssessPaper(_profile);
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (YYException ye) {
+			log.error("YYException occured: {}", ye.getCode());
+			result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+			result.setResultCode(ye.getCode());
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);
 			result.setDetailDescription("Unexpected Error occured...");

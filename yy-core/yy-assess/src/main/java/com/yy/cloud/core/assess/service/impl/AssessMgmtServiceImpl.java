@@ -25,6 +25,7 @@ import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperItem;
 import com.yy.cloud.common.data.otd.metadata.ComplexTemplateItem;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
+import com.yy.cloud.common.utils.YYException;
 import com.yy.cloud.core.assess.data.domain.*;
 import com.yy.cloud.core.assess.data.repositories.*;
 import com.yy.cloud.core.assess.service.AssessMgmtService;
@@ -816,7 +817,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 	}
 
 	@Override
-	public GeneralContentResult<SimpleAssessPaperItem> createAssessPaper(AssessPaperProfileReq _req) {
+	public GeneralContentResult<SimpleAssessPaperItem> createAssessPaper(AssessPaperProfileReq _req) throws YYException {
         GeneralContentResult<SimpleAssessPaperItem> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         if(_req == null)
@@ -831,22 +832,26 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         List<PerAssessAspMap> tempPAAMapList = _req.getAssessList().stream().map(tempItem -> this.convertToAssessAspDTO(tempItem, tempPAP)).collect(Collectors.toList());
         tempPAP.setPerAssessAspMaps(tempPAAMapList);
 
-        PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
-        SimpleAssessPaperItem tempASPI = new SimpleAssessPaperItem();
-        tempASPI.setId(resultPAP.getId());
-        tempASPI.setCode(resultPAP.getCode());
-        tempASPI.setName(resultPAP.getName());
-		tempASPI.setOrgIdList(_req.getOrgIdList());
-		tempASPI.setStatus(resultPAP.getStatus());
-		tempASPI.setTitleList(_req.getTitleList());
-        tempResult.setResultContent(tempASPI);
-
+        try {
+			PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
+			SimpleAssessPaperItem tempASPI = new SimpleAssessPaperItem();
+			tempASPI.setId(resultPAP.getId());
+			tempASPI.setCode(resultPAP.getCode());
+			tempASPI.setName(resultPAP.getName());
+			tempASPI.setOrgIdList(_req.getOrgIdList());
+			tempASPI.setStatus(resultPAP.getStatus());
+			tempASPI.setTitleList(_req.getTitleList());
+			tempResult.setResultContent(tempASPI);
+		} catch (Exception ex) {
+        	log.error("Save Assess Paper error: ", ex);
+        	throw new YYException(ResultCode.ASSESSPAPER_CREATE_FAILED);
+		}
 	    return tempResult;
 	}
 
 	@Override
 	@Transactional
-	public GeneralContentResult<SimpleAssessPaperItem> updateAssessPaper(AssessPaperWithIDProfileReq _req) {
+	public GeneralContentResult<SimpleAssessPaperItem> updateAssessPaper(AssessPaperWithIDProfileReq _req) throws YYException {
         GeneralContentResult<SimpleAssessPaperItem> tempResult = new GeneralContentResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         if(_req == null)
@@ -863,16 +868,20 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		List<PerAssessAspMap> tempPAAMapList = _req.getAssessList().stream().map(tempItem -> this.convertToAssessAspDTO(tempItem, tempPAP)).collect(Collectors.toList());
 		tempPAP.setPerAssessAspMaps(tempPAAMapList);
 
-        PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
-        SimpleAssessPaperItem tempASPI = new SimpleAssessPaperItem();
-        tempASPI.setId(resultPAP.getId());
-        tempASPI.setCode(resultPAP.getCode());
-        tempASPI.setName(resultPAP.getName());
-        tempASPI.setOrgIdList(_req.getOrgIdList());
-        tempASPI.setStatus(resultPAP.getStatus());
-        tempASPI.setTitleList(_req.getTitleList());
-        tempResult.setResultContent(tempASPI);
-
+		try {
+			PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
+			SimpleAssessPaperItem tempASPI = new SimpleAssessPaperItem();
+			tempASPI.setId(resultPAP.getId());
+			tempASPI.setCode(resultPAP.getCode());
+			tempASPI.setName(resultPAP.getName());
+			tempASPI.setOrgIdList(_req.getOrgIdList());
+			tempASPI.setStatus(resultPAP.getStatus());
+			tempASPI.setTitleList(_req.getTitleList());
+			tempResult.setResultContent(tempASPI);
+		} catch (Exception ex) {
+			log.error("Update Assess Paper error: ", ex);
+			throw new YYException(ResultCode.ASSESSPAPER_UPDATE_FAILED);
+		}
         return tempResult;
 	}
 

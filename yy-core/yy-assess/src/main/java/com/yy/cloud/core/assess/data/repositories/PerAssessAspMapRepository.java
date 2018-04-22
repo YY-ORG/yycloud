@@ -46,8 +46,8 @@ public interface PerAssessAspMapRepository extends JpaRepository<PerAssessAspMap
     @Query(value = "SELECT p.assessCategoryId as groupId, count(p) as totalCount FROM PerAssessAspMap p where p.assessPaperId = :assessPaperId group by p.assessCategoryId")
     List<PerAPACCount> getGroupCountByAssessPaper(@Param("assessPaperId") String _assessPaperId);
 
-    @Query(value="select pa.id as id, p.id as apAssessId, pa.code as code, pa.name as name, p.seqNo as seqNo, " +
-            " p.scoringRatio as ratio, p.itemThreshold as itemThreshold,  p.scoringThreshold as threhold from PerAssessAspMap p, PerAssess pa where p.status=1 and p.assessId = pa.id and p.assessPaperId = :assessPaperId and p.assessCategoryId = :categoryId ",
+    @Query(value="select pa.id as id, p.id as apAssessId, pa.code as code, pa.name as name, pa.type as type, p.seqNo as seqNo, " +
+            " p.scoringRatio as ratio, p.itemThreshold as itemThreshold,  p.scoringThreshold as threshold from PerAssessAspMap p, PerAssess pa where p.status=1 and p.assessId = pa.id and p.assessPaperId = :assessPaperId and p.assessCategoryId = :categoryId ",
     countQuery = "select count(p) from PerAssessAspMap p where p.status = 1 and p.assessPaperId = :assessPaperId and p.assessCategoryId = :categoryId")
     Page<ApAssessScoringItem> getAssessScoringForAssessPaper(@Param("assessPaperId") String _assessPaperId, @Param("categoryId") String _categoryId, Pageable _page);
 }

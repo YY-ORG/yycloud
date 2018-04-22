@@ -22,6 +22,8 @@ public final class ExceptionCode {
         EXCEPTION_MSG.put(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION, "获取考生信息异常！");
         EXCEPTION_MSG.put(ResultCode.SCORING_RATIO_EXCEED_MIN, "评分计分比率不能小于等于0！");
         EXCEPTION_MSG.put(ResultCode.SCORING_RATIO_EXCEED_MAX, "评分计分比率不能大于100%！");
-        EXCEPTION_MSG.put(ResultCode.SCORING_THRESHOLD_EXCEED_MIN, "评分计分限额不能小于等于0！");
+        EXCEPTION_MSG.put(ResultCode.SCORING_THRESHOLD_EXCEED_MIN, "评分计分限额不能小于0！");
+        EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_CREATE_FAILED, "创建试卷失败，信息校验失败或同一题被分入不同组！");
+        EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_UPDATE_FAILED, "更新试卷失败，信息校验失败或同一题被分入不同组！");
     }
 }

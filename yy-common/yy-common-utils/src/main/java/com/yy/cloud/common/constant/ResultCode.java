@@ -58,6 +58,8 @@ public class ResultCode {
 	public final static String ASSESS_ANSWER_NOTEXISTS = "10003";
 	
 	public final static String ASSESS_GET_FAILED = "";
+	public final static String ASSESSPAPER_CREATE_FAILED = "10005";
+	public final static String ASSESSPAPER_UPDATE_FAILED = "10006";
 
 	public final static String ACCESS_LIMITED = "999999";
 

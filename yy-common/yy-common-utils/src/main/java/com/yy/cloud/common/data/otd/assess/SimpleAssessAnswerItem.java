@@ -19,6 +19,7 @@ public class SimpleAssessAnswerItem implements Serializable {
     private static final long serialVersionUID = -6888585237314749671L;
     private String id;
     private String templateId;
+    private String answerId;
     private Byte type;
     private Short seqNo;
     private List<SimpleAssessAnswerDetailItem> detailList;

@@ -19,14 +19,9 @@ public interface ApAssessScoringItem {
     String getApAssessId();
     String getCode();
     String getName();
+    Byte getType();
     Integer getSeqNo();
-    default BigDecimal getRatio(){
-        return BigDecimal.ONE;
-    }
-    default BigDecimal getItemThreshold(){
-        return BigDecimal.ZERO;
-    }
-    default BigDecimal getThreshold() {
-        return BigDecimal.ZERO;
-    }
+    BigDecimal getRatio();
+    BigDecimal getItemThreshold();
+    BigDecimal getThreshold();
 }
