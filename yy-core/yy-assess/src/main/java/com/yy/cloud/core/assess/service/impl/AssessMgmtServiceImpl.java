@@ -112,26 +112,26 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
 	@Override
 	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperId(String _userId, String _assessPaperId) {
-		List<PerAssessAspMap> tempAssessAspMapList = this.perAssessAspMapRepository.findByAssessPaperIdAndStatus(_assessPaperId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		List<PerAssessAspMap> tempAssessAspMapList = this.perAssessAspMapRepository.findByAssessPaperIdAndStatusOrderByCreateDateAsc(_assessPaperId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 
 		Map<AssessCategoryItem, List<AssessMenuItem>> tempMenuMap = tempAssessAspMapList.stream().collect(Collectors.groupingBy(this::convertToACIOTD,
 				Collectors.mapping(tempItem -> this.convertToAssessMenuOTD(_userId, tempItem), Collectors.toList())));
 		List<AssessGroupItem> tempAssessMenuItemList = tempMenuMap.entrySet().stream().map(tempItem -> this.packGroupOTD(_userId, _assessPaperId, tempItem.getKey(), tempItem.getValue())).collect(Collectors.toList());
 		GeneralContentResult<List<AssessGroupItem>> tempResult = new GeneralContentResult<>();
 		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-		tempResult.setResultContent(tempAssessMenuItemList);
+		tempResult.setResultContent(tempAssessMenuItemList.stream().sorted(Comparator.comparing(AssessGroupItem::getCreateDate)).collect(Collectors.toList()));
 		return tempResult;
 	}
 
 	@Override
 	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperIdAndGroup(String _userId, String _assessPaperId, String _groupId) {
-		List<PerAssessAspMap> tempAssessAspMapList = this.perAssessAspMapRepository.findByAssessPaperIdAndAndAssessCategoryIdAndStatus(_assessPaperId, _groupId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		List<PerAssessAspMap> tempAssessAspMapList = this.perAssessAspMapRepository.findByAssessPaperIdAndAndAssessCategoryIdAndStatusOrderByCreateDateAsc(_assessPaperId, _groupId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 		Map<AssessCategoryItem, List<AssessMenuItem>> tempMenuMap = tempAssessAspMapList.stream().collect(Collectors.groupingBy(this::convertToACIOTD,
 				Collectors.mapping(tempItem -> this.convertToAssessMenuOTD(_userId, tempItem), Collectors.toList())));
 		List<AssessGroupItem> tempAssessMenuItemList = tempMenuMap.entrySet().stream().map(tempItem -> this.packGroupOTD(_userId, _assessPaperId, tempItem.getKey(), tempItem.getValue())).collect(Collectors.toList());
 		GeneralContentResult<List<AssessGroupItem>> tempResult = new GeneralContentResult<>();
 		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
-		tempResult.setResultContent(tempAssessMenuItemList);
+		tempResult.setResultContent(tempAssessMenuItemList.stream().sorted(Comparator.comparing(AssessGroupItem::getCreateDate)).collect(Collectors.toList()));
 		return tempResult;
 	}
 
@@ -148,6 +148,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setCode(_aciItem.getCode());
 		tempItem.setName(_aciItem.getName());
 		tempItem.setAssessItemList(_tempList);
+		tempItem.setCreateDate(_aciItem.getCreateDate());
 //		Optional<PerAspProcessOverview> tempOverviewOpt = this.perAspProcessOverviewRepository.findByAssessPaperIdAndCategoryIdAndCreatorId(
 //				_assessPaperId, _aciItem.getId(), _userId);
 //		PerAspProcessOverview tempOverview;
@@ -181,6 +182,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setCode(tempGroup.getCode());
 		tempItem.setName(tempGroup.getName());
 		tempItem.setStatus(tempGroup.getStatus());
+		tempItem.setCreateDate(tempGroup.getCreateDate());
 		return tempItem;
 	}
 

@@ -76,4 +76,6 @@ public class CommonConstant {
     public final static String LOG_DEBUG_TAG = "################### ";
     public final static String LOG_ERROR_TAG = "%%%%%%%%%%%%%%%%%%% ";
 
+    public final static String ORG_ALL = "all";
+
 }

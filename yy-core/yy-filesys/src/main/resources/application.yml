@@ -1,6 +1,8 @@
 
 server:
   port: 9025
+  tomcat:
+    uri-encoding: UTF-8
 logging:
   path: /yy/logs/yy_micro/core/
   
@@ -21,6 +23,12 @@ security:
     resource:
       token-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/oauth/check_token
       user-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/user
+spring:
+  http:
+    encoding:
+      enabled: true
+      charset: UTF-8
+      force: true
 
 ---
 spring:

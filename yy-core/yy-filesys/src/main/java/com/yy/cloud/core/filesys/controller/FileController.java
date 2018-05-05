@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -76,23 +78,26 @@ public class FileController {
         GeneralContentResult<YyFile> tempResult = fileService.getFileById(_id);
 
         YyFile tempFile = tempResult.getResultContent();
-        if (tempFile != null) {
-            return ResponseEntity
-                    .ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\"" + tempFile.getName() + "\"")
-                    .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream" )
-                    .header(HttpHeaders.CONTENT_LENGTH, tempFile.getSize()+"")
-                    .header("Connection",  "close")
-                    .body(tempFile.getContent());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
+        try {
+            if (tempFile != null) {
+                log.debug("The file is [{}]", tempFile.getName());
+                return ResponseEntity
+                        .ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename*=UTF-8''" + URLEncoder.encode(tempFile.getName(),"UTF-8"))
+                        .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream" )
+                        .header(HttpHeaders.CONTENT_LENGTH, tempFile.getSize()+"")
+                        .header("Connection",  "close")
+                        .body(tempFile.getContent());
+            }
+        } catch (UnsupportedEncodingException ex) {
+            log.error("Error occured:", ex);
         }
-
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
     }
 
     /**
      * 在线显示/下载文件
-     * @param id
+     * @param _id
      * @return
      */
     @RequestMapping(value = "/authsec/file/{_id}/view", method = RequestMethod.GET)
@@ -103,18 +108,20 @@ public class FileController {
     public ResponseEntity<Object> serveFileOnline(@ApiParam(value = "文件ID") @PathVariable(value = "_id") String _id) {
         GeneralContentResult<YyFile> tempResult = fileService.getFileById(_id);
         YyFile tempFile = tempResult.getResultContent();
-
-        if (tempFile != null) {
-            return ResponseEntity
-                    .ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "fileName=\"" + tempFile.getName() + "\"")
-                    .header(HttpHeaders.CONTENT_TYPE, tempFile.getContentType() )
-                    .header(HttpHeaders.CONTENT_LENGTH, tempFile.getSize()+"")
-                    .header("Connection",  "close")
-                    .body( tempFile.getContent());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
+        try {
+            if (tempFile != null) {
+                return ResponseEntity
+                        .ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename*=UTF-8''" + URLEncoder.encode(tempFile.getName(),"UTF-8"))
+                        .header(HttpHeaders.CONTENT_TYPE, tempFile.getContentType() )
+                        .header(HttpHeaders.CONTENT_LENGTH, tempFile.getSize()+"")
+                        .header("Connection",  "close")
+                        .body( tempFile.getContent());
+            }
+        } catch (UnsupportedEncodingException ex) {
+            log.error("Error occured:", ex);
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
 
     }
 
@@ -131,6 +138,7 @@ public class FileController {
     public GeneralContentResult<String> handleFileUpload(@ApiParam(value = "待上传文件") @RequestParam("file") MultipartFile _file) {
         GeneralContentResult<String> result = new GeneralContentResult<>();
         try {
+            log.debug("Going to upload file 文件[{}] this time.", _file.getOriginalFilename());
             YyFile f = new YyFile(_file.getOriginalFilename(),  _file.getContentType(), _file.getSize(),_file.getBytes());
             f.setMd5(MD5Utils.getMD5(_file.getInputStream()));
             GeneralContentResult<YyFile> tempResult = fileService.saveFile(f);
@@ -146,7 +154,7 @@ public class FileController {
 
     /**
      * 删除文件
-     * @param id
+     * @param _id
      * @return
      */
     @RequestMapping(value = "/authsec/file/{_id}", method = RequestMethod.DELETE)

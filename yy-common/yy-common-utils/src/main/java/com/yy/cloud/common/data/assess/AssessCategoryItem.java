@@ -3,6 +3,7 @@ package com.yy.cloud.common.data.assess;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 /**
  * Function: TODO ADD FUNCTION. <br/>
@@ -21,4 +22,5 @@ public class AssessCategoryItem implements Serializable {
     private String name;
     private Byte status;
     private String creatorId;
+    private Timestamp createDate;
 }

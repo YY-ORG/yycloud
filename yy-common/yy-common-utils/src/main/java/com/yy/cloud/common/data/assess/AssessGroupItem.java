@@ -3,6 +3,7 @@ package com.yy.cloud.common.data.assess;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -20,5 +21,6 @@ public class AssessGroupItem implements Serializable {
     private String id;
     private String code;
     private String name;
+    private Timestamp createDate;
     private List<AssessMenuItem> assessItemList;
 }

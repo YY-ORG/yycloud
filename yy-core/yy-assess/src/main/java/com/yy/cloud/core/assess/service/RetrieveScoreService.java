@@ -5,6 +5,7 @@ import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.otd.assess.SimplePersonalScoreDetail;
 import com.yy.cloud.common.data.otd.assess.SimpleRankingItem;
 import com.yy.cloud.common.utils.YYException;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * @since JDK 1.8
  */
 public interface RetrieveScoreService {
-    GeneralContentResult<SimplePersonalScoreDetail> getPersoanlAnswerScoreList(String _userId, String _assessPaperId) throws YYException;
-    GeneralPagingResult<List<SimpleRankingItem>> getTotalRankList(String _assessPaperId);
-    GeneralPagingResult<List<SimpleRankingItem>> getTotalRankListByCon(String _assessPaperId, String _orgId, Byte _title);
+    GeneralContentResult<List<SimplePersonalScoreDetail>> getPersoanlAnswerScoreList(String _userId, String _assessPaperId) throws YYException;
+    GeneralPagingResult<List<SimpleRankingItem>> getTotalRankList(String _assessPaperId, Pageable _page) throws YYException;
+    GeneralPagingResult<List<SimpleRankingItem>> getTotalRankListByCon(String _assessPaperId, String _orgId, Byte _title, Pageable _page) throws YYException;
 }

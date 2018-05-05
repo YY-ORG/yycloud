@@ -55,6 +55,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     private PerAssessPaperExamineeMapRepository perAssessPaperExamineeMapRepository;
     @Autowired
     private PerAssessOrgMapRepository perAssessOrgMapRepository;
+    @Autowired
+    private PerAssessAnswerDetailRepository perAssessAnswerDetailRepository;
 
     @Override
     @Transactional
@@ -190,7 +192,11 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     @Transactional
     public GeneralResult deleteAssessSubAnswer(String _userId, String _assessPaperId, List<String> _answerItemId) throws YYException {
         this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
+        this.perAssessAnswerDetailRepository.deleteByPerAssessAnswerItemIdIn(_answerItemId);
         this.perAssessAnswerItemRepository.deleteByIdIn(_answerItemId);
+//        List<PerAssessAnswerItem> tempItems = this.perAssessAnswerItemRepository.findAll(_answerItemId);
+//        this.perAssessAnswerItemRepository.deleteInBatch(tempItems);
+
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 
@@ -250,8 +256,13 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     @Transactional
     public GeneralResult deleteMultiAnswerAssessAnswer(String _userId, String _assessPaperId, List<String> _answerIdList) throws YYException {
         this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
-        List<String> tempAssessAnswerIdList = this.perAssessAnswerItemRepository.getAssessAnswerList(_answerIdList);
-        this.perAssessAnswerItemRepository.deleteByIdIn(_answerIdList);
+
+        List<PerAssessAnswerItem> tempAnswerItemList = this.perAssessAnswerItemRepository.findAll(_answerIdList);
+        log.debug("Loaded Items {}.", tempAnswerItemList);
+        List<String> tempAssessAnswerIdList = tempAnswerItemList.stream().map(tempItem -> tempItem.getPerAssessAnswer().getId()).collect(Collectors.toList());
+        this.perAssessAnswerDetailRepository.deleteByPerAssessAnswerItemIdIn(_answerIdList);
+        this.perAssessAnswerItemRepository.deleteInBatch(tempAnswerItemList);
+        log.debug("This time deleted {}'s records.", _answerIdList);
         for (String _tempAnswerId : tempAssessAnswerIdList){
             PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.getOne(_tempAnswerId);
             List<PerAssessAnswerItem> itemList = tempAnswer.getPerAssessAnswerItems();

@@ -3,6 +3,7 @@ package com.yy.cloud.core.assess.data.repositories;
 import com.yy.cloud.core.assess.data.domain.PerAPAAScore;
 import com.yy.cloud.core.assess.data.domain.PerAssessAnswerItem;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -21,9 +22,12 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "perAssessAnswerItem", path = "perAssessAnswerItem")
 public interface PerAssessAnswerItemRepository extends JpaRepository<PerAssessAnswerItem, String> {
     void deleteByTemplateId(String _templateId);
-    void deleteByIdIn(List<String> _idList);
+    @Modifying
+    @Query(value = "DELETE FROM PerAssessAnswerItem pi where pi.id in (:itemIdList)")
+    void deleteByIdIn(@Param("itemIdList") List<String> _idList);
+
     void deleteByTypeAndTemplateIdIn(Byte _type, List<String> _templateIdList);
-    @Query(value = "SELECT pi.perAssessAnswer.id FROM PerAssessAnswerItem pi where pi in (:itemIdList)")
+    @Query(value = "SELECT pi.perAssessAnswer.id FROM PerAssessAnswerItem pi where pi.id in (:itemIdList)")
     List<String> getAssessAnswerList(@Param("itemIdList") List<String> _itemIdList);
 
     @Query(value = "SELECT sum(pi.markedScore) as markedScore, sum(pi.auditScore) as auditScore FROM PerAssessAnswerItem pi " +

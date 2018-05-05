@@ -1,6 +1,8 @@
 package com.yy.cloud.core.assess.data.repositories;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessCategory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,7 @@ import java.util.List;
  */
 @RepositoryRestResource(collectionResourceRel = "perAssessCategory", path = "perAssessCategory")
 public interface PerAssessCategoryRepository extends JpaRepository<PerAssessCategory, String> {
-    @Query(value = "SELECT p FROM PerAssessCategory p, PerApAcMap paam where p.id = paam.assessCategoryId and paam.assessPaperId = :assessPaperId")
+    @Query(value = "SELECT p FROM PerAssessCategory p, PerApAcMap paam where p.id = paam.assessCategoryId and paam.assessPaperId = :assessPaperId order by p.createDate asc") // order by p.createDate asc
     List<PerAssessCategory> findByAssessPaper(@Param("assessPaperId") String _assessPaperId);
+    Page<PerAssessCategory> findAllByOrderByCreateDateAsc(Pageable _page);
 }

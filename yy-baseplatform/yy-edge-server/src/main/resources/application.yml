@@ -3,6 +3,8 @@
 #debug: true
 server:
   port: 10000
+  tomcat:
+    uri-encoding: UTF-8
 #  ssl:
 #    key-store: classpath:server.jks
 #    key-store-password: password
@@ -11,10 +13,16 @@ server:
 spring:
   aop:
     proxy-target-class: true
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+
 logging:
   path: /yy/logs/yy_micro/baseplatform/
   level:
-    org.springframework.security: INFO
+    org.springframework.security: ERROR
 zuul:
   sensitive-headers: '' #Distribute headers cookies to children
   add-proxy-headers: true

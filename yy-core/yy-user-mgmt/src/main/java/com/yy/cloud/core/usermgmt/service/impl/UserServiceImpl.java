@@ -395,7 +395,11 @@ public class UserServiceImpl implements UserService {
     public Map<String, UserDetailsItem> listUsersInOrganization(String _organizationId) {
         Map<String, UserDetailsItem> tempUserMap = new HashMap<>();
        // List<YYUser> yyUsers = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId);
-        List<YYUser> yyUsers = yyUserRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        List<YYUser> yyUsers = null;
+        if(_organizationId == CommonConstant.ORG_ALL)
+            yyUsers = yyUserRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        else
+            yyUsers = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _organizationId);
         log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", yyUsers.size());
 
         tempUserMap = yyUsers.stream().collect(Collectors.toMap(YYUser::getId, this::restructUserBean));

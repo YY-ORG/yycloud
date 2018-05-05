@@ -33,7 +33,7 @@
 		</logger>
 
 		<logger name="org.springframework">
-			<level value="INFO" />
+			<level value="WARN" />
 		</logger>
 	</springProfile>
 	
@@ -44,7 +44,7 @@
 		</logger>
 
 		<logger name="org.springframework">
-			<level value="INFO" />
+			<level value="WARN" />
 		</logger>
 	</springProfile>
 
@@ -64,6 +64,9 @@
 		<appender-ref ref="LOGSTASH" />
 	</root>
 
+	<logger name="swagger">
+		<level value="ERROR" />
+	</logger>
 	<logger name="javax">
 		<level value="ERROR" />
 	</logger>

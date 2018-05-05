@@ -25,5 +25,6 @@ public final class ExceptionCode {
         EXCEPTION_MSG.put(ResultCode.SCORING_THRESHOLD_EXCEED_MIN, "评分计分限额不能小于0！");
         EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_CREATE_FAILED, "创建试卷失败，信息校验失败或同一题被分入不同组！");
         EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_UPDATE_FAILED, "更新试卷失败，信息校验失败或同一题被分入不同组！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_GET_FAILED, "获取考生答案详情失败，该考生可能还未提交答案或者还未完成评分！");
     }
 }

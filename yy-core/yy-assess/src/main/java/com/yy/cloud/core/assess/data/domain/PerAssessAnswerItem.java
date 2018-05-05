@@ -65,8 +65,8 @@ public class PerAssessAnswerItem implements Serializable {
 	@Column(name="ASSESS_ANSWER_ID", insertable = false, updatable = false)
 	private String assessAnswerId;
 
-	//bi-directional many-to-one association to PerAssessAnswerDetail
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, mappedBy="perAssessAnswerItem")
+	//bi-directional many-to-one association to PerAssessAnswerDetail { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="perAssessAnswerItem", orphanRemoval = true)
 	private List<PerAssessAnswerDetail> perAssessAnswerDetails;
 
 	//bi-directional many-to-one association to PerAssessAnswer

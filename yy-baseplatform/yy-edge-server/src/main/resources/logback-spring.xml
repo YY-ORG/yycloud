@@ -63,7 +63,16 @@
 		<!-- <appender-ref ref="STDOUT" /> -->
 		<appender-ref ref="LOGSTASH" />
 	</root>
-	
+
+	<logger name="swagger">
+		<level value="ERROR" />
+	</logger>
+	<logger name="javax">
+		<level value="ERROR" />
+	</logger>
+	<logger name="springfox">
+		<level value="ERROR" />
+	</logger>
 	<logger name="com.sun">
 		<level value="ERROR" />
 	</logger>

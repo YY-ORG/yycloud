@@ -99,7 +99,7 @@ public class AssessCategoryServiceImpl implements AssessCategoryService {
 
     @Override
     public GeneralPagingResult<List<SimpleAssessCategoryItem>> getAssessCategoryListByPage(Pageable _page) {
-        Page<PerAssessCategory> assessCategoryPage = this.perAssessCategoryRepository.findAll(_page);
+        Page<PerAssessCategory> assessCategoryPage = this.perAssessCategoryRepository.findAllByOrderByCreateDateAsc(_page);// this.perAssessCategoryRepository.findAll(_page);
         List<SimpleAssessCategoryItem> assessCategoryItemList = assessCategoryPage.getContent().stream().map(this::convertToASCIOTD).collect(Collectors.toList());
         GeneralPagingResult<List<SimpleAssessCategoryItem>> tempResult = new GeneralPagingResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);

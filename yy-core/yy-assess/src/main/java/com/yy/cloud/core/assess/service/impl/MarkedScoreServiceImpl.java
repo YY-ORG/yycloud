@@ -72,7 +72,7 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
         List<Byte> statusList = new ArrayList<>();
         statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_MARKED);
         statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_AUDITED);
-        return this.getAssessPaperListByOrg(_orgId, statusList, _page);
+        return this.getAssessPaperListByOrg(CommonConstant.ORG_ALL, statusList, _page);
     }
 
     /**

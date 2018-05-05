@@ -19,11 +19,14 @@ public class SimplePersonalAnswerScoreItem implements Serializable {
     private static final long serialVersionUID = -8658888193096121026L;
     private String assessId;
     private String assessName;
-    private String categoryId;
-    private String categoryName;
-    private BigDecimal totalScore;
-    private BigDecimal markedScore;
+    private String assessAnswerId;
+//    private String categoryId;
+//    private String categoryName;
+    private BigDecimal totalScore;//AuditScore
+//    private BigDecimal markedScore;
     private BigDecimal scoringRatio;
-    private BigDecimal realScore;
-    private String ownerId;
+    private BigDecimal scoringThreshold;
+    private BigDecimal realScore;//realAuditScore
+//    private String userId;
+    private String comment;
 }
