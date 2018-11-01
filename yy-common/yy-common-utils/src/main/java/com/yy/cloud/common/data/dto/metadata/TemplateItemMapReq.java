@@ -21,4 +21,8 @@ public class TemplateItemMapReq implements Serializable {
     private Boolean visible;
     private Boolean editable;
     private Integer seqNo;
+    private String valueFrom;
+    private Double minValue;
+    private Double maxValue;
+    private String failedMsg;
 }

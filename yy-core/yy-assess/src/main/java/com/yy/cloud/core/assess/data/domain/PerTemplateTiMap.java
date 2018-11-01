@@ -48,6 +48,18 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="VISIBLE")
 	private Boolean visible;
 
+	@Column(name="VALUE_FROM")
+	private String valueFrom;
+
+	@Column(name="MIN_VALUE")
+	private Double minValue;
+
+	@Column(name="MAX_VALUE")
+	private Double maxValue;
+
+	@Column(name="FAILED_MSG")
+	private String failedMsg;
+
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
@@ -140,6 +152,37 @@ public class PerTemplateTiMap implements Serializable {
 
 	public void setVisible(Boolean visible) {
 		this.visible = visible;
+	}
+	public String getValueFrom() {
+		return valueFrom;
+	}
+
+	public void setValueFrom(String valueFrom) {
+		this.valueFrom = valueFrom;
+	}
+
+	public Double getMinValue() {
+		return minValue;
+	}
+
+	public void setMinValue(Double minValue) {
+		this.minValue = minValue;
+	}
+
+	public Double getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(Double maxValue) {
+		this.maxValue = maxValue;
+	}
+
+	public String getFailedMsg() {
+		return failedMsg;
+	}
+
+	public void setFailedMsg(String failedMsg) {
+		this.failedMsg = failedMsg;
 	}
 
 	public Timestamp getUpdateDate() {

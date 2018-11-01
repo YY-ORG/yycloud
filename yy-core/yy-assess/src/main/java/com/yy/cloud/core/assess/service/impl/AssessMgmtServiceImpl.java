@@ -296,6 +296,10 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 				tempTII.setEditable(pttmItem.isEditable());
 				tempTII.setMandatory(pttmItem.isMandatory());
 				tempTII.setSeqNo(pttmItem.getSeqNo());
+				tempTII.setValueFrom(pttmItem.getValueFrom());
+				tempTII.setMinValue(pttmItem.getMinValue());
+				tempTII.setMaxValue(pttmItem.getMaxValue());
+				tempTII.setFailedMsg(pttmItem.getFailedMsg());
 				tempTIIList.add(tempTII);
 			}
 
@@ -551,6 +555,10 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempTiMap.setEditable(_req.getEditable());
 		tempTiMap.setVisible(_req.getVisible());
 		tempTiMap.setMandatory(_req.getMandatory());
+		tempTiMap.setValueFrom(_req.getValueFrom());
+		tempTiMap.setMinValue(_req.getMinValue());
+		tempTiMap.setMaxValue(_req.getMaxValue());
+		tempTiMap.setFailedMsg(_req.getFailedMsg());
 		tempTiMap.setTemplateItemId(_req.getTemplateItemId());
 		tempTiMap.setPerTemplate(_template);
 		tempTiMap.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
