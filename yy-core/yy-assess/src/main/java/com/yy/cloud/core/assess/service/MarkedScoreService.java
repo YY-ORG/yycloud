@@ -31,7 +31,7 @@ public interface MarkedScoreService {
     GeneralContentResult<MarkedAssessAnswer> markScoreAssessAnswer(String _userId, String _assessPaperId, String _assessId, AssessAnswerScoringReq _req) throws YYException;
     GeneralContentResult<MarkedAssessAnswer> auditScoreAssessAnswer(String _userId, String _assessPaperId, String _assessId, AssessAnswerScoringReq _req) throws YYException;
     GeneralResult submitAssessPaperScoring(String _userId, String _assessPaperId, String _markerId) throws YYException;
-    GeneralResult submitAssessPaperAuditScore(String _userId, String _assessPaperId, String _auditorId) throws YYException;
+    GeneralResult submitAssessPaperAuditScore(String _userId, String _assessPaperId, String _auditorId, Byte _level) throws YYException;
     GeneralContentResult<List<ApAcScoringItem>> getScoringCategoryListForPaper(String _assessPaperId) throws YYException;
     GeneralPagingResult<List<ApAssessScoringItem>> getScoringAssessListForPaper(String _assessPaperId, String _categoryId, Pageable _page) throws YYException;
     GeneralResult commitScoringForApAc(String _userId, List<ApAcScoringReq> _apAcList) throws YYException;

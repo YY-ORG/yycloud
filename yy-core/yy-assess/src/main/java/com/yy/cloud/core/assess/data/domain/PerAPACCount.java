@@ -11,5 +11,7 @@ package com.yy.cloud.core.assess.data.domain;
  */
 public interface PerAPACCount {
     String getGroupId();
+    String getGroupCode();
+    String getGroupName();
     Integer getTotalCount();
 }

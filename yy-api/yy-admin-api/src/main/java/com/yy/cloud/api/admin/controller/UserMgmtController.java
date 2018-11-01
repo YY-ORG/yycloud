@@ -208,10 +208,6 @@ public class UserMgmtController {
        return userMgmtService.findUsersByUserName(_userName, _page, _size);
    }
 
-   
-   
-   
-
    @RequestMapping(value = "/authsec/user/password/modify", method = RequestMethod.PUT)
    @ApiOperation(value = "用户中心-账户管理，修改当前密码")
    @ApiImplicitParams({

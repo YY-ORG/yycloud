@@ -301,13 +301,17 @@ public class MarkScoreController {
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralResult submitAuditScoreForAssessPaper(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
-                                                            @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId){
+                                                        @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam (value = "_userId", required = false) String _userId,
+                                                        @ApiParam(value = "考核的等次") @RequestParam (value = "_level", required = false) Byte _level){
         GeneralResult result = new GeneralResult();
         try {
             String tempUserId = _userId;
             String currentUserId = this.securityService.getCurrentUser().getUserId();
+            Byte tempLevel = _level;
             if(_userId == null)
                 tempUserId = currentUserId;
+            if(_level == null)
+                tempLevel = 1;
             log.info("Going to submit the audit Score of [{}]'s [{}] assess paper.", tempUserId, _assessPaperId);
             List<RoleItem> tempRuleList = this.securityService.getCurrentUser().getRoles();
 
@@ -323,7 +327,7 @@ public class MarkScoreController {
             if(!tempFlag){
                 throw new YYException(ResultCode.ACCESS_LIMITED);
             }
-            result = this.markedScoreService.submitAssessPaperAuditScore(_userId, _assessPaperId, currentUserId);
+            result = this.markedScoreService.submitAssessPaperAuditScore(_userId, _assessPaperId, currentUserId, tempLevel);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ye) {
             log.error("YYException occured: {}", ye.getCode());

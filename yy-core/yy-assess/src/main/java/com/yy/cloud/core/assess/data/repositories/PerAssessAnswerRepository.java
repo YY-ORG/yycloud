@@ -42,5 +42,11 @@ public interface PerAssessAnswerRepository extends JpaRepository<PerAssessAnswer
     List<PerAssessAssessAnswerItem> getAssessAssessAnswerItemList(@Param("assessPaperId") String _assessPaperId,
                                                                   @Param("assessCategoryId") String _assessCategoryId,
                                                                   @Param("userId") String _userId);
+    @Query("select count(pa.id) as completedCount from PerAssessAnswer pa, PerAssessAspMap pam " +
+            " where pa.status=2 and pa.assessId = pam.assessId and pa.assessPaperId = pam.assessPaperId and pam.assessCategoryId=:assessCategoryId and pam.assessPaperId=:assessPaperId and pa.creatorId=:userId")
+    PerAssessAnswerCount getCompletedAnswerCount(
+            @Param("assessPaperId") String _assessPaperId,
+            @Param("assessCategoryId") String _assessCategoryId,
+            @Param("userId") String _userId);
 }
 

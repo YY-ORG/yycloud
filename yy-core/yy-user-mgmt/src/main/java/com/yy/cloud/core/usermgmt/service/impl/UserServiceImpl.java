@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
 			String passwordTem=_userProfile.getPassword();
 			String password = null;
 			if(AssertHelper.notEmpty(passwordTem)){
-				password=  encoder.encode(_userProfile.getPassword());;
+				password=  encoder.encode(_userProfile.getPassword());
 			}else{
 				password = yyUser.getPassword();
 			}
@@ -190,41 +190,30 @@ public class UserServiceImpl implements UserService {
 			if (AssertHelper.notEmpty(_userProfile.getOrgId())) {
 
 				yyUserInfo.setDeptId(_userProfile.getOrgId());
-
 			}
 			if (AssertHelper.notEmpty(_userProfile.getEmail())) {
-
 				yyUserInfo.setEmail(_userProfile.getEmail());
 			}
 			if (AssertHelper.notEmpty(_userProfile.getGender())) {
 				yyUserInfo.setGender(_userProfile.getGender());
 			}
-			
-			
 			if (AssertHelper.notEmpty(_userProfile.getPhone())) {
 				yyUserInfo.setPhone(_userProfile.getPhone());
 			}
-			
 			if (AssertHelper.notEmpty(_userProfile.getAdministrativePost())) {
 				yyUserInfo.setAdministrativePost(_userProfile.getAdministrativePost());
 			}
-			
-			
 			if (AssertHelper.notEmpty(_userProfile.getAdministrativeRank())) {
 				yyUserInfo.setAdministrativeRank(_userProfile.getAdministrativeRank());
 			}
-			
 			if (AssertHelper.notEmpty(_userProfile.getOccupationType())) {
 				yyUserInfo.setOccupationType(_userProfile.getOccupationType());
 			}
-			
 			if (AssertHelper.notEmpty(_userProfile.getProfessionalTitle())) {
 				yyUserInfo.setProfessionalTitle(_userProfile.getProfessionalTitle());
 			}
 			yyUserInfo.setBirthiday( DateUtils.formatDate(_userProfile.getBirthday(), "yyyy-MM-dd") );
-			
 			yyUserInfo.setUserName(_userProfile.getUserName());
-			
 
 			yyUserInfo.setUser(yyUser);
 			yyUser.setUserInfo(yyUserInfo);

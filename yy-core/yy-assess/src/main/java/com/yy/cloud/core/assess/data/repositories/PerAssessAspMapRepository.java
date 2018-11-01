@@ -36,14 +36,15 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "perAssessAspMap", path = "perAssessAspMap")
 public interface PerAssessAspMapRepository extends JpaRepository<PerAssessAspMap, String> {
     List<PerAssessAspMap> findByAssessPaperIdAndStatusOrderByCreateDateAsc(String _assessPaperId, Byte _status);
-    List<PerAssessAspMap> findByAssessPaperIdAndAndAssessCategoryIdAndStatusOrderByCreateDateAsc(String _assessPaperId, String _groupId, Byte _status);
+    List<PerAssessAspMap> findByAssessPaperIdAndAssessCategoryIdAndStatusOrderByCreateDateAsc(String _assessPaperId, String _groupId, Byte _status);
 
     PerAssessAspMap findByAssessPaperIdAndAssessIdAndStatus(String _assessPaperId, String _assessId, Byte _status);
     int countByAssessPaperIdAndAssessCategoryId(String _assessPaperId, String _groupId);
-    @Transactional
-    void deletePerAssessAspMapsByAssessPaperId(String _assessPaperId);
+  //  @Transactional
+    void deleteByAssessPaperId(String _assessPaperId);
 
-    @Query(value = "SELECT p.assessCategoryId as groupId, count(p) as totalCount FROM PerAssessAspMap p where p.assessPaperId = :assessPaperId group by p.assessCategoryId")
+    @Query(value = "SELECT pac.id as groupId, pac.code as groupCode, pac.name as groupName, count(p.id) as totalCount " +
+            "FROM PerAssessAspMap p, PerAssessCategory pac where p.assessCategoryId = pac.id and p.assessPaperId = :assessPaperId group by pac.id, pac.code, pac.name order by pac.createDate")
     List<PerAPACCount> getGroupCountByAssessPaper(@Param("assessPaperId") String _assessPaperId);
 
     @Query(value="select pa.id as id, p.id as apAssessId, pa.code as code, pa.name as name, pa.type as type, p.seqNo as seqNo, " +

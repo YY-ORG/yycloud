@@ -21,4 +21,5 @@ import java.util.List;
 public interface PerAssessPaperExamineeMapRepository extends JpaRepository<PerAssessPaperExamineeMap, String> {
     PerAssessPaperExamineeMap findByAssessPaperIdAndCreatorId(String _assessPaperId, String _userId);
     Page<PerAssessPaperExamineeMap> findByDeptIdAndStatusIn(String _deptId, List<Byte> _statusList, Pageable _page);
+    Page<PerAssessPaperExamineeMap> findByStatusIn(List<Byte> _statusList, Pageable _page);
 }

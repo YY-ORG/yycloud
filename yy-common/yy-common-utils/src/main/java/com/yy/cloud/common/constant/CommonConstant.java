@@ -78,4 +78,7 @@ public class CommonConstant {
 
     public final static String ORG_ALL = "all";
 
+    public final static Integer FILE_EXCEL_GENERAL_HEADER_ROWS = 1;
+    public final static Integer FILE_EXCEL_GENERAL_TITILE_ROWS = 1;
+
 }

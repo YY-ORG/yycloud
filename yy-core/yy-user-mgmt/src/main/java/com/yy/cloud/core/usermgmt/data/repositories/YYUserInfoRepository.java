@@ -13,8 +13,5 @@ import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
  */
 @Repository
 public interface YYUserInfoRepository extends JpaRepository<YYUserInfo, String> {
-	
-	
 	YYUserInfo findByUser(YYUser user);
-	
 }

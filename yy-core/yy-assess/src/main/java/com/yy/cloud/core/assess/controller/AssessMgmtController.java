@@ -10,6 +10,7 @@
 package com.yy.cloud.core.assess.controller;
 
 import com.yy.cloud.common.constant.ExceptionCode;
+import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.assess.AssessGroupItem;
@@ -388,6 +389,7 @@ public class AssessMgmtController {
 		return result;
 	}
 
+
 	@RequestMapping(value = "/authsec/assesspaper/{_id}/assesslistpage", method = RequestMethod.GET)
 	@ApiOperation(value = "分页检索某个考卷的试题")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
@@ -421,6 +423,24 @@ public class AssessMgmtController {
 		try {
 			log.info("Going to load assess paper list by page [{}].", _page);
 			result = this.assessService.getAssessPaperList(_page);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/authsec/assesspaper/allassesspaperlist", method = RequestMethod.GET)
+	@ApiOperation(value = "检索所有的考卷")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<List<SimpleAssessPaperItem>> getAllAssessAssessPaperList(){
+		GeneralContentResult<List<SimpleAssessPaperItem>> result = new GeneralContentResult<>();
+		try {
+			log.info("Going to load assess paper list.");
+			result = this.assessService.getAllAssessPaperList();
 			result.setResultCode(ResultCode.OPERATION_SUCCESS);
 		} catch (Exception e) {
 			log.error("Unexpected Error occured", e);

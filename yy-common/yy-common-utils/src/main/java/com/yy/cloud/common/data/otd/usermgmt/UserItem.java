@@ -30,8 +30,13 @@ public class UserItem {
     @ApiModelProperty(notes = "用户状态")
     private Byte status;
 
+    /**
+     * 部门Id
+     */
+    private String deptId;
+
     @ApiModelProperty(notes = "部门名/机构名")
-    private String organizationName;
+    private String deptName;
 
     @ApiModelProperty(notes = "角色名")
     private String roleName;

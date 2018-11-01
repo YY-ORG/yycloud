@@ -125,7 +125,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
 	@Override
 	public GeneralContentResult<List<AssessGroupItem>> getAssessMenuByAssessPaperIdAndGroup(String _userId, String _assessPaperId, String _groupId) {
-		List<PerAssessAspMap> tempAssessAspMapList = this.perAssessAspMapRepository.findByAssessPaperIdAndAndAssessCategoryIdAndStatusOrderByCreateDateAsc(_assessPaperId, _groupId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		List<PerAssessAspMap> tempAssessAspMapList = this.perAssessAspMapRepository.findByAssessPaperIdAndAssessCategoryIdAndStatusOrderByCreateDateAsc(_assessPaperId, _groupId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 		Map<AssessCategoryItem, List<AssessMenuItem>> tempMenuMap = tempAssessAspMapList.stream().collect(Collectors.groupingBy(this::convertToACIOTD,
 				Collectors.mapping(tempItem -> this.convertToAssessMenuOTD(_userId, tempItem), Collectors.toList())));
 		List<AssessGroupItem> tempAssessMenuItemList = tempMenuMap.entrySet().stream().map(tempItem -> this.packGroupOTD(_userId, _assessPaperId, tempItem.getKey(), tempItem.getValue())).collect(Collectors.toList());
@@ -858,9 +858,12 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         if(_req == null)
             return tempResult;
-
-		this.perAssessAspMapRepository.deletePerAssessAspMapsByAssessPaperId(_req.getId());
+		log.info("Going to delete assess paper by id {}", _req.getId());
+		this.perAssessAspMapRepository.deleteByAssessPaperId(_req.getId());
+		this.perAssessAspMapRepository.flush();
 		this.perAssessOrgMapRepository.deleteByAssessPaperId(_req.getId());
+		this.perAssessOrgMapRepository.flush();
+		log.info("Delete assess paper by id {} completed.", _req.getId());
 		PerAssessPaper tempPAP = this.perAssessPaperRepository.findOne(_req.getId());
 		tempPAP.setCode(_req.getCode());
 		tempPAP.setName(_req.getName());
@@ -927,7 +930,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
     @Transactional
 	@Override
 	public GeneralResult deleteAssessPaper(String _assessPaperId) {
-        this.perAssessAspMapRepository.deletePerAssessAspMapsByAssessPaperId(_assessPaperId);
+        this.perAssessAspMapRepository.deleteByAssessPaperId(_assessPaperId);
         this.perApAcMapRepository.deleteByAssessPaperId(_assessPaperId);
         this.perAssessOrgMapRepository.deleteByAssessPaperId(_assessPaperId);
         this.perAssessPaperRepository.delete(_assessPaperId);
@@ -952,6 +955,18 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         _pageInfo.setTotalPage(tempPAPPage.getTotalPages());
         _pageInfo.setTotalRecords(tempPAPPage.getTotalElements());
         tempResult.setPageInfo(_pageInfo);
+
+		return tempResult;
+	}
+
+	@Override
+	public GeneralContentResult<List<SimpleAssessPaperItem>> getAllAssessPaperList() {
+		List<PerAssessPaper> tempPAPList = this.perAssessPaperRepository.findByStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+		log.info("The total item is: [{}].", tempPAPList.size());
+		List<SimpleAssessPaperItem> tempSAPI = tempPAPList.stream().map(this::convertToAPIOTD).collect(Collectors.toList());
+		GeneralContentResult<List<SimpleAssessPaperItem>> tempResult = new GeneralContentResult<>();
+		tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+		tempResult.setResultContent(tempSAPI);
 
 		return tempResult;
 	}

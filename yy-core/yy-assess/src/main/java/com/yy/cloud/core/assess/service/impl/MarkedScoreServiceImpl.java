@@ -83,22 +83,32 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
      * @return
      */
     private GeneralPagingResult<List<AssessPaperExamineeMapItem>> getAssessPaperListByOrg(String _orgId, List<Byte> _statusList, Pageable _page) throws YYException {
-        Page<PerAssessPaperExamineeMap> tempPAPEPage = this.perAssessPaperExamineeMapRepository.findByDeptIdAndStatusIn(_orgId, _statusList, _page);
+        Page<PerAssessPaperExamineeMap> tempPAPEPage;
+        if(_orgId.equals(CommonConstant.ORG_ALL))
+            tempPAPEPage = this.perAssessPaperExamineeMapRepository.findByStatusIn(_statusList, _page);
+        else
+            tempPAPEPage = this.perAssessPaperExamineeMapRepository.findByDeptIdAndStatusIn(_orgId, _statusList, _page);
         List<PerAssessPaperExamineeMap> tempPAPEList = tempPAPEPage.getContent();
 
         GeneralPagingResult<List<AssessPaperExamineeMapItem>> tempResult = new GeneralPagingResult<>();
-        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         if(tempPAPEList == null || tempPAPEList.size() == 0){
             log.info("There  is nobody having submitted the assess paper...");
+            PageInfo _pageInfo = new PageInfo();
+            _pageInfo.setCurrentPage(_page.getPageNumber());
+            _pageInfo.setPageSize(_page.getPageSize());
+            _pageInfo.setTotalPage(0);
+            _pageInfo.setTotalRecords(0L);
+            tempResult.setPageInfo(_pageInfo);
+            tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
             return tempResult;
         }
-        GeneralContentResult<Map<String, UserDetailsItem>> tempUserMapResult = this.securityClient.getAllMembersInOrganization(_orgId);
-
-        if(!tempUserMapResult.getResultCode().equals(ResultCode.OPERATION_SUCCESS)){
-            log.error("Retrieve Org Mem List failed: {}", tempUserMapResult);
-            throw new YYException(ResultCode.ORG_USER_RETRIEVE_FAILED);
-        }
-        Map<String, UserDetailsItem> tempUserMap = tempUserMapResult.getResultContent();
+//        GeneralContentResult<Map<String, UserDetailsItem>> tempUserMapResult = this.securityClient.getAllMembersInOrganization(_orgId);
+//
+//        if(!tempUserMapResult.getResultCode().equals(ResultCode.OPERATION_SUCCESS)){
+//            log.error("Retrieve Org Mem List failed: {}", tempUserMapResult);
+//            throw new YYException(ResultCode.ORG_USER_RETRIEVE_FAILED);
+//        }
+        //Map<String, UserDetailsItem> tempUserMap = tempUserMapResult.getResultContent();
         if(assessPaperMap == null){
             assessPaperMap = new HashMap<>();
         }
@@ -115,8 +125,13 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
             tempAPEMItem.setUserId(tempItem.getCreatorId());
 
             tempAPEMItem.setOrgId(_orgId);
-
-            UserDetailsItem tempUserItem = tempUserMap.get(tempItem.getCreatorId());
+            GeneralContentResult<UserDetailsItem> tempUserResult = this.securityClient.loadUserById(tempItem.getCreatorId());
+            if(!tempUserResult.getResultCode().equals(ResultCode.OPERATION_SUCCESS)){
+                log.error("Retrieve User Info failed: {}", tempItem.getCreatorId());
+                throw new YYException(ResultCode.ORG_USER_RETRIEVE_FAILED);
+            }
+            UserDetailsItem tempUserItem = tempUserResult.getResultContent();
+            //UserDetailsItem tempUserItem = tempUserMap.get(tempItem.getCreatorId());
             if(tempUserItem == null) {
                 tempAPEMItem.setUserName("未知");
                 tempAPEMItem.setOrgName("未知");
@@ -275,6 +290,7 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
             tempAnswer.setMarkedScore(tempTotalMarkedScore);
             tempAnswer.setRMarkedScore(tempTotalMarkedScore.multiply(tempScoringRatio));
             tempAnswer.setMarkedComment(_req.getComments());
+            tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_MARKED);
             tempAnswer.setMarker(_userId);
         } else {
             tempPerAssessAnswerItem.setAuditScore(tempItemAuditScore);
@@ -284,6 +300,7 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
 //            tempAnswerScore = tempTotalAuditScore.multiply(tempScoringRatio);
             tempAnswer.setRAuditScore(tempTotalAuditScore.multiply(tempScoringRatio));
             tempAnswer.setAuditComment(_req.getComments());
+            tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_AUDITED);
             tempAnswer.setAuditor(_userId);
         }
 //        log.info("Going to update assess answer[{}] and assess answer item[{}]",
@@ -324,21 +341,21 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
 
     @Override
     public GeneralResult submitAssessPaperScoring(String _userId, String _assessPaperId, String _markerId) throws YYException {
-        this.calculateSummaryScore(_userId, _assessPaperId, true, _markerId);
+        this.calculateSummaryScore(_userId, _assessPaperId, true, _markerId, (byte)1);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         return tempResult;
     }
 
     @Override
-    public GeneralResult submitAssessPaperAuditScore(String _userId, String _assessPaperId, String _auditorId) throws YYException {
-        this.calculateSummaryScore(_userId, _assessPaperId, false, _auditorId);
+    public GeneralResult submitAssessPaperAuditScore(String _userId, String _assessPaperId, String _auditorId, Byte _level) throws YYException {
+        this.calculateSummaryScore(_userId, _assessPaperId, false, _auditorId, _level);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         return tempResult;
     }
 
-    private void calculateSummaryScore(String _userId, String _assessPaperId, Boolean _maFlag, String _currentUserId) throws YYException{
+    private void calculateSummaryScore(String _userId, String _assessPaperId, Boolean _maFlag, String _currentUserId, Byte _level) throws YYException{
         List<PerApacExamineeMap> tempApacExamineeMapList = this.perApacExamineeMapRepository.getApacExamineeMapItems(_assessPaperId, _userId);
         BigDecimal tempScore = BigDecimal.ZERO;
 
@@ -389,11 +406,12 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
         if(_maFlag) {
             tempPaperExamineeMap.setMarkedScore(tempScore);
             tempPaperExamineeMap.setMarker(_currentUserId);
-            tempPaperExamineeMap.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_MARKED);
+            tempPaperExamineeMap.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_MARKED);
         } else {
             tempPaperExamineeMap.setAuditScore(tempScore);
             tempPaperExamineeMap.setAuditor(_currentUserId);
-            tempPaperExamineeMap.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_AUDITED);
+            tempPaperExamineeMap.setLevel(_level);
+            tempPaperExamineeMap.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_AUDITED);
         }
 
         this.perAssessPaperExamineeMapRepository.save(tempPaperExamineeMap);

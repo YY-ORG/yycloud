@@ -8,6 +8,7 @@ import com.yy.cloud.common.data.otd.file.SimpleFileInfo;
 import com.yy.cloud.common.utils.MD5Utils;
 import com.yy.cloud.core.filesys.data.domain.YyFile;
 import com.yy.cloud.core.filesys.service.FileService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,6 +36,7 @@ import java.util.List;
  */
 @RestController
 @Slf4j
+@Api("文件上传下载相关API")
 public class FileController {
 
     @Autowired

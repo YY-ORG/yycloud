@@ -51,6 +51,8 @@ public class PerAssessPaperExamineeMap implements Serializable {
 
 	private Byte title;
 
+	private Byte level;
+
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
@@ -147,6 +149,14 @@ public class PerAssessPaperExamineeMap implements Serializable {
 
 	public void setTitle(Byte title) {
 		this.title = title;
+	}
+
+	public Byte getLevel() {
+		return level;
+	}
+
+	public void setLevel(Byte level) {
+		this.level = level;
 	}
 
 	public Timestamp getUpdateDate() {

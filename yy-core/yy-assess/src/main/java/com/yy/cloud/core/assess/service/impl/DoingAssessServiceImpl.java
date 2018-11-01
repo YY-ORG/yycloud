@@ -71,7 +71,6 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DONE);
             tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_SINGLEANSWER);
             tempAnswer.setCreatorId(_userId);
-            this.updateAssessPaperProcessOverview(_answer.getAssessPaperId(), _answer.getGroupId(), _userId);
         } else {
             List<String> tempTemplateIdList = _answer.getAnswerList().stream().map(tempItem -> {return tempItem.getTemplateId();}).collect(Collectors.toList());
             this.perAssessAnswerItemRepository.deleteByTypeAndTemplateIdIn(
@@ -84,6 +83,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         tempAnswer.setPerAssessAnswerItems(tempAnswerItemList);
 
         this.perAssessAnswerRepository.save(tempAnswer);
+        this.perAssessAnswerRepository.flush();
+        this.updateAssessPaperProcessOverview(_answer.getAssessPaperId(), _answer.getGroupId(), _userId);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         return tempResult;
@@ -153,15 +154,18 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         Optional<PerAspProcessOverview> tempOverviewOpt = this.perAspProcessOverviewRepository.findByAssessPaperIdAndCategoryIdAndCreatorId(
                 _assessPaperId, _groupId, _userId);
         PerAspProcessOverview tempOverview;
+
+        PerAssessAnswerCount tempCount = this.perAssessAnswerRepository.getCompletedAnswerCount(_assessPaperId, _groupId, _userId);
         if(tempOverviewOpt.isPresent()){
             tempOverview = tempOverviewOpt.get();
-            int tempCount = tempOverview.getCompletedCount() + 1;
-            tempOverview.setCompletedCount(tempCount > tempOverview.getAssessCount() ? tempOverview.getAssessCount(): tempCount);
+         //   int tempCount = tempOverview.getCompletedCount() + 1;
+            tempOverview.setCompletedCount(tempCount.getCompletedCount());
         } else {
             tempOverview = new PerAspProcessOverview();
             tempOverview.setAssessPaperId(_assessPaperId);
             tempOverview.setCategoryId(_groupId);
             tempOverview.setCreatorId(_userId);
+            tempOverview.setCompletedCount(tempCount.getCompletedCount());
             tempOverview.setAssessCount(this.perAssessAspMapRepository.countByAssessPaperIdAndAssessCategoryId(
                     _assessPaperId, _groupId));
         }
@@ -283,11 +287,12 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     @Override
     public GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
         this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
-        this.updateAssessPaperProcessOverview(_answer.getAssessPaperId(), _answer.getGroupId(), _userId);
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
                 _answer.getAssessPaperId(), _answer.getAssessId(), _userId);
         tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DONE);
         this.perAssessAnswerRepository.save(tempAnswer);
+        this.perAssessAnswerRepository.flush();
+        this.updateAssessPaperProcessOverview(_answer.getAssessPaperId(), _answer.getGroupId(), _userId);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         return tempResult;
@@ -423,14 +428,14 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         List<SimpleAssessGroupAnswerItem> tempGrouAnswerItemList = new ArrayList<>();
         List<PerAspProcessOverview> answerCountList = this.perAspProcessOverviewRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
         for(PerAPACCount tempItem : orgCountList){
-            PerAssessCategory tempCategory = this.perAssessCategoryRepository.findOne(tempItem.getGroupId());
-            if(tempCategory == null){
-                continue;
-            }
+//            PerAssessCategory tempCategory = this.perAssessCategoryRepository.findOne(tempItem.getGroupId());
+//            if(tempCategory == null){
+//                continue;
+//            }
             SimpleAssessGroupAnswerItem tempGroupItem = new SimpleAssessGroupAnswerItem();
             tempGroupItem.setGroupId(tempItem.getGroupId());
-            tempGroupItem.setGroupCode(tempCategory.getCode());
-            tempGroupItem.setGroupName(tempCategory.getName());
+            tempGroupItem.setGroupCode(tempItem.getGroupCode());
+            tempGroupItem.setGroupName(tempItem.getGroupName());
             tempGroupItem.setUnstartedCount(tempItem.getTotalCount());//默认所有的题都未做
             tempGroupItem.setTotalCount(tempItem.getTotalCount());
             tempTotalCount += tempItem.getTotalCount();

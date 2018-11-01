@@ -67,4 +67,9 @@ public class ResultCode {
 	public final static String SCORING_RATIO_EXCEED_MIN = "10004001";
 	public final static String SCORING_RATIO_EXCEED_MAX = "10004002";
 	public final static String SCORING_THRESHOLD_EXCEED_MIN = "10004003";
+
+
+	public final static String FILE_EXCEL_NOT_EXISTS = "10005001";
+    public final static String FILE_EXCEL_IS_EMPTY = "10005002";
+    public final static String FILE_EXCEL_UNKNOWN_ERROR = "10005003";
 }

@@ -87,12 +87,6 @@ public class UserController {
         return userService.findAllorgnazation();
     }
 
-
-    
-    
-    
-    
-
     @RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户中心-账户管理，查询单个账户")
     @ApiImplicitParams({
@@ -145,13 +139,8 @@ public class UserController {
             result.setDetailDescription("password not match.");
             return result;
         }
-
         return result;
     }
-
-   
-
-    
     
     /**
      * 获取
