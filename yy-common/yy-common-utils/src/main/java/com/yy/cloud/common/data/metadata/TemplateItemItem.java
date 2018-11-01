@@ -51,9 +51,15 @@ public class TemplateItemItem implements Serializable {
 	private Boolean editable;
 	private Boolean visible;
 	private String valueFrom;
-	private Double minValue;
-	private Double maxValue;
+	private String minValue;
+	private String maxValue;
 	private String failedMsg;
+	private Boolean exEditable;
+	private Boolean scEditable;
+	private Boolean auEditable;
+	private Boolean exVisible;
+	private Boolean scVisible;
+	private Boolean auVisible;
 
 	private Timestamp createDate;
 	private Timestamp updateDate;

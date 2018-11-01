@@ -22,4 +22,7 @@ public class AssessMenuItem implements Serializable {
     private Integer seqNo;
     private Byte status;
     private Byte answerStatus;
+    private Boolean exEditable = true;
+    private Boolean scEditable = true;
+    private Boolean auEditable = true;
 }

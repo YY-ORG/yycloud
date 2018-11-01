@@ -45,17 +45,35 @@ public class PerTemplateTiMap implements Serializable {
 	@Column(name="EDITABLE")
 	private Boolean editable;
 
+	@Column(name="EX_EDITABLE")
+	private Boolean exEditable;
+
+	@Column(name="SC_EDITABLE")
+	private Boolean scEditable;
+
+	@Column(name="AU_EDITABLE")
+	private Boolean auEditable;
+
 	@Column(name="VISIBLE")
 	private Boolean visible;
+
+	@Column(name="EX_VISIBLE")
+	private Boolean exVisible;
+
+	@Column(name="SC_VISIBLE")
+	private Boolean scVisible;
+
+	@Column(name="AU_VISIBLE")
+	private Boolean auVisible;
 
 	@Column(name="VALUE_FROM")
 	private String valueFrom;
 
 	@Column(name="MIN_VALUE")
-	private Double minValue;
+	private String minValue;
 
 	@Column(name="MAX_VALUE")
-	private Double maxValue;
+	private String maxValue;
 
 	@Column(name="FAILED_MSG")
 	private String failedMsg;
@@ -157,23 +175,71 @@ public class PerTemplateTiMap implements Serializable {
 		return valueFrom;
 	}
 
+	public Boolean getExEditable() {
+		return exEditable;
+	}
+
+	public void setExEditable(Boolean exEditable) {
+		this.exEditable = exEditable;
+	}
+
+	public Boolean getScEditable() {
+		return scEditable;
+	}
+
+	public void setScEditable(Boolean scEditable) {
+		this.scEditable = scEditable;
+	}
+
+	public Boolean getAuEditable() {
+		return auEditable;
+	}
+
+	public void setAuEditable(Boolean auEditable) {
+		this.auEditable = auEditable;
+	}
+
+	public Boolean getExVisible() {
+		return exVisible;
+	}
+
+	public void setExVisible(Boolean exVisible) {
+		this.exVisible = exVisible;
+	}
+
+	public Boolean getScVisible() {
+		return scVisible;
+	}
+
+	public void setScVisible(Boolean scVisible) {
+		this.scVisible = scVisible;
+	}
+
+	public Boolean getAuVisible() {
+		return auVisible;
+	}
+
+	public void setAuVisible(Boolean auVisible) {
+		this.auVisible = auVisible;
+	}
+
 	public void setValueFrom(String valueFrom) {
 		this.valueFrom = valueFrom;
 	}
 
-	public Double getMinValue() {
+	public String getMinValue() {
 		return minValue;
 	}
 
-	public void setMinValue(Double minValue) {
+	public void setMinValue(String minValue) {
 		this.minValue = minValue;
 	}
 
-	public Double getMaxValue() {
+	public String getMaxValue() {
 		return maxValue;
 	}
 
-	public void setMaxValue(Double maxValue) {
+	public void setMaxValue(String maxValue) {
 		this.maxValue = maxValue;
 	}
 

@@ -46,6 +46,15 @@ public class PerAssessAspMap implements Serializable {
 	@Column(name="SEQ_NO")
 	private Integer seqNo;
 
+	@Column(name="EX_EDITABLE")
+	private Boolean exEditable;
+
+	@Column(name="SC_EDITABLE")
+	private Boolean scEditable;
+
+	@Column(name="AU_EDITABLE")
+	private Boolean auEditable;
+
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
@@ -137,6 +146,30 @@ public class PerAssessAspMap implements Serializable {
 
 	public void setSeqNo(Integer seqNo) {
 		this.seqNo = seqNo;
+	}
+
+	public Boolean getExEditable() {
+		return exEditable;
+	}
+
+	public void setExEditable(Boolean exEditable) {
+		this.exEditable = exEditable;
+	}
+
+	public Boolean getScEditable() {
+		return scEditable;
+	}
+
+	public void setScEditable(Boolean scEditable) {
+		this.scEditable = scEditable;
+	}
+
+	public Boolean getAuEditable() {
+		return auEditable;
+	}
+
+	public void setAuEditable(Boolean auEditable) {
+		this.auEditable = auEditable;
 	}
 
 	public Timestamp getUpdateDate() {

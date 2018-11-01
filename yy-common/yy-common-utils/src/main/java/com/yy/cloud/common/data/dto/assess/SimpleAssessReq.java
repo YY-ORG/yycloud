@@ -19,4 +19,7 @@ public class SimpleAssessReq implements Serializable {
     private String assessId;
     private String assessCategoryId;
     private Integer seqNo;
+    private Boolean exEditable = true;
+    private Boolean scEditable = true;
+    private Boolean auEditable = true;
 }

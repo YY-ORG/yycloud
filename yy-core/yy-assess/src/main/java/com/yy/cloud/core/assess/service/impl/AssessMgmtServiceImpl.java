@@ -200,6 +200,9 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempAssessMenuItem.setAssessName(tempAssess.getName());
 		tempAssessMenuItem.setSeqNo(_tempMap.getSeqNo());
 		tempAssessMenuItem.setStatus(tempAssess.getStatus());
+		tempAssessMenuItem.setExEditable(_tempMap.getExEditable());
+		tempAssessMenuItem.setScEditable(_tempMap.getScEditable());
+		tempAssessMenuItem.setAuEditable(_tempMap.getAuEditable());
 
 		PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
 				_tempMap.getAssessPaperId(), _tempMap.getAssessId(), _userId);
@@ -300,6 +303,12 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 				tempTII.setMinValue(pttmItem.getMinValue());
 				tempTII.setMaxValue(pttmItem.getMaxValue());
 				tempTII.setFailedMsg(pttmItem.getFailedMsg());
+				tempTII.setExEditable(pttmItem.getExEditable());
+				tempTII.setScEditable(pttmItem.getScEditable());
+				tempTII.setAuEditable(pttmItem.getAuEditable());
+				tempTII.setExVisible(pttmItem.getExVisible());
+				tempTII.setScVisible(pttmItem.getScVisible());
+				tempTII.setAuVisible(pttmItem.getAuVisible());
 				tempTIIList.add(tempTII);
 			}
 
@@ -552,8 +561,15 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
     private PerTemplateTiMap convertTOPTTMDTO(TemplateItemMapReq _req, PerTemplate _template){
 		PerTemplateTiMap tempTiMap = new PerTemplateTiMap();
 		tempTiMap.setSeqNo(_req.getSeqNo());
+		tempTiMap.setExEditable(_req.getExEditable());
+		tempTiMap.setScEditable(_req.getScEditable());
+		tempTiMap.setAuEditable(_req.getAuEditable());
+		tempTiMap.setExVisible(_req.getExVisible());
+		tempTiMap.setScVisible(_req.getScVisible());
+		tempTiMap.setAuVisible(_req.getAuVisible());
 		tempTiMap.setEditable(_req.getEditable());
 		tempTiMap.setVisible(_req.getVisible());
+
 		tempTiMap.setMandatory(_req.getMandatory());
 		tempTiMap.setValueFrom(_req.getValueFrom());
 		tempTiMap.setMinValue(_req.getMinValue());
@@ -722,6 +738,12 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempItem.setEditable(_tiMap.isEditable());
         tempItem.setMandatory(_tiMap.isMandatory());
         tempItem.setVisible(_tiMap.isVisible());
+		tempItem.setExEditable(_tiMap.getExEditable());
+		tempItem.setScEditable(_tiMap.getScEditable());
+		tempItem.setAuEditable(_tiMap.getAuEditable());
+		tempItem.setExVisible(_tiMap.getExVisible());
+		tempItem.setScVisible(_tiMap.getScVisible());
+		tempItem.setAuVisible(_tiMap.getAuVisible());
         tempItem.setSeqNo(_tiMap.getSeqNo());
 
         if(StringUtils.isNotBlank(_tiMap.getReliedId())){//获取真实的Relied的Item ID
@@ -930,6 +952,9 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempPAAM.setAssessId(_assessReq.getAssessId());
 		tempPAAM.setAssessCategoryId(_assessReq.getAssessCategoryId());
 		tempPAAM.setSeqNo(_assessReq.getSeqNo());
+		tempPAAM.setExEditable(_assessReq.getExEditable());
+		tempPAAM.setScEditable(_assessReq.getScEditable());
+		tempPAAM.setAuEditable(_assessReq.getAuEditable());
 		tempPAAM.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
 		tempPAAM.setPerAssessPaper(_pap);
 		return tempPAAM;

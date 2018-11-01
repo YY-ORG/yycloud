@@ -16,7 +16,13 @@ public class ComplexTemplateItem extends SimpleTemplateItem {
     private static final long serialVersionUID = 8595475516065635684L;
     private Boolean mandatory;
     private Boolean editable;
+    private Boolean exEditable;
+    private Boolean scEditable;
+    private Boolean auEditable;
     private Boolean visible;
+    private Boolean exVisible;
+    private Boolean scVisible;
+    private Boolean auVisible;
     private Integer seqNo;
     private String reliedId;
 }
