@@ -23,6 +23,10 @@ public class ComplexTemplateItem extends SimpleTemplateItem {
     private Boolean exVisible;
     private Boolean scVisible;
     private Boolean auVisible;
+    private String valueFrom;
+    private String minValue;
+    private String maxValue;
+    private String failedMsg;
     private Integer seqNo;
     private String reliedId;
 }

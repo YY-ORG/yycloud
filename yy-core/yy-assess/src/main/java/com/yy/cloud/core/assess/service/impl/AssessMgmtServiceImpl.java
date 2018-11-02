@@ -744,6 +744,10 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setExVisible(_tiMap.getExVisible());
 		tempItem.setScVisible(_tiMap.getScVisible());
 		tempItem.setAuVisible(_tiMap.getAuVisible());
+		tempItem.setValueFrom(_tiMap.getValueFrom());
+		tempItem.setMinValue(_tiMap.getMinValue());
+		tempItem.setMaxValue(_tiMap.getMaxValue());
+		tempItem.setFailedMsg(_tiMap.getFailedMsg());
         tempItem.setSeqNo(_tiMap.getSeqNo());
 
         if(StringUtils.isNotBlank(_tiMap.getReliedId())){//获取真实的Relied的Item ID
@@ -888,22 +892,22 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         if(_req == null)
             return tempResult;
-		log.info("Going to delete assess paper by id {}", _req.getId());
-		this.perAssessAspMapRepository.deleteByAssessPaperId(_req.getId());
-		this.perAssessAspMapRepository.flush();
-		this.perAssessOrgMapRepository.deleteByAssessPaperId(_req.getId());
-		this.perAssessOrgMapRepository.flush();
-		log.info("Delete assess paper by id {} completed.", _req.getId());
-		PerAssessPaper tempPAP = this.perAssessPaperRepository.findOne(_req.getId());
-		tempPAP.setCode(_req.getCode());
-		tempPAP.setName(_req.getName());
-		tempPAP.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
-		tempPAP.setPerAssessOrgMaps(this.packAssessPaperOrgMap(_req, tempPAP));
-
-		List<PerAssessAspMap> tempPAAMapList = _req.getAssessList().stream().map(tempItem -> this.convertToAssessAspDTO(tempItem, tempPAP)).collect(Collectors.toList());
-		tempPAP.setPerAssessAspMaps(tempPAAMapList);
 
 		try {
+			PerAssessPaper tempPAP = this.perAssessPaperRepository.findOne(_req.getId());
+			log.info("Going to delete assess paper by id {}", _req.getId());
+			tempPAP.getPerAssessAspMaps().clear();
+			tempPAP.getPerAssessOrgMaps().clear();
+
+			log.info("Going to add new ASP Item for {}", _req.getId());
+			tempPAP.setCode(_req.getCode());
+			tempPAP.setName(_req.getName());
+			tempPAP.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+			tempPAP.getPerAssessOrgMaps().addAll(this.packAssessPaperOrgMap(_req, tempPAP));
+
+			List<PerAssessAspMap> tempPAAMapList = _req.getAssessList().stream().map(tempItem -> this.convertToAssessAspDTO(tempItem, tempPAP)).collect(Collectors.toList());
+			tempPAP.getPerAssessAspMaps().addAll(tempPAAMapList);
+
 			PerAssessPaper resultPAP = this.perAssessPaperRepository.save(tempPAP);
 			SimpleAssessPaperItem tempASPI = new SimpleAssessPaperItem();
 			tempASPI.setId(resultPAP.getId());

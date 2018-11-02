@@ -43,12 +43,10 @@ public class PerAssessPaper implements Serializable {
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
-	//bi-directional many-to-one association to PerAssessAspMap
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, mappedBy="perAssessPaper")
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="perAssessPaper")
 	private List<PerAssessAspMap> perAssessAspMaps;
-	
-	//bi-directional many-to-one association to PerAssessOrgMap
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, mappedBy="perAssessPaper")
+
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="perAssessPaper")
 	private List<PerAssessOrgMap> perAssessOrgMaps;
 
 	public PerAssessPaper() {
