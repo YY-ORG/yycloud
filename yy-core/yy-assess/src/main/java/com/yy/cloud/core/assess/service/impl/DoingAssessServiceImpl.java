@@ -474,6 +474,9 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         if(tempAssessPaper == null){
             throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_NOTEXISTS, "该考核人员不在该考卷的考核人员列表中，请重新选择考卷答题！");
         }
+        // 补全未答题的答案
+        this.completeUnsubmitAnswerByAsp(_userId, _assessPaperId);
+
         PerAssessPaperExamineeMap tempPAPEM = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
         GeneralResult tempResult = new GeneralResult();
         if(tempPAPEM == null) {
@@ -493,6 +496,40 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             return tempResult;
         } else {
             throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_ALREADY, "你已提交该考卷，无法进行更改！");
+        }
+    }
+
+    private void completeUnsubmitAnswerByAsp(String _userId, String _paperId){
+        List<PerAssessAspMap> tempAssessAspList = this.perAssessAspMapRepository.findByAssessPaperIdAndStatus(_paperId, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+        tempAssessAspList.stream().forEach(item -> this.completeUnsubmitAnswer(_userId, item.getAssessId(), _paperId));
+    }
+
+    private void completeUnsubmitAnswer(String _userId, String _assessId, String _paperId){
+        PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(_paperId, _assessId, _userId);
+        if(tempAnswer == null){
+            tempAnswer = new PerAssessAnswer();
+            tempAnswer.setAssessId(_assessId);
+            tempAnswer.setAssessPaperId(_paperId);
+            tempAnswer.setCreatorId(_userId);
+            tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DONE);
+            PerAssess tempAssess = this.perAssessRepository.findOne(_assessId);
+            if(tempAssess != null) {
+                Byte tempAssessType = tempAssess.getType();
+                if(tempAssessType.equals(CommonConstant.DIC_ASSESS_TYPE_SINGLE_ANSWER)){
+                    tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_SINGLEANSWER);
+                } else if (tempAssessType.equals(CommonConstant.DIC_ASSESS_TYPE_TABLE_SINGLE_ANSWER)) {
+                    tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_SINGLEWITHMULTISUBS_ANSWER);
+                } else if(tempAssessType.equals(CommonConstant.DIC_ASSESS_TYPE_TABLE_MULTI_ANSWERS)) {
+                    tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_MULTIANSWERS);
+                } else if(tempAssessType.equals(CommonConstant.DIC_ASSESS_TYPE_MULTI_ANSWERS)){
+                    tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_MULTIANSWERS);
+                } else {
+                    tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_SINGLEANSWER);
+                }
+            } else {
+                tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_SINGLEANSWER);
+            }
+            this.perAssessAnswerRepository.save(tempAnswer);
         }
     }
 
