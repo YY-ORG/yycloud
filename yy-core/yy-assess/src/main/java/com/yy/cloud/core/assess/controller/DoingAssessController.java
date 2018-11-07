@@ -49,6 +49,7 @@ public class DoingAssessController {
     public GeneralResult submitAssessAnswer(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
                                             @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
                                             @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                            @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId,
                                       //      @ApiParam(value = "答案的类型：0为单答案题的答案；1为单答案题的子项答案；2为多答案题的某个或者某些答案") @RequestParam(value = "_type", defaultValue = "0") Byte _type,
                                             @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
         GeneralResult result = new GeneralResult();
@@ -62,7 +63,7 @@ public class DoingAssessController {
             tempAnswerReq.setAssessPaperId(_assessPaperId);
             tempAnswerReq.setAnswerList(_groupSummaryReq);
 
-            result = this.doingAssessService.submitSingleAnswerAssessAnswer(tempUserId, tempAnswerReq);
+            result = this.doingAssessService.submitSingleAnswerAssessAnswer(_userId, tempAnswerReq, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -83,6 +84,7 @@ public class DoingAssessController {
     public GeneralContentResult<List<String>> addAssessAnswerSubAnser(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
                                                                       @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
                                                                          @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                      @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId,
                                                                          @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
         GeneralContentResult<List<String>> result = new GeneralContentResult<>();
         try {
@@ -95,7 +97,7 @@ public class DoingAssessController {
             tempAnswerReq.setAssessPaperId(_assessPaperId);
             tempAnswerReq.setAnswerList(_groupSummaryReq);
 
-            result = this.doingAssessService.addAssessSubAnswer(tempUserId, tempAnswerReq);
+            result = this.doingAssessService.addAssessSubAnswer(_userId, tempAnswerReq, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -117,6 +119,7 @@ public class DoingAssessController {
                                                                       @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
                                                                       @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
                                                                          @ApiParam(value = "待更新的子项的答案的ID") @PathVariable(value = "_subAnswerId", required = true) String _subAnswerId,
+                                                                   @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId,
                                                                       @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
         GeneralContentResult<String> result = new GeneralContentResult<>();
         try {
@@ -129,7 +132,7 @@ public class DoingAssessController {
             tempAnswerReq.setAssessPaperId(_assessPaperId);
             tempAnswerReq.setAnswerList(_groupSummaryReq);
 
-            result = this.doingAssessService.updateAssessSubAnswer(tempUserId, _subAnswerId, tempAnswerReq);
+            result = this.doingAssessService.updateAssessSubAnswer(_userId, _subAnswerId, tempAnswerReq, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -148,14 +151,15 @@ public class DoingAssessController {
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralResult deleteAssessAnswerSubAnser(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
-                                                    @ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_subAnswerId", required = true) String _subAnswerId){
+                                                    @ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_subAnswerId", required = true) String _subAnswerId,
+                                                    @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId){
         GeneralResult result = new GeneralResult();
         try {
             String tempUserId = this.securityService.getCurrentUser().getUserId();
             log.info("oing to delete sub answer [{}].", _subAnswerId);
             List<String> subIdList = new ArrayList<>();
             subIdList.add(_subAnswerId);
-            result = this.doingAssessService.deleteAssessSubAnswer(tempUserId, _assessPaperId, subIdList);
+            result = this.doingAssessService.deleteAssessSubAnswer(_userId, _assessPaperId, subIdList, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -174,12 +178,13 @@ public class DoingAssessController {
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralResult deleteAssessAnswerSubAnserInBatch(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                           @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId,
                                                            @ApiParam(value = "待删除的子项答案集") @RequestBody List<String> _subAnswerIdList){
         GeneralResult result = new GeneralResult();
         try {
             String tempUserId = this.securityService.getCurrentUser().getUserId();
             log.info("oing to delete sub answer [{}] in batch.", _subAnswerIdList);
-            result = this.doingAssessService.deleteAssessSubAnswer(tempUserId, _assessPaperId, _subAnswerIdList);
+            result = this.doingAssessService.deleteAssessSubAnswer(_userId, _assessPaperId, _subAnswerIdList, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -201,6 +206,7 @@ public class DoingAssessController {
     public GeneralContentResult<List<String>> addMultiAssessAnswerItems(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
                                                                       @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
                                                                       @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                                        @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId,
                                                                       @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
         GeneralContentResult<List<String>> result = new GeneralContentResult<>();
         try {
@@ -213,7 +219,7 @@ public class DoingAssessController {
             tempAnswerReq.setAssessPaperId(_assessPaperId);
             tempAnswerReq.setAnswerList(_groupSummaryReq);
 
-            result = this.doingAssessService.addMultiAnswerAssessAnswer(tempUserId, tempAnswerReq);
+            result = this.doingAssessService.addMultiAnswerAssessAnswer(_userId, tempAnswerReq, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -236,6 +242,7 @@ public class DoingAssessController {
                                                                         @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
                                                                         @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
                                                                            @ApiParam(value = "要更改的答案ID") @PathVariable(value = "_answerItemId", required = true) String _answerItemId,
+                                                                     @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId,
                                                                         @ApiParam(value = "题的答案，以题的模板为单位来封装，如果一个题有多个答案，则一个模板则会封装多个List元素") @RequestBody List<AssessTemplateReq> _groupSummaryReq){
         GeneralContentResult<String> result = new GeneralContentResult<>();
         try {
@@ -248,7 +255,7 @@ public class DoingAssessController {
             tempAnswerReq.setAssessPaperId(_assessPaperId);
             tempAnswerReq.setAnswerList(_groupSummaryReq);
 
-            result = this.doingAssessService.updateMultiAnswerAssessAnswer(tempUserId, _answerItemId, tempAnswerReq);
+            result = this.doingAssessService.updateMultiAnswerAssessAnswer(_userId, _answerItemId, tempAnswerReq, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -268,7 +275,8 @@ public class DoingAssessController {
             value = "Token", defaultValue = "bearer ")
     public GeneralResult submitMultiAssessAnswer(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
                                                                         @ApiParam(value = "题所属的试卷分组ID") @PathVariable(value = "_groupId", required = true) String _groupId,
-                                                                        @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId){
+                                                                        @ApiParam(value = "题的ID") @PathVariable(value = "_assessId", required = true) String _assessId,
+                                                 @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId){
         GeneralResult result = new GeneralResult();
         try {
             String tempUserId = this.securityService.getCurrentUser().getUserId();
@@ -279,7 +287,7 @@ public class DoingAssessController {
             tempAnswerReq.setGroupId(_groupId);
             tempAnswerReq.setAssessPaperId(_assessPaperId);
 
-            result = this.doingAssessService.submitMultiAnswerAssessAnswer(tempUserId, tempAnswerReq);
+            result = this.doingAssessService.submitMultiAnswerAssessAnswer(_userId, tempAnswerReq, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -298,14 +306,15 @@ public class DoingAssessController {
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralResult deleteMultiAnswersOneAssessAnswer(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
-                                                           @ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_answerItemId", required = true) String _answerItemId){
+                                                           @ApiParam(value = "某个元素项的某个答案的ID") @PathVariable(value = "_answerItemId", required = true) String _answerItemId,
+                                                           @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId){
         GeneralResult result = new GeneralResult();
         try {
             String tempUserId = this.securityService.getCurrentUser().getUserId();
             log.info("oing to delete answer Item [{}].", _answerItemId);
             List<String> subIdList = new ArrayList<>();
             subIdList.add(_answerItemId);
-            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(tempUserId, _assessPaperId, subIdList);
+            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(_userId, _assessPaperId, subIdList, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ex){
             log.info("The Exception Code is: {}", ex.getCode());
@@ -324,12 +333,13 @@ public class DoingAssessController {
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralResult deleteMultiAnswersAssessAnswers(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                         @ApiParam(value = "参评者ID") @RequestParam(value = "_userId", required = false) String _userId,
                                                          @ApiParam(value = "待删除的答案集") @RequestBody List<String> _answerItemIdList){
         GeneralResult result = new GeneralResult();
         try {
             String tempUserId = this.securityService.getCurrentUser().getUserId();
             log.info("Going to delete sub answer [{}] in batch.", _answerItemIdList);
-            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(tempUserId, _assessPaperId, _answerItemIdList);
+            result = this.doingAssessService.deleteMultiAnswerAssessAnswer(_userId, _assessPaperId, _answerItemIdList, tempUserId);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (Exception e) {
             log.error("Unexpected Error occured", e);

@@ -51,4 +51,6 @@ public interface YYUserRepository extends JpaRepository<YYUser, String> {
 	List<YYUser> findByStatusLessThanAndUserInfoDeptId(Byte status,String orgId);
 
 	List<YYUser> findByStatusLessThan(Byte _status);
+
+	Page<YYUser> findByStatus(Byte status, Pageable pageable);
 }

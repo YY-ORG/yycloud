@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -253,12 +254,17 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NoRecordFoundException(String.format("user %s not found.", _userId)));
 
         UserItem userItem = modelMapper.map(foxUser, UserItem.class);
+        userItem.setProfessionalTitle(foxUser.getUserInfo().getProfessionalTitle());
         return userItem;
     }
 
     @Override
     public List<UserItem> listUsersByPage(PageInfo _pageInfo, Byte _status) {
-    	return new ArrayList<UserItem>();
+        Pageable tempPage = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize());
+        Page<YYUser> yyUsersPage = this.yyUserRepository.findByStatus(_status, tempPage);
+        Page<UserItem> tempItemPage = yyUsersPage.map(item -> modelMapper.map(item, UserItem.class));
+
+        return tempItemPage.getContent();
     }
 
     @Override

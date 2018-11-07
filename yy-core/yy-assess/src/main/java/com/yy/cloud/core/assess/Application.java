@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 /**
@@ -20,9 +21,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @SpringBootApplication
 @ComponentScan({"com.yy.cloud"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.yy.cloud.common.clients"})
+@EnableFeignClients(basePackages = {"com.yy.cloud.core.assess.clients", "com.yy.cloud.common.clients"})
 @EnableResourceServer
-//@EnableZuulProxy
+@EnableScheduling
 //@EnableHystrix
 public class Application {
 

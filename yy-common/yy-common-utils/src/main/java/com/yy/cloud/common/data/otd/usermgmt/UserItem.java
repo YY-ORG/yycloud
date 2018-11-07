@@ -30,6 +30,9 @@ public class UserItem {
     @ApiModelProperty(notes = "用户状态")
     private Byte status;
 
+    @ApiModelProperty(notes = "用户职称")
+    private Byte professionalTitle;
+
     /**
      * 部门Id
      */

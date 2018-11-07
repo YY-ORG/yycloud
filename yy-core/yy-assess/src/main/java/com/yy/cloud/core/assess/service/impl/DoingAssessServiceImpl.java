@@ -16,6 +16,7 @@ import com.yy.cloud.core.assess.data.domain.*;
 import com.yy.cloud.core.assess.data.repositories.*;
 import com.yy.cloud.core.assess.service.DoingAssessService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,8 +61,11 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
     @Override
     @Transactional
-    public GeneralResult submitSingleAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
-        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+    public GeneralResult submitSingleAnswerAssessAnswer(String _userId, AssessAnswerReq _answer, String _commitorId) throws YYException {
+        if(StringUtils.isBlank(_userId)) {
+            _userId = _commitorId;
+            this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+        }
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
                 _answer.getAssessPaperId(), _answer.getAssessId(), _userId);
         if(tempAnswer == null) {
@@ -91,8 +95,11 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
-    public GeneralContentResult<List<String>> addAssessSubAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
-        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+    public GeneralContentResult<List<String>> addAssessSubAnswer(String _userId, AssessAnswerReq _answer, String _commitorId) throws YYException {
+        if(StringUtils.isBlank(_userId)) {
+            _userId = _commitorId;
+            this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+        }
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.
                 findByAssessPaperIdAndAssessIdAndCreatorId(_answer.getAssessPaperId(), _answer.getAssessId(), _userId);
 
@@ -120,8 +127,11 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
     @Override
     @Transactional
-    public GeneralContentResult<String> updateAssessSubAnswer(String _userId, String _subAnswerId, AssessAnswerReq _answer) throws YYException {
-        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+    public GeneralContentResult<String> updateAssessSubAnswer(String _userId, String _subAnswerId, AssessAnswerReq _answer, String _commitorId) throws YYException {
+        if(StringUtils.isBlank(_userId)) {
+            _userId = _commitorId;
+            this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+        }
 
         if(_answer.getAnswerList() == null || _answer.getAnswerList().size() == 0){
             throw new YYException(ResultCode.ASSESS_ANSWER_NOTEXISTS, "新的答案为空，还请重新提交！");
@@ -194,8 +204,12 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
     @Override
     @Transactional
-    public GeneralResult deleteAssessSubAnswer(String _userId, String _assessPaperId, List<String> _answerItemId) throws YYException {
-        this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
+    public GeneralResult deleteAssessSubAnswer(String _userId, String _assessPaperId, List<String> _answerItemId, String _commitorId) throws YYException {
+        if(StringUtils.isBlank(_userId)) {
+            _userId = _commitorId;
+            this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
+        }
+
         this.perAssessAnswerDetailRepository.deleteByPerAssessAnswerItemIdIn(_answerItemId);
         this.perAssessAnswerItemRepository.deleteByIdIn(_answerItemId);
 //        List<PerAssessAnswerItem> tempItems = this.perAssessAnswerItemRepository.findAll(_answerItemId);
@@ -208,8 +222,12 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
-    public GeneralContentResult<List<String>> addMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
-        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+    public GeneralContentResult<List<String>> addMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer, String _commitorId) throws YYException {
+        if(StringUtils.isBlank(_userId)) {
+            _userId = _commitorId;
+            this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+        }
+
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
                 _answer.getAssessPaperId(), _answer.getAssessId(), _userId);
         if(tempAnswer == null) {
@@ -233,8 +251,11 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
-    public GeneralContentResult<String> updateMultiAnswerAssessAnswer(String _userId, String _answerItemId, AssessAnswerReq _answer) throws YYException {
-        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+    public GeneralContentResult<String> updateMultiAnswerAssessAnswer(String _userId, String _answerItemId, AssessAnswerReq _answer, String _commitorId) throws YYException {
+        if(StringUtils.isBlank(_userId)) {
+            _userId = _commitorId;
+            this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+        }
 
         if(_answer.getAnswerList() == null || _answer.getAnswerList().size() == 0){
             throw new YYException(ResultCode.ASSESS_ANSWER_NOTEXISTS, "新的答案为空，还请重新提交！");
@@ -258,8 +279,11 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
     @Override
     @Transactional
-    public GeneralResult deleteMultiAnswerAssessAnswer(String _userId, String _assessPaperId, List<String> _answerIdList) throws YYException {
-        this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
+    public GeneralResult deleteMultiAnswerAssessAnswer(String _userId, String _assessPaperId, List<String> _answerIdList, String _commitorId) throws YYException {
+        if(StringUtils.isBlank(_userId)) {
+            _userId = _commitorId;
+            this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
+        }
 
         List<PerAssessAnswerItem> tempAnswerItemList = this.perAssessAnswerItemRepository.findAll(_answerIdList);
         log.debug("Loaded Items {}.", tempAnswerItemList);
@@ -285,8 +309,11 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     }
 
     @Override
-    public GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer) throws YYException {
-        this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+    public GeneralResult submitMultiAnswerAssessAnswer(String _userId, AssessAnswerReq _answer, String _commitorId) throws YYException {
+        if(StringUtils.isBlank(_userId)) {
+            _userId = _commitorId;
+            this.checkAssessPaperAnswerStatus(_userId, _answer.getAssessPaperId());
+        }
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
                 _answer.getAssessPaperId(), _answer.getAssessId(), _userId);
         tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DONE);

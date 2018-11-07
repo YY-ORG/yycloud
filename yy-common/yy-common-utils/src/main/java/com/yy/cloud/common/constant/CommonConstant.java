@@ -64,6 +64,12 @@ public class CommonConstant {
     public final static Byte DIC_SCORING_TYPE_RATIO_SUM = 4;
     public final static Byte DIC_SCORING_TYPE_RATIO_SUM_THREHOLD = 5;
 
+
+    public final static Byte DIC_SCORING_LEVEL_EXCELLENT = 0;
+    public final static Byte DIC_SCORING_LEVEL_GOOD = 1;
+    public final static Byte DIC_SCORING_LEVEL_ACCEPTABLE = 2;
+    public final static Byte DIC_SCORING_LEVEL_FAILED = 3;
+
     /**
      * 前台部门
      */
