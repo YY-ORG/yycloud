@@ -72,4 +72,8 @@ public class ResultCode {
 	public final static String FILE_EXCEL_NOT_EXISTS = "10005001";
     public final static String FILE_EXCEL_IS_EMPTY = "10005002";
     public final static String FILE_EXCEL_UNKNOWN_ERROR = "10005003";
+
+
+	public final static String FILE_EXCEED_SIZE_MAX = "10005010";
+	public final static String FILE_UPLOAD_ERROR = "10005011";
 }

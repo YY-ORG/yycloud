@@ -1,11 +1,14 @@
 package com.yy.cloud.core.filesys.service;
 
+import com.mongodb.gridfs.GridFSDBFile;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.otd.file.SimpleFileInfo;
+import com.yy.cloud.common.utils.YYException;
 import com.yy.cloud.core.filesys.data.domain.YyFile;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,7 +27,7 @@ public interface FileService {
      * @param _file
      * @return
      */
-    GeneralContentResult<YyFile> saveFile(YyFile _file);
+    GeneralContentResult<YyFile> saveFile(MultipartFile _file) throws YYException;
 
     /**
      * 删除文件
@@ -38,7 +41,7 @@ public interface FileService {
      * @param _id
      * @return
      */
-    GeneralContentResult<YyFile> getFileById(String _id);
+    GeneralContentResult<GridFSDBFile> getFileById(String _id);
 
     /**
      * 分页查询，按上传时间降序

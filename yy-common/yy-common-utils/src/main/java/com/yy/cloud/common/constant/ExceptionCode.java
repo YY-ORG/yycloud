@@ -30,5 +30,7 @@ public final class ExceptionCode {
         EXCEPTION_MSG.put(ResultCode.FILE_EXCEL_NOT_EXISTS, "所上传Excel文件不存在！");
         EXCEPTION_MSG.put(ResultCode.FILE_EXCEL_IS_EMPTY, "所上传Excel文件为空！");
         EXCEPTION_MSG.put(ResultCode.FILE_EXCEL_UNKNOWN_ERROR, "所上传Excel文件遇到未知异常！");
+        EXCEPTION_MSG.put(ResultCode.FILE_EXCEED_SIZE_MAX, "所上传超过了最大文件限制1GB！");
+        EXCEPTION_MSG.put(ResultCode.FILE_UPLOAD_ERROR, "上传文件过程中出现异常，请稍后重新选择小于1GB的文件上传！");
     }
 }

@@ -3,6 +3,8 @@ server:
   port: 9025
   tomcat:
     uri-encoding: UTF-8
+    basedir: /home/tomcat
+
 logging:
   path: /yy/logs/yy_micro/core/
   
@@ -25,6 +27,10 @@ security:
       user-info-uri: http://${AUTHSERVER_SERVICE_HOST}:${AUTHSERVER_SERVICE_PORT}/uaa/user
 spring:
   http:
+    multipart:
+      enabled: true
+      max-file-size: 1024MB
+      max-request-size: 1024MB
     encoding:
       enabled: true
       charset: UTF-8
@@ -49,12 +55,6 @@ spring:
       uri: mongodb://yyadmin:abcd1234@172.16.112.95/yy
     #  username: admin
     #  password: abcd1234
-
-  http:
-    multipart:
-      enabled: true
-      max-file-size: 1024MB
-      max-request-size: 1024MB
 
 eureka:
   client:

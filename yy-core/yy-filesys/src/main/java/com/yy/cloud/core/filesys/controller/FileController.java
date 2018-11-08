@@ -1,5 +1,7 @@
 package com.yy.cloud.core.filesys.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.gridfs.GridFSDBFile;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
@@ -21,6 +23,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -44,6 +49,7 @@ public class FileController {
 
     /**
      * 分页查询文件
+     *
      * @param _page
      * @return
      */
@@ -51,7 +57,7 @@ public class FileController {
     @ApiOperation(value = "分页查询文件")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    public GeneralPagingResult<List<YyFile>> listFilesByPage(Pageable _page){
+    public GeneralPagingResult<List<YyFile>> listFilesByPage(Pageable _page) {
         GeneralPagingResult<List<YyFile>> result = new GeneralPagingResult<>();
         try {
             log.info("Going to load file by page [{}].", _page);
@@ -67,6 +73,7 @@ public class FileController {
 
     /**
      * 获取文件片信息/下载文件
+     *
      * @param _id
      * @return
      */
@@ -74,31 +81,40 @@ public class FileController {
     @ApiOperation(value = "获取文件片信息")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    @ResponseBody
-    public ResponseEntity<Object> serveFile(@ApiParam(value = "文件ID") @PathVariable(value = "_id") String _id) {
+    public void serveFile(@ApiParam(value = "文件ID") @PathVariable(value = "_id") String _id, HttpServletResponse _response) {
 
-        GeneralContentResult<YyFile> tempResult = fileService.getFileById(_id);
+        GeneralContentResult<GridFSDBFile> tempResult = fileService.getFileById(_id);
+        GridFSDBFile tempFile = tempResult.getResultContent();
 
-        YyFile tempFile = tempResult.getResultContent();
-        try {
-            if (tempFile != null) {
-                log.debug("The file is [{}]", tempFile.getName());
-                return ResponseEntity
-                        .ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename*=UTF-8''" + URLEncoder.encode(tempFile.getName(),"UTF-8"))
-                        .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream" )
-                        .header(HttpHeaders.CONTENT_LENGTH, tempFile.getSize()+"")
-                        .header("Connection",  "close")
-                        .body(tempFile.getContent());
-            }
-        } catch (UnsupportedEncodingException ex) {
-            log.error("Error occured:", ex);
+        if (tempFile == null) {
+            responseFail("404 not found", _response);
+            return;
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
+        OutputStream tempOs = null;
+        try {
+            tempOs = _response.getOutputStream();
+            _response.addHeader("Content-Disposition", "attachment;filename=" + tempFile.getFilename());
+            _response.addHeader("Content-Length", "" + tempFile.getLength());
+            _response.setContentType("application/octet-stream");
+            tempFile.writeTo(tempOs);
+            tempOs.flush();
+            tempOs.close();
+
+        } catch (Exception e) {
+            try {
+                if (tempOs != null) {
+                    tempOs.close();
+                }
+            } catch (Exception e2) {
+            }
+            log.error("Encountered Error while trying to download file [{}]. ", tempFile.getFilename(), e);
+        }
     }
+
 
     /**
      * 在线显示/下载文件
+     *
      * @param _id
      * @return
      */
@@ -107,28 +123,38 @@ public class FileController {
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     @ResponseBody
-    public ResponseEntity<Object> serveFileOnline(@ApiParam(value = "文件ID") @PathVariable(value = "_id") String _id) {
-        GeneralContentResult<YyFile> tempResult = fileService.getFileById(_id);
-        YyFile tempFile = tempResult.getResultContent();
-        try {
-            if (tempFile != null) {
-                return ResponseEntity
-                        .ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename*=UTF-8''" + URLEncoder.encode(tempFile.getName(),"UTF-8"))
-                        .header(HttpHeaders.CONTENT_TYPE, tempFile.getContentType() )
-                        .header(HttpHeaders.CONTENT_LENGTH, tempFile.getSize()+"")
-                        .header("Connection",  "close")
-                        .body( tempFile.getContent());
-            }
-        } catch (UnsupportedEncodingException ex) {
-            log.error("Error occured:", ex);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
+    public void serveFileOnline(@ApiParam(value = "文件ID") @PathVariable(value = "_id") String _id, HttpServletResponse _response) {
 
+        GeneralContentResult<GridFSDBFile> tempResult = fileService.getFileById(_id);
+        GridFSDBFile tempFile = tempResult.getResultContent();
+
+        if (tempFile == null) {
+            responseFail("404 not found", _response);
+            return;
+        }
+        OutputStream tempOs = null;
+        try {
+            tempOs = _response.getOutputStream();
+            _response.addHeader("Content-Disposition", "attachment;filename=" + tempFile.getFilename());
+            _response.addHeader("Content-Length", "" + tempFile.getLength());
+            _response.setContentType(tempFile.getContentType());
+            tempFile.writeTo(tempOs);
+            tempOs.flush();
+            tempOs.close();
+        } catch (Exception e) {
+            try {
+                if (tempOs != null) {
+                    tempOs.close();
+                }
+            } catch (Exception e2) {
+            }
+            log.error("Encountered Error while trying to view file [{}]. ", tempFile.getFilename(), e);
+        }
     }
 
     /**
      * 上传接口
+     *
      * @param _file
      * @return
      */
@@ -141,9 +167,7 @@ public class FileController {
         GeneralContentResult<String> result = new GeneralContentResult<>();
         try {
             log.debug("Going to upload file 文件[{}] this time.", _file.getOriginalFilename());
-            YyFile f = new YyFile(_file.getOriginalFilename(),  _file.getContentType(), _file.getSize(),_file.getBytes());
-            f.setMd5(MD5Utils.getMD5(_file.getInputStream()));
-            GeneralContentResult<YyFile> tempResult = fileService.saveFile(f);
+            GeneralContentResult<YyFile> tempResult = fileService.saveFile(_file);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
             result.setResultContent(tempResult.getResultContent().getId());
         } catch (Exception e) {
@@ -156,6 +180,7 @@ public class FileController {
 
     /**
      * 删除文件
+     *
      * @param _id
      * @return
      */
@@ -179,6 +204,7 @@ public class FileController {
 
     /**
      * 获取文件的摘要信息
+     *
      * @param _idList
      * @return
      */
@@ -200,5 +226,24 @@ public class FileController {
         }
         return result;
 
+    }
+
+    private void responseFail(String _msg, HttpServletResponse _response) {
+        _response.setCharacterEncoding("UTF-8");
+        _response.setContentType("application/json; charset=utf-8");
+        PrintWriter out = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String res = mapper.writeValueAsString(_msg);
+            out = _response.getWriter();
+            out.append(res);
+        } catch (Exception e) {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (Exception e2) {
+            }
+        }
     }
 }
