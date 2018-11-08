@@ -82,6 +82,7 @@
 		<module>yy-sysbase</module>
 		<module>yy-user-mgmt</module>
 		<module>yy-assess</module>
+		<module>yy-finance</module>
 		<module>yy-filesys</module>
 	</modules>
 </project>
