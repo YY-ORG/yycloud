@@ -1,127 +1,136 @@
 package com.yy.cloud.core.finance.data.domain;
 
+import java.io.Serializable;
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
+import java.util.List;
+
 
 /**
- * Function: TODO ADD FUNCTION. <br/>
- * Reason:	 TODO ADD REASON. <br/>
- * Date:     11/8/18 8:12 PM<br/>
- *
- * @author chenxj
- * @see
- * @since JDK 1.8
+ * The persistent class for the f_subject database table.
+ * 
  */
 @Entity
-@Table(name = "f_subject", schema = "yy", catalog = "")
-public class FSubject {
-    private String id;
-    private String code;
-    private String name;
-    private Byte status;
-    private String parentId;
-    private String creatorId;
-    private Timestamp createDate;
-    private Timestamp updateDate;
+@Table(name="f_subject")
+@NamedQuery(name="FSubject.findAll", query="SELECT f FROM FSubject f")
+public class FSubject implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(name = "ID", nullable = false, length = 36)
-    public String getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private String id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	private String code;
 
-    @Basic
-    @Column(name = "CODE", nullable = true, length = 255)
-    public String getCode() {
-        return code;
-    }
+	@Column(name="CREATE_DATE")
+	private Timestamp createDate;
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	@Column(name="CREATOR_ID")
+	private String creatorId;
 
-    @Basic
-    @Column(name = "NAME", nullable = true, length = 255)
-    public String getName() {
-        return name;
-    }
+	private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	private byte status;
 
-    @Basic
-    @Column(name = "STATUS", nullable = true)
-    public Byte getStatus() {
-        return status;
-    }
+	@Column(name="UPDATE_DATE")
+	private Timestamp updateDate;
 
-    public void setStatus(Byte status) {
-        this.status = status;
-    }
+	//bi-directional many-to-one association to FSubject
+	@ManyToOne
+	@JoinColumn(name="PARENT_ID")
+	private FSubject FSubject;
 
-    @Basic
-    @Column(name = "PARENT_ID", nullable = true, length = 36)
-    public String getParentId() {
-        return parentId;
-    }
+	//bi-directional many-to-one association to FSubject
+	@OneToMany(mappedBy="FSubject")
+	private List<FSubject> FSubjects;
 
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
+	public FSubject() {
+	}
 
-    @Basic
-    @Column(name = "CREATOR_ID", nullable = true, length = 36)
-    public String getCreatorId() {
-        return creatorId;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    @Basic
-    @Column(name = "CREATE_DATE", nullable = true)
-    public Timestamp getCreateDate() {
-        return createDate;
-    }
+	public String getCode() {
+		return this.code;
+	}
 
-    public void setCreateDate(Timestamp createDate) {
-        this.createDate = createDate;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    @Basic
-    @Column(name = "UPDATE_DATE", nullable = true)
-    public Timestamp getUpdateDate() {
-        return updateDate;
-    }
+	public Timestamp getCreateDate() {
+		return this.createDate;
+	}
 
-    public void setUpdateDate(Timestamp updateDate) {
-        this.updateDate = updateDate;
-    }
+	public void setCreateDate(Timestamp createDate) {
+		this.createDate = createDate;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FSubject fSubject = (FSubject) o;
-        return Objects.equals(id, fSubject.id) &&
-                Objects.equals(code, fSubject.code) &&
-                Objects.equals(name, fSubject.name) &&
-                Objects.equals(status, fSubject.status) &&
-                Objects.equals(parentId, fSubject.parentId) &&
-                Objects.equals(creatorId, fSubject.creatorId) &&
-                Objects.equals(createDate, fSubject.createDate) &&
-                Objects.equals(updateDate, fSubject.updateDate);
-    }
+	public String getCreatorId() {
+		return this.creatorId;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, code, name, status, parentId, creatorId, createDate, updateDate);
-    }
+	public void setCreatorId(String creatorId) {
+		this.creatorId = creatorId;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public byte getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(byte status) {
+		this.status = status;
+	}
+
+	public Timestamp getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(Timestamp updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public FSubject getFSubject() {
+		return this.FSubject;
+	}
+
+	public void setFSubject(FSubject FSubject) {
+		this.FSubject = FSubject;
+	}
+
+	public List<FSubject> getFSubjects() {
+		return this.FSubjects;
+	}
+
+	public void setFSubjects(List<FSubject> FSubjects) {
+		this.FSubjects = FSubjects;
+	}
+
+	public FSubject addFSubject(FSubject FSubject) {
+		getFSubjects().add(FSubject);
+		FSubject.setFSubject(this);
+
+		return FSubject;
+	}
+
+	public FSubject removeFSubject(FSubject FSubject) {
+		getFSubjects().remove(FSubject);
+		FSubject.setFSubject(null);
+
+		return FSubject;
+	}
+
 }
