@@ -1,176 +1,158 @@
 package com.yy.cloud.core.assess.data.domain;
 
+import java.io.Serializable;
 import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import java.sql.Timestamp;
-import java.util.Objects;
+
 
 /**
- * Function: TODO ADD FUNCTION. <br/>
- * Reason:	 TODO ADD REASON. <br/>
- * Date:     11/7/18 4:40 PM<br/>
- *
- * @author chenxj
- * @see
- * @since JDK 1.8
+ * The persistent class for the per_assess_period database table.
+ * 
  */
 @Entity
-@Table(name = "per_assess_period", schema = "yy", catalog = "")
+@Table(name="per_assess_period")
 @NamedQuery(name="PerAssessPeriod.findAll", query="SELECT p FROM PerAssessPeriod p")
-public class PerAssessPeriod {
-    private String id;
-    private String assessId;
-    private Boolean type;
-    private Timestamp doingStart;
-    private Timestamp doingEnd;
-    private Timestamp scStart;
-    private Timestamp scEnd;
-    private Timestamp auStart;
-    private Timestamp auEnd;
-    private String creatorId;
-    private Timestamp createDate;
-    private Timestamp updateDate;
+public class PerAssessPeriod implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(name = "ID", nullable = false, length = 36)
-    public String getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
+	@Column(name="ID")
+	private String id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	@Column(name="ASSESS_PAPER_ID")
+	private String assessPaperId;
 
-    @Basic
-    @Column(name = "ASSESS_ID", nullable = true, length = 36)
-    public String getAssessId() {
-        return assessId;
-    }
+	@Column(name="AU_END")
+	private Timestamp auEnd;
 
-    public void setAssessId(String assessId) {
-        this.assessId = assessId;
-    }
+	@Column(name="AU_START")
+	private Timestamp auStart;
 
-    @Basic
-    @Column(name = "TYPE", nullable = true)
-    public Boolean getType() {
-        return type;
-    }
+	@Column(name="CREATE_DATE")
+	private Timestamp createDate;
 
-    public void setType(Boolean type) {
-        this.type = type;
-    }
+	@Column(name="CREATOR_ID")
+	private String creatorId;
 
-    @Basic
-    @Column(name = "DOING_START", nullable = true)
-    public Timestamp getDoingStart() {
-        return doingStart;
-    }
+	@Column(name="DOING_END")
+	private Timestamp doingEnd;
 
-    public void setDoingStart(Timestamp doingStart) {
-        this.doingStart = doingStart;
-    }
+	@Column(name="DOING_START")
+	private Timestamp doingStart;
 
-    @Basic
-    @Column(name = "DOING_END", nullable = true)
-    public Timestamp getDoingEnd() {
-        return doingEnd;
-    }
+	@Column(name="SC_END")
+	private Timestamp scEnd;
 
-    public void setDoingEnd(Timestamp doingEnd) {
-        this.doingEnd = doingEnd;
-    }
+	@Column(name="SC_START")
+	private Timestamp scStart;
 
-    @Basic
-    @Column(name = "SC_START", nullable = true)
-    public Timestamp getScStart() {
-        return scStart;
-    }
+	private byte type;
 
-    public void setScStart(Timestamp scStart) {
-        this.scStart = scStart;
-    }
+	@Column(name="UPDATE_DATE")
+	private Timestamp updateDate;
 
-    @Basic
-    @Column(name = "SC_END", nullable = true)
-    public Timestamp getScEnd() {
-        return scEnd;
-    }
+	public PerAssessPeriod() {
+	}
 
-    public void setScEnd(Timestamp scEnd) {
-        this.scEnd = scEnd;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    @Basic
-    @Column(name = "AU_START", nullable = true)
-    public Timestamp getAuStart() {
-        return auStart;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setAuStart(Timestamp auStart) {
-        this.auStart = auStart;
-    }
+	public String getAssessPaperId() {
+		return this.assessPaperId;
+	}
 
-    @Basic
-    @Column(name = "AU_END", nullable = true)
-    public Timestamp getAuEnd() {
-        return auEnd;
-    }
+	public void setAssessPaperId(String assessPaperId) {
+		this.assessPaperId = assessPaperId;
+	}
 
-    public void setAuEnd(Timestamp auEnd) {
-        this.auEnd = auEnd;
-    }
+	public Timestamp getAuEnd() {
+		return this.auEnd;
+	}
 
-    @Basic
-    @Column(name = "CREATOR_ID", nullable = true, length = 36)
-    public String getCreatorId() {
-        return creatorId;
-    }
+	public void setAuEnd(Timestamp auEnd) {
+		this.auEnd = auEnd;
+	}
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
-    }
+	public Timestamp getAuStart() {
+		return this.auStart;
+	}
 
-    @Basic
-    @Column(name = "CREATE_DATE", nullable = true)
-    public Timestamp getCreateDate() {
-        return createDate;
-    }
+	public void setAuStart(Timestamp auStart) {
+		this.auStart = auStart;
+	}
 
-    public void setCreateDate(Timestamp createDate) {
-        this.createDate = createDate;
-    }
+	public Timestamp getCreateDate() {
+		return this.createDate;
+	}
 
-    @Basic
-    @Column(name = "UPDATE_DATE", nullable = true)
-    public Timestamp getUpdateDate() {
-        return updateDate;
-    }
+	public void setCreateDate(Timestamp createDate) {
+		this.createDate = createDate;
+	}
 
-    public void setUpdateDate(Timestamp updateDate) {
-        this.updateDate = updateDate;
-    }
+	public String getCreatorId() {
+		return this.creatorId;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PerAssessPeriod that = (PerAssessPeriod) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(assessId, that.assessId) &&
-                Objects.equals(type, that.type) &&
-                Objects.equals(doingStart, that.doingStart) &&
-                Objects.equals(doingEnd, that.doingEnd) &&
-                Objects.equals(scStart, that.scStart) &&
-                Objects.equals(scEnd, that.scEnd) &&
-                Objects.equals(auStart, that.auStart) &&
-                Objects.equals(auEnd, that.auEnd) &&
-                Objects.equals(creatorId, that.creatorId) &&
-                Objects.equals(createDate, that.createDate) &&
-                Objects.equals(updateDate, that.updateDate);
-    }
+	public void setCreatorId(String creatorId) {
+		this.creatorId = creatorId;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, assessId, type, doingStart, doingEnd, scStart, scEnd, auStart, auEnd, creatorId, createDate, updateDate);
-    }
+	public Timestamp getDoingEnd() {
+		return this.doingEnd;
+	}
+
+	public void setDoingEnd(Timestamp doingEnd) {
+		this.doingEnd = doingEnd;
+	}
+
+	public Timestamp getDoingStart() {
+		return this.doingStart;
+	}
+
+	public void setDoingStart(Timestamp doingStart) {
+		this.doingStart = doingStart;
+	}
+
+	public Timestamp getScEnd() {
+		return this.scEnd;
+	}
+
+	public void setScEnd(Timestamp scEnd) {
+		this.scEnd = scEnd;
+	}
+
+	public Timestamp getScStart() {
+		return this.scStart;
+	}
+
+	public void setScStart(Timestamp scStart) {
+		this.scStart = scStart;
+	}
+
+	public byte getType() {
+		return this.type;
+	}
+
+	public void setType(byte type) {
+		this.type = type;
+	}
+
+	public Timestamp getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(Timestamp updateDate) {
+		this.updateDate = updateDate;
+	}
+
 }
