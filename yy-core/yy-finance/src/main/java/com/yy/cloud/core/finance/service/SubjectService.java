@@ -7,7 +7,9 @@ import com.yy.cloud.common.data.assess.AssessCategoryItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.dto.assess.AssessCategoryReq;
 import com.yy.cloud.common.data.dto.assess.AssessCategoryWithIDReq;
+import com.yy.cloud.common.data.dto.finance.SubjectProfileReq;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessCategoryItem;
+import com.yy.cloud.common.data.otd.finance.SubjectItemRes;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -21,16 +23,7 @@ import java.util.List;
  * @see
  * @since JDK 1.8
  */
-public interface AssessCategoryService {
-    GeneralContentResult<AssessCategoryItem> createAssessCategory(String _creatorId, AssessCategoryReq _req);
+public interface SubjectService {
+    GeneralContentResult<List<SubjectItemRes>> createSubjects(String _creatorId, List<SubjectProfileReq> _req);
 
-    GeneralContentResult<AssessCategoryItem> updateAssessCategory(String _creatorId, AssessCategoryWithIDReq _req);
-
-    GeneralResult deleteAssessCategory(String _assessCategoryId);
-
-    GeneralPagingResult<List<SimpleAssessCategoryItem>> getAssessCategoryListByPage(Pageable _page);
-
-    GeneralResult addCategoryToAssessPaper(String _creatorId, String _assessPaper, List<String> _categoryList);
-
-    GeneralContentResult<List<SimpleAssessCategoryItem>> getCategoryListByAssessPaper(String _assessPaper);
 }

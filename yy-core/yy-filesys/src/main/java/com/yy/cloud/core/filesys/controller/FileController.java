@@ -93,7 +93,9 @@ public class FileController {
         OutputStream tempOs = null;
         try {
             tempOs = _response.getOutputStream();
-            _response.addHeader("Content-Disposition", "attachment;filename=" + tempFile.getFilename());
+            //_response.addHeader("Content-Disposition", "attachment;filename=" + tempFile.getFilename());
+            _response.addHeader("Content-Disposition", "attachment; fileName="+  tempFile.getFilename() +";filename*=utf-8''"+URLEncoder.encode(tempFile.getFilename(),"UTF-8"));
+
             _response.addHeader("Content-Length", "" + tempFile.getLength());
             _response.setContentType("application/octet-stream");
             tempFile.writeTo(tempOs);
@@ -122,7 +124,6 @@ public class FileController {
     @ApiOperation(value = "在线显示文件")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    @ResponseBody
     public void serveFileOnline(@ApiParam(value = "文件ID") @PathVariable(value = "_id") String _id, HttpServletResponse _response) {
 
         GeneralContentResult<GridFSDBFile> tempResult = fileService.getFileById(_id);
@@ -135,7 +136,10 @@ public class FileController {
         OutputStream tempOs = null;
         try {
             tempOs = _response.getOutputStream();
-            _response.addHeader("Content-Disposition", "attachment;filename=" + tempFile.getFilename());
+            //_response.addHeader("Content-Disposition", "attachment;filename=" + tempFile.getFilename());
+
+            _response.addHeader("Content-Disposition", "attachment; fileName="+  tempFile.getFilename() +";filename*=utf-8''"+URLEncoder.encode(tempFile.getFilename(),"UTF-8"));
+
             _response.addHeader("Content-Length", "" + tempFile.getLength());
             _response.setContentType(tempFile.getContentType());
             tempFile.writeTo(tempOs);

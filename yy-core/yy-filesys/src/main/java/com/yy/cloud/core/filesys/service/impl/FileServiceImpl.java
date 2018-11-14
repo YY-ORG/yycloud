@@ -91,7 +91,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public GeneralContentResult<GridFSDBFile> getFileById(String _id) {
         GridFS gridFS = new GridFS(mongodbfactory.getDb());
-        GridFSDBFile tempDBFile = gridFS.findOne(new BasicDBObject("_id", _id));
+        GridFSDBFile tempDBFile = gridFS.findOne(new ObjectId(_id));
 
         GeneralContentResult<GridFSDBFile> tempResult = new GeneralContentResult<>();
         tempResult.setResultContent(tempDBFile);
@@ -154,7 +154,8 @@ public class FileServiceImpl implements FileService {
 
         GridFS gridFS = new GridFS(mongodbfactory.getDb());
         _idList.stream().forEach(item -> {
-            GridFSDBFile tempDBFile = gridFS.findOne(new BasicDBObject("_id", item));
+            GridFSDBFile tempDBFile = gridFS.findOne(new ObjectId(item));
+            log.info("The file is: {}-{}", tempDBFile.getId(), tempDBFile.getMD5());
             SimpleFileInfo tempInfo = new SimpleFileInfo();
             tempInfo.setId(tempDBFile.getId().toString());
             tempInfo.setName(tempDBFile.getFilename());

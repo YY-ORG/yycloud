@@ -24,7 +24,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @EnableFeignClients(basePackages = {"com.yy.cloud.core.finance.clients", "com.yy.cloud.common.clients"})
 @EnableResourceServer
 @EnableScheduling
-//@EnableHystrix
 public class Application {
 
 	public static void main(String[] args) {

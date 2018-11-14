@@ -1,5 +1,7 @@
 package com.yy.cloud.core.finance.data.domain;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -17,12 +19,14 @@ public class FSubject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(generator = "system-uuid")
+	@GenericGenerator(name = "system-uuid", strategy = "uuid2")
+	@Column(name="ID")
 	private String id;
 
 	private String code;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="CREATOR_ID")
@@ -30,18 +34,19 @@ public class FSubject implements Serializable {
 
 	private String name;
 
-	private byte status;
+	private Byte status;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
-	//bi-directional many-to-one association to FSubject
-	@ManyToOne
+	@Column(name="PARENT_ID", insertable = false, updatable = false)
+	private String parentId;
+
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PARENT_ID")
 	private FSubject FSubject;
 
-	//bi-directional many-to-one association to FSubject
-	@OneToMany(mappedBy="FSubject")
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="FSubject")
 	private List<FSubject> FSubjects;
 
 	public FSubject() {
@@ -87,11 +92,11 @@ public class FSubject implements Serializable {
 		this.name = name;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 
@@ -101,6 +106,14 @@ public class FSubject implements Serializable {
 
 	public void setUpdateDate(Timestamp updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
 	}
 
 	public FSubject getFSubject() {

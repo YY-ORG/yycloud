@@ -338,6 +338,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 		tempItem.setRegExp(_tempPTI.getRegExp());
 		tempItem.setRegExpExc(_tempPTI.getRegExpExc());
 		tempItem.setStatus(_tempPTI.getStatus());
+		tempItem.setDefaultValue(_tempPTI.getDefaultValue());
 		tempItem.setTip(_tempPTI.getTip());
 		tempItem.setType(_tempPTI.getType());
 		tempItem.setValueOwner(_tempPTI.getValueOwner());
@@ -360,6 +361,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempItem.setName(_tempPTI.getName());
         tempItem.setLabel(_tempPTI.getLabel());
         tempItem.setPlaceholderTip(_tempPTI.getPlaceholderTip());
+        tempItem.setDefaultValue(_tempPTI.getDefaultValue());
         tempItem.setStatus(_tempPTI.getStatus());
         tempItem.setTip(_tempPTI.getTip());
         tempItem.setType(_tempPTI.getType());
@@ -764,6 +766,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempItem.setStatus(tempTemplateItem.getStatus());
         tempItem.setTip(tempTemplateItem.getTip());
         tempItem.setType(tempTemplateItem.getType());
+        tempItem.setDefaultValue(tempTemplateItem.getDefaultValue());
         tempItem.setValueField(tempTemplateItem.getValueField());
         tempItem.setValueOwner(tempTemplateItem.getValueOwner());
         return tempItem;
