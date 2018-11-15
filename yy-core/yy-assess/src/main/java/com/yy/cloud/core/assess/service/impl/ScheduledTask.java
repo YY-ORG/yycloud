@@ -96,8 +96,8 @@ public class ScheduledTask {
                     if (tempPeriod != null) {
                         LocalDate currentDate = LocalDate.now();
                         Timestamp tempCurrentTimestamp = new Timestamp(System.currentTimeMillis());
-                        if (tempPeriod.getDoingEnd() != null && tempCurrentTimestamp.after(tempPeriod.getDoingEnd())) {
-                            LocalDate startDate = tempPeriod.getDoingEnd().toLocalDateTime().toLocalDate();
+                        if (tempPeriod.getScEnd() != null && tempCurrentTimestamp.after(tempPeriod.getDoingEnd())) {
+                            LocalDate startDate = tempPeriod.getScEnd().toLocalDateTime().toLocalDate();
                             LocalDate endDate = startDate.plusDays(5);
 
                             if (currentDate.isAfter(startDate) && startDate.isBefore(endDate)) {
@@ -130,8 +130,8 @@ public class ScheduledTask {
                     if (tempPeriod != null) {
                         LocalDate currentDate = LocalDate.now();
                         Timestamp tempCurrentTimestamp = new Timestamp(System.currentTimeMillis());
-                        if (tempPeriod.getDoingEnd() != null && tempCurrentTimestamp.after(tempPeriod.getDoingEnd())) {
-                            LocalDate startDate = tempPeriod.getDoingEnd().toLocalDateTime().toLocalDate();
+                        if (tempPeriod.getAuEnd() != null && tempCurrentTimestamp.after(tempPeriod.getDoingEnd())) {
+                            LocalDate startDate = tempPeriod.getAuEnd().toLocalDateTime().toLocalDate();
                             LocalDate endDate = startDate.plusDays(5);
 
                             if (currentDate.isAfter(startDate) && startDate.isBefore(endDate)) {

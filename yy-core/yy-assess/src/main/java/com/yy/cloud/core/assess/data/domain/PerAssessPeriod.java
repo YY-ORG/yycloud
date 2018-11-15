@@ -27,13 +27,18 @@ public class PerAssessPeriod implements Serializable {
 	@Column(name="ASSESS_PAPER_ID")
 	private String assessPaperId;
 
+	//bi-directional many-to-one association to PerAssessPaper
+	@ManyToOne
+	@JoinColumn(name="ASSESS_PAPER_ID", insertable = false, updatable = false)
+	private PerAssessPaper perAssessPaper;
+
 	@Column(name="AU_END")
 	private Timestamp auEnd;
 
 	@Column(name="AU_START")
 	private Timestamp auStart;
 
-	@Column(name="CREATE_DATE")
+	@Column(name="CREATE_DATE", insertable = false, updatable = false)
 	private Timestamp createDate;
 
 	@Column(name="CREATOR_ID")
@@ -53,7 +58,7 @@ public class PerAssessPeriod implements Serializable {
 
 	private byte type;
 
-	@Column(name="UPDATE_DATE")
+	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
 
 	public PerAssessPeriod() {
@@ -73,6 +78,14 @@ public class PerAssessPeriod implements Serializable {
 
 	public void setAssessPaperId(String assessPaperId) {
 		this.assessPaperId = assessPaperId;
+	}
+
+	public PerAssessPaper getPerAssessPaper() {
+		return this.perAssessPaper;
+	}
+
+	public void setPerAssessPaper(PerAssessPaper perAssessPaper) {
+		this.perAssessPaper = perAssessPaper;
 	}
 
 	public Timestamp getAuEnd() {

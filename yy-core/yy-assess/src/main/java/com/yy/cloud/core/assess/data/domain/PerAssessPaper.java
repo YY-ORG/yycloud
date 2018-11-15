@@ -49,6 +49,9 @@ public class PerAssessPaper implements Serializable {
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="perAssessPaper")
 	private List<PerAssessOrgMap> perAssessOrgMaps;
 
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="perAssessPaper")
+	private List<PerAssessPeriod> perAssessPeriods;
+
 	public PerAssessPaper() {
 	}
 
@@ -128,6 +131,28 @@ public class PerAssessPaper implements Serializable {
 		perAssessAspMap.setPerAssessPaper(null);
 
 		return perAssessAspMap;
+	}
+
+	public List<PerAssessPeriod> getPerAssessPeriods() {
+		return perAssessPeriods;
+	}
+
+	public void setPerAssessPeriods(List<PerAssessPeriod> perAssessPeriods) {
+		this.perAssessPeriods = perAssessPeriods;
+	}
+
+	public PerAssessPeriod addPerAssessPeriod(PerAssessPeriod perAssessPeriod) {
+		getPerAssessPeriods().add(perAssessPeriod);
+		perAssessPeriod.setPerAssessPaper(this);
+
+		return perAssessPeriod;
+	}
+
+	public PerAssessPeriod removePerAssessPeriod(PerAssessPeriod perAssessPeriod) {
+		getPerAssessPeriods().remove(perAssessPeriod);
+		perAssessPeriod.setPerAssessPaper(null);
+
+		return perAssessPeriod;
 	}
 
 	public List<PerAssessOrgMap> getPerAssessOrgMaps() {

@@ -1093,10 +1093,10 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
     @Override
     public GeneralPagingResult<List<AssessPeriodItem>> getAssessPeriodPageList(Pageable _page) {
-        Page<IPerAssespaperPeriod> tempAssessPeriodPage = this.perAssessPeriodRepository.getAssessPaperPeriodByPage(_page);
+        Page<IPerAssespaperPeriod> tempAssessPeriodPage = this.perAssessPaperRepository.getAssessPaperPeriodByPage(_page);
 
-        List<IPerAssespaperPeriod> tempPeriodList = tempAssessPeriodPage.getContent();
-        List<AssessPeriodItem> tempPeriodItemList = tempPeriodList.stream().map(tempItem -> this.convertToPeriodItem(tempItem)).collect(Collectors.toList());
+//        List<IPerAssespaperPeriod> tempPeriodList = this.perAssessPaperRepository.getAssessPaperPeriodByPage();
+        List<AssessPeriodItem> tempPeriodItemList = tempAssessPeriodPage.getContent().stream().map(tempItem -> this.convertToPeriodItem(tempItem)).collect(Collectors.toList());
 
         GeneralPagingResult<List<AssessPeriodItem>> tempResult = new GeneralPagingResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
