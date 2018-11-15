@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +59,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     private PerAssessOrgMapRepository perAssessOrgMapRepository;
     @Autowired
     private PerAssessAnswerDetailRepository perAssessAnswerDetailRepository;
+    @Autowired
+    private PerAssessPeriodRepository perAssessPeriodRepository;
 
     @Override
     @Transactional
@@ -75,12 +78,12 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DONE);
             tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_SINGLEANSWER);
             tempAnswer.setCreatorId(_userId);
-        } else {
+        } /*else {
             List<String> tempTemplateIdList = _answer.getAnswerList().stream().map(tempItem -> {return tempItem.getTemplateId();}).collect(Collectors.toList());
             this.perAssessAnswerItemRepository.deleteByTypeAndTemplateIdIn(
                     CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY,
                     tempTemplateIdList);
-        }
+        }*/
         PerAssessAnswer tempAnswerAA = tempAnswer;
         List<PerAssessAnswerItem> tempAnswerItemList = _answer.getAnswerList().stream().
                 map(tempTemplate -> this.packAssessAnswerItemDTO(tempTemplate, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY, tempAnswerAA)).collect(Collectors.toList());
@@ -137,7 +140,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             throw new YYException(ResultCode.ASSESS_ANSWER_NOTEXISTS, "新的答案为空，还请重新提交！");
         }
 
-        this.perAssessAnswerItemRepository.delete(_subAnswerId);
+//        this.perAssessAnswerItemRepository.delete(_subAnswerId);
 
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.
                 findByAssessPaperIdAndAssessIdAndCreatorId(_answer.getAssessPaperId(), _answer.getAssessId(), _userId);
@@ -264,7 +267,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.
                 findByAssessPaperIdAndAssessIdAndCreatorId(_answer.getAssessPaperId(), _answer.getAssessId(), _userId);
 
-        this.perAssessAnswerItemRepository.delete(_answerItemId);
+//        this.perAssessAnswerItemRepository.delete(_answerItemId);
 
         PerAssessAnswerItem tempAnswerItem = this.packAssessAnswerItemDTO(_answer.getAnswerList().get(0), CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY,
                 tempAnswer);
@@ -385,14 +388,31 @@ public class DoingAssessServiceImpl implements DoingAssessService {
      * @return
      */
     private PerAssessAnswerItem packAssessAnswerItemDTO(AssessTemplateReq _req, Byte _type, PerAssessAnswer _answer){
-        PerAssessAnswerItem tempAnswerItem = new PerAssessAnswerItem();
-        tempAnswerItem.setTemplateId(_req.getTemplateId());
-        tempAnswerItem.setSeqNo(_req.getSeqNo());
-        tempAnswerItem.setPerAssessAnswer(_answer);
-        tempAnswerItem.setType(_type);
-        List<PerAssessAnswerDetail> tempItemList = _req.getItemList().stream().
-                map(tempItem -> this.packAssessAnswerDetailDTO(tempItem, tempAnswerItem)).collect(Collectors.toList());
-        tempAnswerItem.setPerAssessAnswerDetails(tempItemList);
+        PerAssessAnswerItem tempAnswerItem = null;
+        List<PerAssessAnswerItem> tempItemList = _answer.getPerAssessAnswerItems();
+        if(tempItemList != null && tempItemList.size() > 0) {
+            for(PerAssessAnswerItem _tempItem : tempItemList) {
+                if(_tempItem.getTemplateId().equals(_req.getTemplateId())){
+                    tempAnswerItem = _tempItem;
+                    tempAnswerItem.getPerAssessAnswerDetails().clear();
+                    break;
+                }
+            }
+        }
+        if(tempAnswerItem == null) {
+            tempAnswerItem = new PerAssessAnswerItem();
+            tempAnswerItem.setTemplateId(_req.getTemplateId());
+            tempAnswerItem.setSeqNo(_req.getSeqNo());
+            tempAnswerItem.setPerAssessAnswer(_answer);
+            tempAnswerItem.setType(_type);
+            tempAnswerItem.setPerAssessAnswerDetails(new ArrayList<>());
+        }
+        PerAssessAnswerItem tempAnswerItem2 = tempAnswerItem;
+        List<PerAssessAnswerDetail> tempItemDetailList = _req.getItemList().stream().
+                map(tempItem -> this.packAssessAnswerDetailDTO(tempItem, tempAnswerItem2)).collect(Collectors.toList());
+
+        tempAnswerItem.getPerAssessAnswerDetails().addAll(tempItemDetailList);
+
         return tempAnswerItem;
     }
 
@@ -568,6 +588,16 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         PerAssessPaperExamineeMap tempPAPEM = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
         if(tempPAPEM != null && tempPAPEM.getStatus() != CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT) {
             throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_ALREADY);
+        }
+        PerAssessPeriod tempPeriod = this.perAssessPeriodRepository.getPerAssessPeriodByAssessPaperId(_assessPaperId);
+        if(tempPeriod != null){
+            Timestamp tempCurrentTimestamp = new Timestamp(System.currentTimeMillis());
+            if(tempPeriod.getDoingStart() != null && tempCurrentTimestamp.before(tempPeriod.getDoingStart())) {
+                throw new YYException(ResultCode.ASSESS_ANSWER_EX_NOT_STARTED);
+            }
+            if(tempPeriod.getDoingEnd() != null && tempCurrentTimestamp.after(tempPeriod.getDoingEnd())) {
+                throw new YYException(ResultCode.ASSESS_ANSWER_EX_ENDED_ALREADY);
+            }
         }
     }
 }

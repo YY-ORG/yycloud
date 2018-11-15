@@ -17,14 +17,12 @@ import com.yy.cloud.common.data.assess.AssessGroupItem;
 import com.yy.cloud.common.data.assess.AssessItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.assess.AssessPaperItem;
-import com.yy.cloud.common.data.dto.assess.AssessPaperProfileReq;
-import com.yy.cloud.common.data.dto.assess.AssessPaperWithIDProfileReq;
-import com.yy.cloud.common.data.dto.assess.AssessProfileReq;
-import com.yy.cloud.common.data.dto.assess.AssessWithIDProfileReq;
+import com.yy.cloud.common.data.dto.assess.*;
 import com.yy.cloud.common.data.dto.metadata.TemplateItemProfileReq;
 import com.yy.cloud.common.data.dto.metadata.TemplateItemWithIDProfileReq;
 import com.yy.cloud.common.data.dto.metadata.TemplateProfileReq;
 import com.yy.cloud.common.data.dto.metadata.TemplateWithIDProfileReq;
+import com.yy.cloud.common.data.otd.assess.AssessPeriodItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperItem;
 import com.yy.cloud.common.data.otd.metadata.ComplexTemplateItem;
@@ -106,5 +104,10 @@ public interface AssessMgmtService {
     public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperListByOrg(String _orgId, Byte _title, Pageable _page);
 
 	public GeneralContentResult<List<SimpleTemplate>> getTemplateListByType(Byte _type);
+
+	public GeneralPagingResult<List<AssessPeriodItem>> getAssessPeriodPageList(Pageable _page);
+
+	public GeneralResult updateAssessPeriod(AssessPeriodReq _req, String _userId);
+	public GeneralResult updateAssessPeriodList(List<AssessPeriodReq> _reqList, String _userId);
 }
 

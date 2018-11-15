@@ -62,6 +62,16 @@ public class ResultCode {
 	public final static String ASSESSPAPER_CREATE_FAILED = "10005";
 	public final static String ASSESSPAPER_UPDATE_FAILED = "10006";
 
+	public final static String ASSESSPAPER_PERIOD_GET_FAILED = "10007";
+	public final static String ASSESSPAPER_PERIOD_UPDATE_FAILED = "10008";
+
+	public final static String ASSESS_ANSWER_EX_NOT_STARTED = "10011";
+	public final static String ASSESS_ANSWER_EX_ENDED_ALREADY = "10012";
+	public final static String ASSESS_ANSWER_SC_NOT_STARTED = "10013";
+	public final static String ASSESS_ANSWER_SC_ENDED_ALREADY = "10014";
+	public final static String ASSESS_ANSWER_AU_NOT_STARTED = "10015";
+	public final static String ASSESS_ANSWER_AU_ENDED_ALREADY = "10016";
+
 	public final static String ACCESS_LIMITED = "999999";
 
 	public final static String SCORING_RATIO_EXCEED_MIN = "10004001";

@@ -16,14 +16,12 @@ import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.assess.AssessGroupItem;
 import com.yy.cloud.common.data.assess.AssessMenuItem;
 import com.yy.cloud.common.data.assess.AssessPaperItem;
-import com.yy.cloud.common.data.dto.assess.AssessPaperProfileReq;
-import com.yy.cloud.common.data.dto.assess.AssessPaperWithIDProfileReq;
-import com.yy.cloud.common.data.dto.assess.AssessProfileReq;
-import com.yy.cloud.common.data.dto.assess.AssessWithIDProfileReq;
+import com.yy.cloud.common.data.dto.assess.*;
 import com.yy.cloud.common.data.dto.metadata.TemplateItemProfileReq;
 import com.yy.cloud.common.data.dto.metadata.TemplateItemWithIDProfileReq;
 import com.yy.cloud.common.data.dto.metadata.TemplateProfileReq;
 import com.yy.cloud.common.data.dto.metadata.TemplateWithIDProfileReq;
+import com.yy.cloud.common.data.otd.assess.AssessPeriodItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperItem;
 import com.yy.cloud.common.data.otd.metadata.ComplexTemplateItem;
@@ -596,4 +594,39 @@ public class AssessMgmtController {
 		return result;
 	}
 
+	@RequestMapping(value = "/authsec/assessespaper/periodlist", method = RequestMethod.GET)
+	@ApiOperation(value = "分页检索题库中的试题的有效期设置")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralPagingResult<List<AssessPeriodItem>> getAssessPaperPeriodList(@PageableDefault(sort = { "assessPaperName" }, direction = Sort.Direction.ASC) Pageable _page){
+		GeneralPagingResult<List<AssessPeriodItem>> result = new GeneralPagingResult<>();
+		try {
+			log.info("Going to load assess period by page [{}].", _page);
+			result = this.assessService.getAssessPeriodPageList(_page);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESSPAPER_PERIOD_GET_FAILED);
+		}
+		return result;
+	}
+	@RequestMapping(value = "/authsec/assessespaper/perioditems", method = RequestMethod.POST)
+	@ApiOperation(value = "批量更新试题的有效期设置")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralResult updateAssessPaperPeriod(@ApiParam(value = "更新考卷") @RequestBody List<AssessPeriodReq> _profileList){
+		GeneralResult result = new GeneralResult();
+		try {
+			String tempUserId = this.securityService.getCurrentUser().getUserId();
+			log.info("Going to update assess period [{}].", _profileList.size());
+			result = this.assessService.updateAssessPeriodList(_profileList, tempUserId);
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESSPAPER_PERIOD_GET_FAILED);
+		}
+		return result;
+	}
 }

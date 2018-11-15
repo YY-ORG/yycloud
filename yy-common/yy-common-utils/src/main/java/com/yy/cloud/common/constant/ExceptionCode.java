@@ -32,5 +32,7 @@ public final class ExceptionCode {
         EXCEPTION_MSG.put(ResultCode.FILE_EXCEL_UNKNOWN_ERROR, "所上传Excel文件遇到未知异常！");
         EXCEPTION_MSG.put(ResultCode.FILE_EXCEED_SIZE_MAX, "所上传超过了最大文件限制1GB！");
         EXCEPTION_MSG.put(ResultCode.FILE_UPLOAD_ERROR, "上传文件过程中出现异常，请稍后重新选择小于1GB的文件上传！");
+        EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_PERIOD_GET_FAILED, "获取考卷的有效期设置失败！");
+        EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_PERIOD_UPDATE_FAILED, "更新考卷的有效期设置失败！");
     }
 }
