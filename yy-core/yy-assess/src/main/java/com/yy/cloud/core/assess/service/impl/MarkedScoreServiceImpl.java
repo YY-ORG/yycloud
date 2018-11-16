@@ -60,6 +60,10 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
     private PerApAcMapRepository perApAcMapRepository;
     @Autowired
     private PerAssessPeriodRepository perAssessPeriodRepository;
+    @Autowired
+    private PerTemplateItemRepository perTemplateItemRepository;
+    @Autowired
+    private PerContentRepository perContentRepository;
 
     private static Map<String, PerAssessPaper> assessPaperMap;
 
@@ -236,8 +240,19 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
     private SimpleAssessAnswerDetailItem convertToASSDIOTD(PerAssessAnswerDetail _detail) {
         SimpleAssessAnswerDetailItem tempItem = new SimpleAssessAnswerDetailItem();
         tempItem.setId(_detail.getId());
+        PerTemplateItem tempTemplateItem = this.perTemplateItemRepository.findOne(_detail.getItemId());
+        if (tempTemplateItem.getType().equals(CommonConstant.DIC_TEMPLATE_ITEM_TYPE_TEXT)) {
+            PerContent tempContent = this.perContentRepository.findOne(_detail.getItemValue());
+            if(tempContent == null) {
+                tempItem.setItemValue(_detail.getItemValue());
+            } else {
+                tempItem.setItemValue(tempContent.getContent());
+            }
+        } else {
+            tempItem.setItemValue(_detail.getItemValue());
+        }
+
         tempItem.setItemCode(_detail.getItemCode());
-        tempItem.setItemValue(_detail.getItemValue());
         return tempItem;
     }
 

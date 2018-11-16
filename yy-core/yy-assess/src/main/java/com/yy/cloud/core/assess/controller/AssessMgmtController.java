@@ -598,7 +598,7 @@ public class AssessMgmtController {
 	@ApiOperation(value = "分页检索题库中的试题的有效期设置")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
 			value = "Token", defaultValue = "bearer ")
-	public GeneralPagingResult<List<AssessPeriodItem>> getAssessPaperPeriodList(@PageableDefault(sort = { "assessPaperName" }, direction = Sort.Direction.ASC) Pageable _page){
+	public GeneralPagingResult<List<AssessPeriodItem>> getAssessPaperPeriodList(@PageableDefault(sort = { "name" }, direction = Sort.Direction.ASC) Pageable _page){
 		GeneralPagingResult<List<AssessPeriodItem>> result = new GeneralPagingResult<>();
 		try {
 			log.info("Going to load assess period by page [{}].", _page);

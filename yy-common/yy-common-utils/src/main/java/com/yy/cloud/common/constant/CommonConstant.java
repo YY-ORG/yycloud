@@ -70,6 +70,8 @@ public class CommonConstant {
     public final static Byte DIC_SCORING_LEVEL_ACCEPTABLE = 2;
     public final static Byte DIC_SCORING_LEVEL_FAILED = 3;
 
+    public final static Byte DIC_TEMPLATE_ITEM_TYPE_TEXT = 17;
+
     /**
      * 前台部门
      */
