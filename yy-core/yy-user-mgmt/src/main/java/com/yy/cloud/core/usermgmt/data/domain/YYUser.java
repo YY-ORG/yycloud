@@ -97,11 +97,11 @@ public class YYUser implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastLoginData;
 	
-	@Column(name = "CREATE_DATE", updatable = false)
+	@Column(name = "CREATE_DATE", insertable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDate;
 
-	@Column(name = "UPDATE_DATE", updatable = false)
+	@Column(name = "UPDATE_DATE", insertable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
 

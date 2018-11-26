@@ -88,7 +88,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         }*/
         PerAssessAnswer tempAnswerAA = tempAnswer;
         List<PerAssessAnswerItem> tempAnswerItemList = _answer.getAnswerList().stream().
-                map(tempTemplate -> this.packAssessAnswerItemDTO(tempTemplate, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY, tempAnswerAA)).collect(Collectors.toList());
+                map(tempTemplate -> this.packAssessAnswerItemDTO(tempTemplate, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY, tempAnswerAA, false)).collect(Collectors.toList());
         tempAnswer.setPerAssessAnswerItems(tempAnswerItemList);
 
         this.perAssessAnswerRepository.save(tempAnswer);
@@ -119,7 +119,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         PerAssessAnswer tempAnswerAA = tempAnswer;
         List<PerAssessAnswerItem> tempAnswerItemList = _answer.getAnswerList().stream()
                 .map(tempItem -> this.packAssessAnswerItemDTO(tempItem, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_SUB,
-                        tempAnswerAA)).collect(Collectors.toList());
+                        tempAnswerAA, true)).collect(Collectors.toList());
 
         List<PerAssessAnswerItem> tempItemList = this.perAssessAnswerItemRepository.save(tempAnswerItemList);
         List<String> tempResultList = tempItemList.stream().map(tempItem -> tempItem.getId()).collect(Collectors.toList());
@@ -143,12 +143,13 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         }
 
 //        this.perAssessAnswerItemRepository.delete(_subAnswerId);
-
+        AssessTemplateReq tempItemReq = _answer.getAnswerList().get(0);
+        tempItemReq.setId(_subAnswerId);
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.
                 findByAssessPaperIdAndAssessIdAndCreatorId(_answer.getAssessPaperId(), _answer.getAssessId(), _userId);
 
-        PerAssessAnswerItem tempAnswerItem = this.packAssessAnswerItemDTO(_answer.getAnswerList().get(0), CommonConstant.DIC_ASSESSANSWERITEM_TYPE_SUB,
-                tempAnswer);
+        PerAssessAnswerItem tempAnswerItem = this.packAssessAnswerItemDTO(tempItemReq, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_SUB,
+                tempAnswer, true);
 
         PerAssessAnswerItem tempItemList = this.perAssessAnswerItemRepository.save(tempAnswerItem);
 
@@ -245,7 +246,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         }
         PerAssessAnswer tempAnswerAA = tempAnswer;
         List<PerAssessAnswerItem> tempAnswerItemList = _answer.getAnswerList().stream().
-                map(tempTemplate -> this.packAssessAnswerItemDTO(tempTemplate, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY, tempAnswerAA)).collect(Collectors.toList());
+                map(tempTemplate -> this.packAssessAnswerItemDTO(tempTemplate, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY, tempAnswerAA, true)).collect(Collectors.toList());
+
         List<PerAssessAnswerItem> tempResultItemList = this.perAssessAnswerItemRepository.save(tempAnswerItemList);
 
         List<String> tempResultContent = tempResultItemList.stream().map(tempItem -> tempItem.getId()).collect(Collectors.toList());
@@ -270,9 +272,10 @@ public class DoingAssessServiceImpl implements DoingAssessService {
                 findByAssessPaperIdAndAssessIdAndCreatorId(_answer.getAssessPaperId(), _answer.getAssessId(), _userId);
 
 //        this.perAssessAnswerItemRepository.delete(_answerItemId);
-
-        PerAssessAnswerItem tempAnswerItem = this.packAssessAnswerItemDTO(_answer.getAnswerList().get(0), CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY,
-                tempAnswer);
+        AssessTemplateReq tempItemReq = _answer.getAnswerList().get(0);
+        tempItemReq.setId(_answerItemId);
+        PerAssessAnswerItem tempAnswerItem = this.packAssessAnswerItemDTO(tempItemReq, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY,
+                tempAnswer, true);
 
         PerAssessAnswerItem tempItemList = this.perAssessAnswerItemRepository.save(tempAnswerItem);
 
@@ -399,18 +402,26 @@ public class DoingAssessServiceImpl implements DoingAssessService {
      * @param _answer
      * @return
      */
-    private PerAssessAnswerItem packAssessAnswerItemDTO(AssessTemplateReq _req, Byte _type, PerAssessAnswer _answer) {
+    private PerAssessAnswerItem packAssessAnswerItemDTO(AssessTemplateReq _req, Byte _type, PerAssessAnswer _answer, Boolean _multiFlag) {
         PerAssessAnswerItem tempAnswerItem = null;
         List<PerAssessAnswerItem> tempItemList = _answer.getPerAssessAnswerItems();
-        if (tempItemList != null && tempItemList.size() > 0) {
-            for (PerAssessAnswerItem _tempItem : tempItemList) {
-                if (_tempItem.getTemplateId().equals(_req.getTemplateId())) {
-                    tempAnswerItem = _tempItem;
-                    tempAnswerItem.getPerAssessAnswerDetails().clear();
-                    break;
-                }
+        if(tempItemList == null) {
+            tempItemList = new ArrayList<>();
+            _answer.setPerAssessAnswerItems(tempItemList);
+        }
+
+        for (PerAssessAnswerItem _tempItem : tempItemList) {
+            if (!_multiFlag && _tempItem.getTemplateId().equals(_req.getTemplateId())) {
+                tempAnswerItem = _tempItem;
+                tempAnswerItem.getPerAssessAnswerDetails().clear();
+                break;
+            } else if(_multiFlag && _tempItem.getId().equals(_req.getId())) {
+                tempAnswerItem = _tempItem;
+                tempAnswerItem.getPerAssessAnswerDetails().clear();
+                break;
             }
         }
+
         if (tempAnswerItem == null) {
             tempAnswerItem = new PerAssessAnswerItem();
             tempAnswerItem.setTemplateId(_req.getTemplateId());
@@ -424,6 +435,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
                 map(tempItem -> this.packAssessAnswerDetailDTO(tempItem, tempAnswerItem2)).collect(Collectors.toList());
 
         tempAnswerItem.getPerAssessAnswerDetails().addAll(tempItemDetailList);
+        _answer.addPerAssessAnswerItem(tempAnswerItem);
 
         return tempAnswerItem;
     }

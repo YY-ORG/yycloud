@@ -38,6 +38,7 @@ public class UserMgmtConstants {
 		
 	 
 	 public final static String ACCOUNT_DEFAULTROLE = "DEFAULTROLE";
+	 public final static String ACCOUNT_KXCY_ROLE = "KYKHCY";
 	 
 	 public final static String ACCOUNT_SYSADMIN = "sysadmin";
 

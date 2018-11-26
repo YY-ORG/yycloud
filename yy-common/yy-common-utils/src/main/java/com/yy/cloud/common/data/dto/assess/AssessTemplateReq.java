@@ -17,6 +17,7 @@ import java.util.List;
 @Data
 public class AssessTemplateReq implements Serializable {
     private static final long serialVersionUID = 3190799465073233215L;
+    private String id;
     private String templateId;
     private Short seqNo;
     private List<AssessTIItemReq> itemList;

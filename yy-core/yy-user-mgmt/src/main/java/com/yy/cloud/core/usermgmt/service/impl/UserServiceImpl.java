@@ -117,16 +117,23 @@ public class UserServiceImpl implements UserService {
         /**
          * 设置默认角色
          */
-        YYRole yyrole=foxRoleRepository.findOneByRoleName(UserMgmtConstants.ACCOUNT_DEFAULTROLE);
-        YYUserRole foxUserRole = new YYUserRole();
-        foxUserRole.setRoleId(yyrole.getId());
-        foxUserRole.setUserId(foxUser.getId());
-        foxUserRoleRepository.save(foxUserRole);
+        List<String> tempRoleList = new ArrayList<>();
+        tempRoleList.add(UserMgmtConstants.ACCOUNT_DEFAULTROLE);
+        tempRoleList.add(UserMgmtConstants.ACCOUNT_KXCY_ROLE);
+
+        List<YYRole> yyroleList=foxRoleRepository.findByCodeIn(tempRoleList);
+        for(YYRole tempRole : yyroleList){
+            YYUserRole foxUserRole = new YYUserRole();
+            foxUserRole.setRoleId(tempRole.getId());
+            foxUserRole.setUserId(foxUser.getId());
+            foxUserRoleRepository.save(foxUserRole);
+        }
+
         return foxUser.getId();
     }
     
     @Override
-    public GeneralContentResult<List<com.yy.cloud.common.data.otd.usermgmt.OrganizationItem>> findAllorgnazation(){
+    public GeneralContentResult<List<OrganizationItem>> findAllorgnazation(){
     	GeneralContentResult<List<OrganizationItem>> reslut = new GeneralContentResult<List<OrganizationItem>>();
     	
     	List<OrganizationItem> orglis= new ArrayList<OrganizationItem>();
@@ -270,7 +277,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName) {
 		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
-				Sort.Direction.DESC, "createDate");
+				Sort.Direction.ASC, "loginName");
 
 		UserDetailsItem userDetailsItem = securityService.getCurrentUser();
 		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
@@ -352,7 +359,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserItem> listNonOrganizationMembers(PageInfo _pageInfo) {
         PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
-                Sort.Direction.DESC, "createDate");
+                Sort.Direction.ASC, "loginName");
         Page<String> userIds = foxUserOrganizationRepository.findNonOrganizationUserIds(pageRequest);
 
         List<UserItem> userItems = new ArrayList<>();
@@ -370,7 +377,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
 	public List<UserDetailsItem> listUsersInOrganization(String _organizationId, PageInfo _pageInfo) {
-		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize());
+		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
+                Sort.Direction.ASC, "loginName");
 
 		UserDetailsItem userDetailsItem = securityService.getCurrentUser();
 		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
