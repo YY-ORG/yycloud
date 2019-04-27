@@ -9,9 +9,7 @@
 
 package com.yy.cloud.api.admin.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,72 +42,50 @@ public class SysBaseServiceImpl implements SysBaseService {
 	public List<SysDic> getAllSysdictionary() {
 		log.debug("Going to retrieve all of the dics...");
 		
-		List<SysDic> tempList = new ArrayList<SysDic>();
-		
 		Collection<SystemDictionary> tempCol = this.sysBaseClient.findSysDicAll().getContent();
-		if (tempCol == null || tempCol.isEmpty()) {
-			return tempList;
-		}
-		for (SystemDictionary tempDic : tempCol) {
-			SysDic tempItem = new SysDic();
-			tempItem.setCode(tempDic.getValue());
-			tempItem.setValue(tempDic.getCode());
-			tempItem.setDisplayValue(tempDic.getText());
-			tempItem.setField(tempDic.getField());
-			tempItem.setOwner(tempDic.getOwner());
-			
-			tempList.add(tempItem);
-		}
-
-		return tempList;
+		return this.convertToSysDic(tempCol);
 	}
 
 	@Override
 	public List<SysDic> getSysdictionaryByOwner(String _owner) {
-
-		List<SysDic> tempList = new ArrayList<SysDic>();
-		
 		Collection<SystemDictionary> tempCol = this.sysBaseClient.findByOwner(_owner).getContent();
-		
-		if (tempCol == null || tempCol.isEmpty()) {
-			return tempList;
-		}
-		for (SystemDictionary tempDic : tempCol) {
-			SysDic tempItem = new SysDic();
-			tempItem.setCode(tempDic.getValue());
-			tempItem.setValue(tempDic.getCode());
-			tempItem.setDisplayValue(tempDic.getText());
-			tempItem.setField(tempDic.getField());
-			tempItem.setOwner(tempDic.getOwner());
-			
-			tempList.add(tempItem);
-		}
-
-		return tempList;
+		return this.convertToSysDic(tempCol);
 	}
 
 	@Override
 	public List<SysDic> getSysdictionaryByOwnerAndField(String _owner, String _field) {
 		log.info("Going to invoke sysbase to retrieve {}-{} 's dics.", _owner, _field);
-		List<SysDic> tempList = new ArrayList<SysDic>();
-		
+
 		Collection<SystemDictionary> tempCol = this.sysBaseClient.findByOwnerAndField(_owner, _field).getContent();
-		
-		if (tempCol == null || tempCol.isEmpty()) {
+		return this.convertToSysDic(tempCol);
+	}
+
+	private List<SysDic> convertToSysDic(Collection<SystemDictionary> _col) {
+		List<SysDic> tempList = new ArrayList<SysDic>();
+		if (_col == null || _col.isEmpty()) {
 			log.debug("The result is empty!");
 			return tempList;
 		}
-		for (SystemDictionary tempDic : tempCol) {
+		for (SystemDictionary tempDic : _col) {
 			SysDic tempItem = new SysDic();
 			tempItem.setCode(tempDic.getValue());
 			tempItem.setValue(tempDic.getCode());
 			tempItem.setDisplayValue(tempDic.getText());
 			tempItem.setField(tempDic.getField());
 			tempItem.setOwner(tempDic.getOwner());
-			
+
 			tempList.add(tempItem);
 		}
-
+		Collections.sort(tempList, new Comparator<SysDic>() {
+			@Override
+			public int compare(SysDic o1, SysDic o2) {
+				int i = Integer.parseInt(o1.getValue());
+				int j = Integer.parseInt(o2.getValue());
+				if (i > j) return 1;
+				if (i < j) return -1;
+				return 0;
+			}
+		});
 		return tempList;
 	}
 
@@ -135,5 +111,4 @@ public class SysBaseServiceImpl implements SysBaseService {
 		
 		return tempItem;
 	}
-
 }

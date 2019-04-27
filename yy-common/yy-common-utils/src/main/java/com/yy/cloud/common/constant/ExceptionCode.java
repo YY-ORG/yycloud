@@ -34,5 +34,11 @@ public final class ExceptionCode {
         EXCEPTION_MSG.put(ResultCode.FILE_UPLOAD_ERROR, "上传文件过程中出现异常，请稍后重新选择小于1GB的文件上传！");
         EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_PERIOD_GET_FAILED, "获取考卷的有效期设置失败！");
         EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_PERIOD_UPDATE_FAILED, "更新考卷的有效期设置失败！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_EX_ENDED_ALREADY, "该考核填报时间已过！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_EX_NOT_STARTED, "该考核还未开始！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_SC_NOT_STARTED, "该考核还未开始审核！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_SC_ENDED_ALREADY, "该考核审核期已过！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_AU_NOT_STARTED, "该考核复核期还未到！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_AU_ENDED_ALREADY, "该考核复核期已过！");
     }
 }

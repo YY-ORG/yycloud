@@ -324,6 +324,13 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         }
         PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.findByAssessPaperIdAndAssessIdAndCreatorId(
                 _answer.getAssessPaperId(), _answer.getAssessId(), _userId);
+        if (tempAnswer == null) {
+            tempAnswer = new PerAssessAnswer();
+            tempAnswer.setAssessId(_answer.getAssessId());
+            tempAnswer.setAssessPaperId(_answer.getAssessPaperId());
+            tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_MULTIANSWERS);
+            tempAnswer.setCreatorId(_userId);
+        }
         tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DONE);
         this.perAssessAnswerRepository.save(tempAnswer);
         this.perAssessAnswerRepository.flush();
