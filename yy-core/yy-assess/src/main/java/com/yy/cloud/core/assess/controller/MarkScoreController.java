@@ -147,7 +147,7 @@ public class MarkScoreController {
                 throw new YYException(ResultCode.ACCESS_LIMITED);
             boolean tempFlag = false;
             for(RoleItem tempItem : tempRuleList){
-                if(tempItem.getCode().equals(SecurityConstant.ROLE_MARK_SCORE)){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_MARK_SCORE) || tempItem.getCode().equals(SecurityConstant.ROLE_AUDIT_SCORE)){
                     tempFlag = true;
                     break;
                 }

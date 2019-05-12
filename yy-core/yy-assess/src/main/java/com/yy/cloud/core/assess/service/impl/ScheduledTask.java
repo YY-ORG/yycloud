@@ -100,9 +100,10 @@ public class ScheduledTask {
                             LocalDate startDate = tempPeriod.getScEnd().toLocalDateTime().toLocalDate();
                             LocalDate endDate = startDate.plusDays(5);
 
-                            if (currentDate.isAfter(startDate) && startDate.isBefore(endDate)) {
+                            if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
                                 try {
                                     markedScoreService.submitAssessPaperScoring(item.getCreatorId(), item.getAssessPaperId(), "sysauto");
+                                    log.info("System auto score [{}]'s [{}] paper.", item.getCreatorId(), item.getAssessPaperId());
                                 } catch (YYException ex) {
                                     log.info("The User [{}]'s [{}] assess paper has been scoringed already.", item.getCreatorId(), item.getAssessPaperId());
                                 } catch (Exception e) {
@@ -134,9 +135,10 @@ public class ScheduledTask {
                             LocalDate startDate = tempPeriod.getAuEnd().toLocalDateTime().toLocalDate();
                             LocalDate endDate = startDate.plusDays(5);
 
-                            if (currentDate.isAfter(startDate) && startDate.isBefore(endDate)) {
+                            if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
                                 try {
                                     markedScoreService.submitAssessPaperAuditScore(item.getCreatorId(), item.getAssessPaperId(), "sysauto", CommonConstant.DIC_SCORING_LEVEL_FAILED);
+                                    log.info("System auto audit [{}]'s [{}] paper.", item.getCreatorId(), item.getAssessPaperId());
                                 } catch (YYException ex) {
                                     log.info("The User [{}]'s [{}] assess paper has been scoringed already.", item.getCreatorId(), item.getAssessPaperId());
                                 } catch (Exception e) {

@@ -512,6 +512,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         }
         int tempTotalCount = 0;
         int tempDoneCount = 0;
+        int tempMarkedCount = 0;
+        int tempAuditedCount = 0;
         List<SimpleAssessGroupAnswerItem> tempGrouAnswerItemList = new ArrayList<>();
         List<PerAspProcessOverview> answerCountList = this.perAspProcessOverviewRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
         for (PerAPACCount tempItem : orgCountList) {
@@ -530,13 +532,19 @@ public class DoingAssessServiceImpl implements DoingAssessService {
                 if (tempOverViewItem.getCategoryId().equals(tempItem.getGroupId())) {//如果题做过，则会在记录表中存在记录，重设未做数量
                     tempGroupItem.setUnstartedCount(tempItem.getTotalCount() - tempOverViewItem.getCompletedCount());
                     tempGroupItem.setDoneCount(tempOverViewItem.getCompletedCount());
+                    tempGroupItem.setMarkedCount(tempOverViewItem.getMarkedCount());
+                    tempGroupItem.setAuditedCount(tempOverViewItem.getAuditCount());
                     tempDoneCount += tempOverViewItem.getCompletedCount();
+                    tempMarkedCount += tempOverViewItem.getMarkedCount();
+                    tempAuditedCount += tempOverViewItem.getAuditCount();
                 }
             }
             tempGrouAnswerItemList.add(tempGroupItem);
         }
         tempPaperAnswerItem.setUnstartedCount(tempTotalCount - tempDoneCount);
         tempPaperAnswerItem.setDoneCount(tempDoneCount);
+        tempPaperAnswerItem.setMarkedCount(tempMarkedCount);
+        tempPaperAnswerItem.setAuditedCount(tempAuditedCount);
         tempPaperAnswerItem.setTotalCount(tempTotalCount);
         tempPaperAnswerItem.setGroupAnswerItemList(tempGrouAnswerItemList);
 
