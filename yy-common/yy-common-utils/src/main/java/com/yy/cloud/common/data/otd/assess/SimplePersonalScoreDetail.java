@@ -22,5 +22,7 @@ public class SimplePersonalScoreDetail implements Serializable {
     private String categoryName;
     private BigDecimal totalScore;
     private BigDecimal scoringRatio;
+    private BigDecimal scoringThreshold;
+    private BigDecimal realTotalScore;
     private List<SimplePersonalAnswerScoreItem> itemList;
 }

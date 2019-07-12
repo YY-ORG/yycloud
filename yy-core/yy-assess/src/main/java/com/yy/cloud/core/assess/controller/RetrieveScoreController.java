@@ -4,6 +4,7 @@ import com.yy.cloud.common.constant.ExceptionCode;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
+import com.yy.cloud.common.data.otd.assess.SimplePersonScore;
 import com.yy.cloud.common.data.otd.assess.SimplePersonalScoreDetail;
 import com.yy.cloud.common.data.otd.assess.SimpleRankingItem;
 import com.yy.cloud.common.utils.YYException;
@@ -42,9 +43,9 @@ public class RetrieveScoreController {
     @ApiOperation(value = "按照分组获取某个用户某个试卷的评分详情")
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
-    public GeneralContentResult<List<SimplePersonalScoreDetail>> getPersoanlAnswerScoreList(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
-                                                                                      @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam(value = "_userId", required = false) String _userId){
-        GeneralContentResult<List<SimplePersonalScoreDetail>> result  = new GeneralContentResult<>();
+    public GeneralContentResult<SimplePersonScore> getPersoanlAnswerScoreList(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                                                              @ApiParam(value = "做题人的ID, 为空则表示当前用户") @RequestParam(value = "_userId", required = false) String _userId){
+        GeneralContentResult<SimplePersonScore> result  = new GeneralContentResult<>();
 
         try {
             result = this.retrieveScoreService.getPersoanlAnswerScoreList(_userId, _assessPaperId);

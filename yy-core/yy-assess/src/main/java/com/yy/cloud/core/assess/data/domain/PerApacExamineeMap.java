@@ -41,6 +41,12 @@ public class PerApacExamineeMap implements Serializable {
 	@Column(name="MARKED_SCORE")
 	private BigDecimal markedScore = BigDecimal.ZERO;
 
+	@Column(name="R_MARKED_SCORE")
+	private BigDecimal rMarkedScore;
+
+	@Column(name="R_AUDIT_SCORE")
+	private BigDecimal rAuditScore;
+
 	private String marker;
 
 	private Byte status;
@@ -113,6 +119,22 @@ public class PerApacExamineeMap implements Serializable {
 
 	public void setMarkedScore(BigDecimal markedScore) {
 		this.markedScore = markedScore;
+	}
+
+	public BigDecimal getrMarkedScore() {
+		return rMarkedScore;
+	}
+
+	public void setrMarkedScore(BigDecimal rMarkedScore) {
+		this.rMarkedScore = rMarkedScore;
+	}
+
+	public BigDecimal getrAuditScore() {
+		return rAuditScore;
+	}
+
+	public void setrAuditScore(BigDecimal rAuditScore) {
+		this.rAuditScore = rAuditScore;
 	}
 
 	public String getMarker() {

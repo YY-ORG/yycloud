@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yy-common-security</artifactId>
     <packaging>jar</packaging>
-    <name>YouYin Cloud - YYCloud Common Security Libary</name>
-    <description>YouYin Cloud - YYCloud Common Security Libary</description>
+    <name>YouYin Cloud - YYCloud Common Security Library</name>
+    <description>YouYin Cloud - YYCloud Common Security Library</description>
 
     <parent>
         <groupId>com.yy.cloud</groupId>

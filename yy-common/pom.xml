@@ -10,8 +10,8 @@
 
 	<artifactId>yy-common</artifactId>
 	<packaging>pom</packaging>
-	<name>YouYin Cloud - YYCloud Common Libary</name>
-	<description>YouYin Cloud - YYCloud Common Libary</description>
+	<name>YouYin Cloud - YYCloud Common Library</name>
+	<description>YouYin Cloud - YYCloud Common Library</description>
 	<url>https://www.gemii.cc</url>
 	<properties>
 		<project.uri>${project.baseUri}/../</project.uri>

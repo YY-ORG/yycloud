@@ -4,6 +4,7 @@ import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.otd.assess.SimplePersonScore;
 import com.yy.cloud.common.data.otd.assess.SimplePersonalAnswerScoreItem;
 import com.yy.cloud.common.data.otd.assess.SimplePersonalScoreDetail;
 import com.yy.cloud.common.data.otd.assess.SimpleRankingItem;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,9 +49,11 @@ public class RetrieveScoreServiceImpl implements RetrieveScoreService {
     @Autowired
     private PerAssessAnswerRepository perAssessAnswerRepository;
 
+    DateFormat sdf = new SimpleDateFormat("yyyy年度");
+
     @Override
-    public GeneralContentResult<List<SimplePersonalScoreDetail>> getPersoanlAnswerScoreList(String _userId, String _assessPaperId) throws YYException {
-        GeneralContentResult<List<SimplePersonalScoreDetail>> tempResult = new GeneralContentResult<>();
+    public GeneralContentResult<SimplePersonScore> getPersoanlAnswerScoreList(String _userId, String _assessPaperId) throws YYException {
+        GeneralContentResult<SimplePersonScore> tempResult = new GeneralContentResult<>();
         PerAssessPaperExamineeMap tempAPEMItem = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
         if(tempAPEMItem == null){
             throw new YYException(ResultCode.ASSESS_ANSWER_GET_FAILED);
@@ -56,17 +61,27 @@ public class RetrieveScoreServiceImpl implements RetrieveScoreService {
         List<PerApAcExamineeDetailItem> tempCategoryExamineeItemList = this.perApacExamineeMapRepository.getApAcExamineeDetailItemList(tempAPEMItem.getId());
         List<SimplePersonalScoreDetail> tempContent = new ArrayList<>();
         for(PerApAcExamineeDetailItem tempItem : tempCategoryExamineeItemList){
+            log.info("The Item is: [{}]", tempItem);
+            log.info("The real total score is: [{}]", tempItem.getrAuditScore());
             SimplePersonalScoreDetail tempContentItem = new SimplePersonalScoreDetail();
             tempContentItem.setCategoryId(tempItem.getApAcId());
             tempContentItem.setCategoryName(tempItem.getApAcName());
             tempContentItem.setScoringRatio(tempItem.getScoringRatio());
             tempContentItem.setTotalScore(tempItem.getAuditScore());
+            tempContentItem.setRealTotalScore(tempItem.getrAuditScore());
+            tempContentItem.setScoringThreshold(tempItem.getScoringThreshold());
             List<PerAssessAssessAnswerItem> tempAnswerItemList = this.perAssessAnswerRepository.getAssessAssessAnswerItemList(_assessPaperId, tempItem.getApAcId(), _userId);
             List<SimplePersonalAnswerScoreItem> tempItemList = tempAnswerItemList.stream().map(this::convertPAAIToSPASI).collect(Collectors.toList());
             tempContentItem.setItemList(tempItemList);
             tempContent.add(tempContentItem);
         }
-        tempResult.setResultContent(tempContent);
+        SimplePersonScore tempPersonScore = new SimplePersonScore();
+        tempPersonScore.setAssessPaperId(tempAPEMItem.getAssessPaperId());
+        tempPersonScore.setTotalScore(tempAPEMItem.getAuditScore());
+        tempPersonScore.setDetailList(tempContent);
+        String tempTitle = sdf.format(tempAPEMItem.getCreateDate());
+        tempPersonScore.setAnnualTitle(tempTitle);
+        tempResult.setResultContent(tempPersonScore);
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         return tempResult;
     }

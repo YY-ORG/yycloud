@@ -378,7 +378,6 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
     private void calculateSummaryScore(String _userId, String _assessPaperId, Boolean _maFlag, String _currentUserId, Byte _level) throws YYException {
         List<PerApacExamineeMap> tempApacExamineeMapList = this.perApacExamineeMapRepository.getApacExamineeMapItems(_assessPaperId, _userId);
         BigDecimal tempScore = BigDecimal.ZERO;
-
         PerAssessPaperExamineeMap tempPaperExamineeMap = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
         if (tempPaperExamineeMap == null) {
             tempPaperExamineeMap = new PerAssessPaperExamineeMap();
@@ -404,19 +403,22 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
                     BigDecimal tempItemScore = tempItem.getMarkedScore();
                     if (tempItemScore == null)
                         tempItemScore = BigDecimal.ZERO;
-                    tempItemScore = tempItemScore.multiply(tempRatio);
                     if (tempThreshold.compareTo(BigDecimal.ZERO) > 0) {
                         tempItemScore = tempItemScore.compareTo(tempThreshold) > 0 ? tempThreshold : tempItemScore;
                     }
+                    tempItemScore = tempItemScore.multiply(tempRatio);
+                    tempItem.setrMarkedScore(tempItemScore);
                     tempScore = tempScore.add(tempItemScore);
                 } else {
                     BigDecimal tempItemScore = tempItem.getAuditScore();
                     if (tempItemScore == null)
                         tempItemScore = BigDecimal.ZERO;
-                    tempItemScore = tempItemScore.multiply(tempRatio);
+
                     if (tempThreshold.compareTo(BigDecimal.ZERO) > 0) {
                         tempItemScore = tempItemScore.compareTo(tempThreshold) > 0 ? tempThreshold : tempItemScore;
                     }
+                    tempItemScore = tempItemScore.multiply(tempRatio);
+                    tempItem.setrAuditScore(tempItemScore);
                     tempScore = tempScore.add(tempItemScore);
                 }
                 tempItem.setPerAssessPaperExamineeMap(tempPaperExamineeMap);
@@ -518,7 +520,7 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
     private BigDecimal checkRatio(BigDecimal _ratio) throws YYException {
         if (_ratio == null)
             return BigDecimal.ONE;
-        if (_ratio.compareTo(BigDecimal.ZERO) <= 0) {
+        if (_ratio.compareTo(BigDecimal.ZERO) < 0) {
             throw new YYException(ResultCode.SCORING_RATIO_EXCEED_MIN);
         }
         if (_ratio.compareTo(BigDecimal.ONE) > 0) {

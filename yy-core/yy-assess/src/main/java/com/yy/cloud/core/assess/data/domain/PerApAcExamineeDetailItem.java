@@ -18,6 +18,8 @@ public interface PerApAcExamineeDetailItem {
     BigDecimal getScoringThreshold();
     BigDecimal getMarkedScore();
     BigDecimal getAuditScore();
+    BigDecimal getrMarkedScore();
+    BigDecimal getrAuditScore();
     String getMarker();
     String getAuditor();
 }
