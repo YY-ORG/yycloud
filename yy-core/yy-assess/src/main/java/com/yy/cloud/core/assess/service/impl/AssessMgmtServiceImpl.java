@@ -45,10 +45,10 @@ import java.util.stream.Collectors;
  * Function: TODO ADD FUNCTION. <br/>
  * Reason:	 TODO ADD REASON. <br/>
  * Date:     Sep 27, 2017 9:30:56 PM <br/>
+ *
  * @author chenxj
- * @version
- * @since JDK 1.8
  * @see
+ * @since JDK 1.8
  */
 @Slf4j
 @Service
@@ -221,6 +221,9 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         List<AssessPaperItem> tempAssessPaperItemList = new ArrayList<>();
         for (PerAssessOrgMap tempItem : tempAssessOrgMapList) {
             PerAssessPaper tempPaper = tempItem.getPerAssessPaper();
+            if (tempPaper.getStatus() != CommonConstant.DIC_GLOBAL_STATUS_ENABLE) {
+                continue;
+            }
             AssessPaperItem tempAssessPaperItem = new AssessPaperItem();
             tempAssessPaperItem.setId(tempPaper.getId());
             tempAssessPaperItem.setCode(tempPaper.getCode());
@@ -988,7 +991,8 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
     public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperList(Pageable _page) {
         Page<PerAssessPaper> tempPAPPage = this.perAssessPaperRepository.findAll(_page);
         log.info("The Paper page is: [{}].", tempPAPPage);
-        List<SimpleAssessPaperItem> tempSAPI = tempPAPPage.getContent().stream().map(this::convertToAPIOTD).collect(Collectors.toList());
+        List<SimpleAssessPaperItem> tempSAPI = tempPAPPage.getContent().stream().filter(item -> item.getStatus() != CommonConstant.DIC_GLOBAL_STATUS_DELETED)
+                .map(this::convertToAPIOTD).collect(Collectors.toList());
         GeneralPagingResult<List<SimpleAssessPaperItem>> tempResult = new GeneralPagingResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         tempResult.setResultContent(tempSAPI);
