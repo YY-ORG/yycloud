@@ -8,6 +8,9 @@ import com.yy.cloud.common.data.PageInfo;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationProfile;
 
+/**
+ * @author chenxj
+ */
 public interface OrgnizationService {
 
 	/**
@@ -44,9 +47,10 @@ public interface OrgnizationService {
 	 *
 	 * @param _pageInfo
 	 * @param _status
+	 * @param _name
 	 * @return
 	 */
-	List<OrganizationItem> listOrganizationsByPage(PageInfo _pageInfo, Byte _status);
+	List<OrganizationItem> listOrganizationsByPage(PageInfo _pageInfo, Byte _status, String _name);
 
 	OrganizationItem findOrganizationItemById(String _organizationId);
 }

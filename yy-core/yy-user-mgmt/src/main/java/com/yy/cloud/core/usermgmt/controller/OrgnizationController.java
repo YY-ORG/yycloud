@@ -80,7 +80,7 @@ public class OrgnizationController {
 			@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ") })
 	public GeneralPagingResult<List<OrganizationItem>> findOrganizations(
 			@RequestParam(value = "status", required = false) Byte _status, @RequestParam(value = "page") Integer _page,
-			@RequestParam(value = "size") Integer _size) {
+			@RequestParam(value = "size") Integer _size, @RequestParam(value = "name") String _name) {
 		GeneralPagingResult<List<OrganizationItem>> result = new GeneralPagingResult<List<OrganizationItem>>();
 		result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
@@ -88,7 +88,7 @@ public class OrgnizationController {
 		pageInfo.setCurrentPage(_page);
 		pageInfo.setPageSize(_size);
 
-		List<OrganizationItem> organizationItems = orgnizationService.listOrganizationsByPage(pageInfo, _status);
+		List<OrganizationItem> organizationItems = orgnizationService.listOrganizationsByPage(pageInfo, _status, _name);
 
 		result.setResultContent(organizationItems);
 		result.setPageInfo(pageInfo);

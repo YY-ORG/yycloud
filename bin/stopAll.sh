@@ -1,12 +1,13 @@
-./gcbi-api-gateway.sh stop
-./gcbi-config.sh stop
-./gcbi-discovery.sh stop
-./gcbi-gate.sh stop
-./gcbi-hystrix-dashboard.sh stop
-#./gcbi-metamap.sh stop
-#./gcbi-metarep.sh stop
-./gcbi-remote.sh stop
-./gcbi-searchengine.sh stop
-#./gcbi-semrep.sh stop
-./gcbi-solr.sh stop
-./gcbi-sysbase.sh stop
+#!/bin/sh
+
+/root/yycloud/bin/base/yycloud-edgeserver.sh stop
+/root/yycloud/bin/base/yycloud-auth.sh stop
+sleep 5s
+/root/yycloud/bin/api/yycloud-adminui.sh stop
+/root/yycloud/bin/core/yycloud-assess.sh stop
+/root/yycloud/bin/core/yycloud-filesys.sh stop
+/root/yycloud/bin/core/yycloud-finance.sh stop
+/root/yycloud/bin/core/yycloud-sysbase.sh stop
+/root/yycloud/bin/core/yycloud-usermgmt.sh stop
+sleep 10s
+/root/yycloud/bin/base/yycloud-discovery.sh stop

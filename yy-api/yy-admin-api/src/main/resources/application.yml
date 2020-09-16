@@ -43,15 +43,6 @@ security:
 ---
 spring:
   profiles: development
-  redis:
-    database: 6
-    host: 15.114.102.10
-    port: 6379
-    pool:
-      max-active: 10
-      max-idle: 10
-      max-wait: -1
-      min-idle: 0
 eureka:
   client:
     serviceUrl:

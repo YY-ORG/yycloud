@@ -19,6 +19,7 @@ import java.util.List;
  * @version 
  * @since JDK 1.8
  */
+
 @Repository
 public interface YYRoleRepository extends JpaRepository<YYRole, String> {
 

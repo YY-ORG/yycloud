@@ -132,7 +132,7 @@ public class OrgnizationServiceImpl implements OrgnizationService {
 	}
 
 	@Override
-	public List<OrganizationItem> listOrganizationsByPage(PageInfo _pageInfo, Byte _status) {
+	public List<OrganizationItem> listOrganizationsByPage(PageInfo _pageInfo, Byte _status, String _name) {
 		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
 				Sort.Direction.DESC, "createDate");
 		// 后台登录用户
@@ -141,28 +141,40 @@ public class OrgnizationServiceImpl implements OrgnizationService {
 		List<RoleItem> roles = userDetailsItem.getRoles();
 		boolean isAdmin = false;
 		if (roles != null) {
-
 			for (RoleItem roleItem : roles) {
-
 				if ("系统管理员".equalsIgnoreCase(roleItem.getRoleName())) {
 					isAdmin = true;
 				}
-
 			}
 		}
 		Page<YYOrganization> YYOrganizations = null;
-		log.info(CommonConstant.LOG_DEBUG_TAG + "该用户是后台用户，查询后台机构列表，status:{}", _status);
+		log.info(CommonConstant.LOG_DEBUG_TAG + "该用户是后台用户，查询后台机构列表，status:{}, _name:{}", _status, _name);
+
 		if (isAdmin) {
 			if (null == _status) {
-				YYOrganizations = yyOrganizationRepository
-						.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
+				if(StringUtils.isBlank(_name)) {
+					YYOrganizations = yyOrganizationRepository
+							.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
+				} else {
+					YYOrganizations = yyOrganizationRepository
+							.findByStatusLessThanAndNameLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _name.trim(), pageRequest);
+				}
 			} else {
 				// 查询状态为_status的后台机构
-				YYOrganizations = yyOrganizationRepository.findByStatus(_status, pageRequest);
+				if(StringUtils.isBlank(_name)) {
+					YYOrganizations = yyOrganizationRepository.findByStatus(_status, pageRequest);
+				} else {
+					YYOrganizations = yyOrganizationRepository.findByStatusAndNameLike(_status, _name, pageRequest);
+				}
 			}
 		} else {
-			YYOrganizations = yyOrganizationRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED,
-					pageRequest);
+			if(StringUtils.isBlank(_name)) {
+				YYOrganizations = yyOrganizationRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+						pageRequest);
+			} else {
+				YYOrganizations = yyOrganizationRepository.findByStatusLessThanAndNameLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _name.trim(),
+						pageRequest);
+			}
 		}
 		
 		List<OrganizationItem> organizationItems = new ArrayList<>();
