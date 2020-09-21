@@ -14,11 +14,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.yy.cloud.core.assess.data.domain.PerAssessPaper;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ClassName:PerAssessPaperRepository <br/>
@@ -40,5 +42,25 @@ public interface PerAssessPaperRepository extends JpaRepository<PerAssessPaper, 
 
     List<PerAssessPaper> findByStatus(Byte _status);
     Page<PerAssessPaper> findByStatus(Byte _status, Pageable _page);
+
+    /**
+     * Try to find the assess paper with code and annual.
+     *
+     * @param _code
+     * @param _annual
+     * @param _status
+     * @return
+     */
+    Optional<PerAssessPaper> findByCodeAndAnnualAndStatus(String _code, Integer _annual, Byte _status);
+
+    /**
+     * Duplicate the assess paper.
+     *
+     * @param _annual
+     * @param _sourceId
+     * @param _creatorId
+     */
+    @Procedure(procedureName = "P_DUPLICATE_ASSESS_PAPER")
+    void pDuplicateAssessPaper(Integer _annual, String _sourceId, String _creatorId);
 }
 

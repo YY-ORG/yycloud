@@ -228,6 +228,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
             tempAssessPaperItem.setId(tempPaper.getId());
             tempAssessPaperItem.setCode(tempPaper.getCode());
             tempAssessPaperItem.setName(tempPaper.getName());
+            tempAssessPaperItem.setAnnual(tempPaper.getAnnual());
             tempAssessPaperItem.setStatus(tempPaper.getStatus());
             tempAssessPaperItemList.add(tempAssessPaperItem);
         }
@@ -445,6 +446,28 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempResultAssessItem.setId(newAssess.getId());
 
         tempResult.setResultContent(tempResultAssessItem);
+        return tempResult;
+    }
+
+    @Override
+    public GeneralResult copyAssessPaper(String _sourceId, Integer _destAnnual, String _creatorId) throws YYException {
+        PerAssessPaper tempAssessPaper = this.perAssessPaperRepository.findOne(_sourceId);
+        if(tempAssessPaper == null || !tempAssessPaper.getStatus().equals(CommonConstant.DIC_GLOBAL_STATUS_ENABLE)) {
+            throw new YYException(ResultCode.ASSESSPAPER_COPY_FAILED_SOURCE_ERROR);
+        }
+        Calendar calendar = Calendar.getInstance();
+        Integer tempAnnual = calendar.get(Calendar.YEAR);
+        if(_destAnnual != null && _destAnnual > tempAnnual) {
+            tempAnnual = _destAnnual;
+        }
+        Optional<PerAssessPaper> tempPaper = this.perAssessPaperRepository.findByCodeAndAnnualAndStatus(
+                tempAssessPaper.getCode(), tempAnnual, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
+        if(tempPaper.isPresent()) {
+            throw new YYException(ResultCode.ASSESSPAPER_COPY_FAILED_ANNUAL_EXISTS);
+        }
+        this.perAssessPaperRepository.pDuplicateAssessPaper(tempAnnual, _sourceId, _creatorId);
+        GeneralResult tempResult = new GeneralResult();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         return tempResult;
     }
 
@@ -884,6 +907,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
             tempASPI.setId(resultPAP.getId());
             tempASPI.setCode(resultPAP.getCode());
             tempASPI.setName(resultPAP.getName());
+            tempASPI.setAnnual(resultPAP.getAnnual());
             tempASPI.setOrgIdList(_req.getOrgIdList());
             tempASPI.setStatus(resultPAP.getStatus());
             tempASPI.setTitleList(_req.getTitleList());
@@ -912,6 +936,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
             log.info("Going to add new ASP Item for {}", _req.getId());
             tempPAP.setCode(_req.getCode());
             tempPAP.setName(_req.getName());
+            tempPAP.setAnnual(_req.getAnnual());
             tempPAP.setStatus(CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
             tempPAP.getPerAssessOrgMaps().addAll(this.packAssessPaperOrgMap(_req, tempPAP));
 
@@ -923,6 +948,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
             tempASPI.setId(resultPAP.getId());
             tempASPI.setCode(resultPAP.getCode());
             tempASPI.setName(resultPAP.getName());
+            tempASPI.setAnnual(resultPAP.getAnnual());
             tempASPI.setOrgIdList(_req.getOrgIdList());
             tempASPI.setStatus(resultPAP.getStatus());
             tempASPI.setTitleList(_req.getTitleList());
@@ -1071,6 +1097,7 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         tempItem.setCode(_pap.getCode());
         tempItem.setName(_pap.getName());
         tempItem.setStatus(_pap.getStatus());
+        tempItem.setAnnual(_pap.getAnnual());
 
         Set<String> orgSet = new TreeSet<>();
         Set<Byte> titleSet = new TreeSet<>();

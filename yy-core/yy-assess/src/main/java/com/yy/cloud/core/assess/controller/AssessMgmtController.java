@@ -328,6 +328,28 @@ public class AssessMgmtController {
 		return result;
 	}
 
+	@RequestMapping(value = "/authsec/assesspaper/copy", method = RequestMethod.GET)
+	@ApiOperation(value = "复制考卷")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralResult copyAssessPaper(@ApiParam(value = "源考卷") @RequestParam(name = "_sourceId") String _sourceId,
+																	   @ApiParam(value = "目标年份") @RequestParam(name = "_destAnnual", required = false) Integer _destAnnual) {
+		GeneralResult result = new GeneralResult();
+		try {
+			result = this.assessService.copyAssessPaper(_sourceId, _destAnnual, this.securityService.getCurrentUser().getUserId());
+
+			result.setResultCode(ResultCode.OPERATION_SUCCESS);
+		} catch (YYException ye) {
+			log.error("YYException occured: {}", ye.getCode());
+			result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+			result.setResultCode(ye.getCode());
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESSPAPER_CREATE_FAILED);
+		}
+		return result;
+	}
 
 	@RequestMapping(value = "/authsec/assesspaper", method = RequestMethod.PUT)
 	@ApiOperation(value = "更新考题考卷")

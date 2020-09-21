@@ -65,6 +65,9 @@ public class ResultCode {
 	public final static String ASSESSPAPER_PERIOD_GET_FAILED = "10007";
 	public final static String ASSESSPAPER_PERIOD_UPDATE_FAILED = "10008";
 
+	public final static String ASSESSPAPER_COPY_FAILED_SOURCE_ERROR = "10009";
+	public final static String ASSESSPAPER_COPY_FAILED_ANNUAL_EXISTS = "10010";
+
 	public final static String ASSESS_ANSWER_EX_NOT_STARTED = "10011";
 	public final static String ASSESS_ANSWER_EX_ENDED_ALREADY = "10012";
 	public final static String ASSESS_ANSWER_SC_NOT_STARTED = "10013";

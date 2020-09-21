@@ -9,7 +9,6 @@
 
 package com.yy.cloud.core.assess.service;
 
-import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
@@ -90,6 +89,17 @@ public interface AssessMgmtService {
 	public GeneralPagingResult<List<SimpleAssessItem>> getAssessListByAssessPaper(String _assessPaperId, String _groupId, Pageable _page);
 
 	public GeneralContentResult<SimpleAssessPaperItem> createAssessPaper(AssessPaperProfileReq _req) throws YYException;
+
+	/**
+	 * Copy source assess paper.
+	 *
+	 * @param _sourceId
+	 * @param _destAnnual
+	 * @param _creatorId
+	 * @return
+	 * @throws YYException
+	 */
+	public GeneralResult copyAssessPaper(String _sourceId, Integer _destAnnual, String _creatorId) throws YYException;
 
 	public GeneralContentResult<SimpleAssessPaperItem> updateAssessPaper(AssessPaperWithIDProfileReq _req) throws YYException;
 

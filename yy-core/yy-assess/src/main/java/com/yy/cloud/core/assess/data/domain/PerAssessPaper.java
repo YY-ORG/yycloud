@@ -16,6 +16,11 @@ import java.util.List;
 @Entity
 @Table(name="PER_ASSESS_PAPER")
 @NamedQuery(name="PerAssessPaper.findAll", query="SELECT p FROM PerAssessPaper p")
+@NamedStoredProcedureQuery(name = "PerAssessPaper.P_DUPLICATE_ASSESS_PAPER", procedureName = "P_DUPLICATE_ASSESS_PAPER",parameters = {
+		@StoredProcedureParameter(mode = ParameterMode.IN,name = "I_ANNUAL",type=Integer.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN,name="I_REFER_ASSESS_ID",type = String.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN,name="I_CREATOR_ID",type = String.class)
+})
 public class PerAssessPaper implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -39,6 +44,9 @@ public class PerAssessPaper implements Serializable {
 
 	@Column(name="STATUS")
 	private Byte status;
+
+	@Column(name="ANNUAL")
+	private Integer annual;
 
 	@Column(name="UPDATE_DATE", insertable = false, updatable = false)
 	private Timestamp updateDate;
@@ -101,6 +109,14 @@ public class PerAssessPaper implements Serializable {
 
 	public void setStatus(Byte status) {
 		this.status = status;
+	}
+
+	public Integer getAnnual() {
+		return annual;
+	}
+
+	public void setAnnual(Integer annual) {
+		this.annual = annual;
 	}
 
 	public Timestamp getUpdateDate() {

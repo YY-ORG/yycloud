@@ -21,9 +21,9 @@
 			</fileNamePattern>
 			<!-- keep 30 days' worth of history -->
 			<maxHistory>30</maxHistory>
-		</rollingPolicy>
+		</rollingPolicy><!--
 		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
-		</encoder>
+		</encoder>-->
 	</appender>
 
 	<springProfile name="development">

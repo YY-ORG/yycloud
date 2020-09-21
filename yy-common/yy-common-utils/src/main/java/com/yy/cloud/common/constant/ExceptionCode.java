@@ -40,5 +40,8 @@ public final class ExceptionCode {
         EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_SC_ENDED_ALREADY, "该考核审核期已过！");
         EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_AU_NOT_STARTED, "该考核复核期还未到！");
         EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_AU_ENDED_ALREADY, "该考核复核期已过！");
+
+        EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_COPY_FAILED_SOURCE_ERROR, "请选择已启用的试卷！");
+        EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_COPY_FAILED_ANNUAL_EXISTS, "要复制创建的目的年份试卷已生成，请勿重复复制！");
     }
 }

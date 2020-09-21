@@ -34,9 +34,17 @@ public class AssessPaperItem implements Serializable {
 	private static final long serialVersionUID = 7927627781438055513L;
 	private String id;
 	private String code;
+	private Integer annual;
 	private Timestamp createDate;
 	private String creatorId;
 	private String name;
 //	private List<String> orgIdList;
 	private Byte status;
+
+	public String getName() {
+		if(this.name.contains("年度")) {
+			return this.name;
+		}
+		return this.annual + "年度" + this.name;
+	}
 }

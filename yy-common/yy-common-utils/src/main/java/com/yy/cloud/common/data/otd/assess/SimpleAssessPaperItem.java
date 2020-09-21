@@ -20,7 +20,15 @@ public class SimpleAssessPaperItem implements Serializable {
     private String id;
     private String code;
     private String name;
+    private Integer annual;
     private Collection<Byte> titleList;
     private Collection<String> orgIdList;
     private Byte status;
+
+    public String getName() {
+        if(this.name.contains("年度")) {
+            return this.name;
+        }
+        return this.annual + "年度" + this.name;
+    }
 }
