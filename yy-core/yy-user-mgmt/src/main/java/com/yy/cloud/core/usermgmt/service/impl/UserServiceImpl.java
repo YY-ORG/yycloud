@@ -1,9 +1,24 @@
 package com.yy.cloud.core.usermgmt.service.impl;
 
-import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
+import com.yy.cloud.common.constant.CommonConstant;
+import com.yy.cloud.common.constant.ResultCode;
+import com.yy.cloud.common.data.GeneralContentResult;
+import com.yy.cloud.common.data.GeneralResult;
+import com.yy.cloud.common.data.PageInfo;
+import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
+import com.yy.cloud.common.data.dto.sysbase.UserProfile;
+import com.yy.cloud.common.data.otd.usermgmt.*;
+import com.yy.cloud.common.exception.NoRecordFoundException;
+import com.yy.cloud.common.service.SecurityService;
+import com.yy.cloud.common.utils.AssertHelper;
+import com.yy.cloud.common.utils.DateUtils;
+import com.yy.cloud.core.usermgmt.constant.UserMgmtConstants;
+import com.yy.cloud.core.usermgmt.data.domain.*;
+import com.yy.cloud.core.usermgmt.data.repositories.*;
+import com.yy.cloud.core.usermgmt.exception.PasswordNotMatchException;
+import com.yy.cloud.core.usermgmt.exception.UserExistException;
+import com.yy.cloud.core.usermgmt.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,39 +31,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.yy.cloud.common.constant.CommonConstant;
-import com.yy.cloud.common.constant.ResultCode;
-import com.yy.cloud.common.data.GeneralContentResult;
-import com.yy.cloud.common.data.GeneralResult;
-import com.yy.cloud.common.data.PageInfo;
-import com.yy.cloud.common.data.dto.sysbase.PasswordProfile;
-import com.yy.cloud.common.data.dto.sysbase.UserProfile;
-import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
-import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
-import com.yy.cloud.common.data.otd.usermgmt.RoleItem;
-import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
-import com.yy.cloud.common.data.otd.usermgmt.UserItem;
-import com.yy.cloud.common.exception.NoRecordFoundException;
-import com.yy.cloud.common.service.SecurityService;
-import com.yy.cloud.common.utils.AssertHelper;
-import com.yy.cloud.common.utils.DateUtils;
-import com.yy.cloud.core.usermgmt.constant.UserMgmtConstants;
-import com.yy.cloud.core.usermgmt.data.domain.YYOrganization;
-import com.yy.cloud.core.usermgmt.data.domain.YYRole;
-import com.yy.cloud.core.usermgmt.data.domain.YYUser;
-import com.yy.cloud.core.usermgmt.data.domain.YYUserInfo;
-import com.yy.cloud.core.usermgmt.data.domain.YYUserRole;
-import com.yy.cloud.core.usermgmt.data.repositories.YYOrganizationRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.YYRoleRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.YYUserInfoRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.YYUserOrganizationRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.YYUserRepository;
-import com.yy.cloud.core.usermgmt.data.repositories.YYUserRoleRepository;
-import com.yy.cloud.core.usermgmt.exception.PasswordNotMatchException;
-import com.yy.cloud.core.usermgmt.exception.UserExistException;
-import com.yy.cloud.core.usermgmt.service.UserService;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -73,15 +57,16 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 创建用户
+     *
      * @param _userProfile
      * @return
      */
     @Override
     @Transactional
     public String createUser(UserProfile _userProfile) {
-    	
-        YYUser foxUserExist = yyUserRepository.findByLoginNameAndStatusLessThan(_userProfile.getLoginName() , CommonConstant.DIC_GLOBAL_STATUS_DELETED);
-        if(null != foxUserExist){
+
+        YYUser foxUserExist = yyUserRepository.findByLoginNameAndStatusLessThan(_userProfile.getLoginName(), CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        if (null != foxUserExist) {
             log.info(CommonConstant.LOG_DEBUG_TAG + "该用户名已存在：" + _userProfile.getLoginName());
             throw new UserExistException();
         }
@@ -90,7 +75,7 @@ public class UserServiceImpl implements UserService {
         foxUser.setType(UserMgmtConstants.ACCOUNT_TYPE_PERSONAL);
         String encodedPassword = encoder.encode(_userProfile.getPassword());
         foxUser.setPassword(encodedPassword);
-        
+
         /**
          * 基本信息
          */
@@ -105,15 +90,15 @@ public class UserServiceImpl implements UserService {
         userInfo.setEmail(_userProfile.getEmail());
         userInfo.setGender(_userProfile.getGender());
         userInfo.setAddress(_userProfile.getAddress());
-        
+
         /**
          * 部门信息
          */
         userInfo.setDeptId(_userProfile.getOrgId());
-        
+
         userInfo.setUser(foxUser);
         foxUser.setUserInfo(userInfo);
-        foxUser= yyUserRepository.save(foxUser);
+        foxUser = yyUserRepository.save(foxUser);
         /**
          * 设置默认角色
          */
@@ -121,8 +106,8 @@ public class UserServiceImpl implements UserService {
         tempRoleList.add(UserMgmtConstants.ACCOUNT_DEFAULTROLE);
         tempRoleList.add(UserMgmtConstants.ACCOUNT_KXCY_ROLE);
 
-        List<YYRole> yyroleList=foxRoleRepository.findByCodeIn(tempRoleList);
-        for(YYRole tempRole : yyroleList){
+        List<YYRole> yyroleList = foxRoleRepository.findByCodeIn(tempRoleList);
+        for (YYRole tempRole : yyroleList) {
             YYUserRole foxUserRole = new YYUserRole();
             foxUserRole.setRoleId(tempRole.getId());
             foxUserRole.setUserId(foxUser.getId());
@@ -131,121 +116,121 @@ public class UserServiceImpl implements UserService {
 
         return foxUser.getId();
     }
-    
+
     @Override
-    public GeneralContentResult<List<OrganizationItem>> findAllorgnazation(){
-    	GeneralContentResult<List<OrganizationItem>> reslut = new GeneralContentResult<List<OrganizationItem>>();
-    	
-    	List<OrganizationItem> orglis= new ArrayList<OrganizationItem>();
-    	List<YYOrganization> items=yyOrganzationRepository.findAll();
-    	
-    	log.debug("The value of items is [{}]", items.size());
-    	
-    	if(items!=null && items.size()>0){
-    		for(YYOrganization yyOrganization :items){
-    			OrganizationItem org= new OrganizationItem();
-    			org.setId(yyOrganization.getId());
-    			org.setOrganizitionName(yyOrganization.getName());
-    			org.setDesc(yyOrganization.getDescription());
-    			orglis.add(org);
-    		}
-    	}
-    	
-    	reslut.setResultContent(orglis);
-    	reslut.setDetailDescription(ResultCode.OPERATION_SUCCESS);
-    	reslut.setResultCode(ResultCode.OPERATION_SUCCESS);
-    	
-    	return reslut;
+    public GeneralContentResult<List<OrganizationItem>> findAllorgnazation() {
+        GeneralContentResult<List<OrganizationItem>> reslut = new GeneralContentResult<List<OrganizationItem>>();
+
+        List<OrganizationItem> orglis = new ArrayList<OrganizationItem>();
+        List<YYOrganization> items = yyOrganzationRepository.findAll();
+
+        log.debug("The value of items is [{}]", items.size());
+
+        if (items != null && items.size() > 0) {
+            for (YYOrganization yyOrganization : items) {
+                OrganizationItem org = new OrganizationItem();
+                org.setId(yyOrganization.getId());
+                org.setOrganizitionName(yyOrganization.getName());
+                org.setDesc(yyOrganization.getDescription());
+                orglis.add(org);
+            }
+        }
+
+        reslut.setResultContent(orglis);
+        reslut.setDetailDescription(ResultCode.OPERATION_SUCCESS);
+        reslut.setResultCode(ResultCode.OPERATION_SUCCESS);
+
+        return reslut;
     }
 
     @Override
     @Transactional
-	public void modifyUser(UserProfile _userProfile) {
-			log.debug("The method modifyUser is begin");
-			YYUser yyUser = Optional.ofNullable(yyUserRepository.findOne(_userProfile.getId())).orElseThrow(
-					() -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
+    public void modifyUser(UserProfile _userProfile) {
+        log.debug("The method modifyUser is begin");
+        YYUser yyUser = Optional.ofNullable(yyUserRepository.findOne(_userProfile.getId())).orElseThrow(
+                () -> new NoRecordFoundException(String.format("user %s not found.", _userProfile.getId())));
 
-			String userId = _userProfile.getId();
-			String passwordTem=_userProfile.getPassword();
-			String password = null;
-			if(AssertHelper.notEmpty(passwordTem)){
-				password=  encoder.encode(_userProfile.getPassword());
-			}else{
-				password = yyUser.getPassword();
-			}
-			
-			Byte status = yyUser.getStatus();
-			Byte type = yyUser.getType();
-			String loginName = yyUser.getLoginName();
+        String userId = _userProfile.getId();
+        String passwordTem = _userProfile.getPassword();
+        String password = null;
+        if (AssertHelper.notEmpty(passwordTem)) {
+            password = encoder.encode(_userProfile.getPassword());
+        } else {
+            password = yyUser.getPassword();
+        }
 
-			yyUser = modelMapper.map(_userProfile, YYUser.class);
-			
-			log.debug("The value yyUser.loginName is \'"+yyUser.getLoginName()+"\'");
-			yyUser.setStatus(status);
-			yyUser.setPassword(password);
-			yyUser.setType(type);
-			yyUser.setLoginName(loginName);
-			UserDetailsItem userDetailItem = securityService.getCurrentUser();
-			log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem);
+        Byte status = yyUser.getStatus();
+        Byte type = yyUser.getType();
+        String loginName = yyUser.getLoginName();
 
-			YYUserInfo yyUserInfo = yyUserInfoRepository.findByUser(yyUser);
-			
-			log.debug(CommonConstant.LOG_DEBUG_TAG + "获取用户Info",  yyUserInfo);
-			
-			if (AssertHelper.notEmpty(_userProfile.getAddress())) {
-				yyUserInfo.setAddress(_userProfile.getAddress());
-			}
-			if (AssertHelper.notEmpty(_userProfile.getOrgId())) {
+        yyUser = modelMapper.map(_userProfile, YYUser.class);
 
-				yyUserInfo.setDeptId(_userProfile.getOrgId());
-			}
-			if (AssertHelper.notEmpty(_userProfile.getEmail())) {
-				yyUserInfo.setEmail(_userProfile.getEmail());
-			}
-			if (AssertHelper.notEmpty(_userProfile.getGender())) {
-				yyUserInfo.setGender(_userProfile.getGender());
-			}
-			if (AssertHelper.notEmpty(_userProfile.getPhone())) {
-				yyUserInfo.setPhone(_userProfile.getPhone());
-			}
-			if (AssertHelper.notEmpty(_userProfile.getAdministrativePost())) {
-				yyUserInfo.setAdministrativePost(_userProfile.getAdministrativePost());
-			}
-			if (AssertHelper.notEmpty(_userProfile.getAdministrativeRank())) {
-				yyUserInfo.setAdministrativeRank(_userProfile.getAdministrativeRank());
-			}
-			if (AssertHelper.notEmpty(_userProfile.getOccupationType())) {
-				yyUserInfo.setOccupationType(_userProfile.getOccupationType());
-			}
-			if (AssertHelper.notEmpty(_userProfile.getProfessionalTitle())) {
-				yyUserInfo.setProfessionalTitle(_userProfile.getProfessionalTitle());
-			}
-			yyUserInfo.setBirthiday( DateUtils.formatDate(_userProfile.getBirthday(), "yyyy-MM-dd") );
-			yyUserInfo.setUserName(_userProfile.getUserName());
+        log.debug("The value yyUser.loginName is \'" + yyUser.getLoginName() + "\'");
+        yyUser.setStatus(status);
+        yyUser.setPassword(password);
+        yyUser.setType(type);
+        yyUser.setLoginName(loginName);
+        UserDetailsItem userDetailItem = securityService.getCurrentUser();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户：{}", userDetailItem);
 
-			yyUserInfo.setUser(yyUser);
-			yyUser.setUserInfo(yyUserInfo);
-			yyUserRepository.save(yyUser);
-			// 绑定角色
-			if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
-				List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
-				foxUserRoleRepository.deleteInBatch(foxUserRoles);
+        YYUserInfo yyUserInfo = yyUserInfoRepository.findByUser(yyUser);
 
-				// 过滤重复的roleId
-				Set<String> roleIdSet = new HashSet<String>();
-				_userProfile.getRoles().forEach(roleProfile -> {
-					roleIdSet.add(roleProfile.getId());
-				});
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取用户Info", yyUserInfo);
 
-				roleIdSet.forEach(roleId -> {
-					YYUserRole foxUserRole = new YYUserRole();
-					foxUserRole.setRoleId(roleId);
-					foxUserRole.setUserId(userId);
-					foxUserRole.setCreateDate(new Date());
-					foxUserRoleRepository.save(foxUserRole);
-				});
-			}
-	}
+        if (AssertHelper.notEmpty(_userProfile.getAddress())) {
+            yyUserInfo.setAddress(_userProfile.getAddress());
+        }
+        if (AssertHelper.notEmpty(_userProfile.getOrgId())) {
+
+            yyUserInfo.setDeptId(_userProfile.getOrgId());
+        }
+        if (AssertHelper.notEmpty(_userProfile.getEmail())) {
+            yyUserInfo.setEmail(_userProfile.getEmail());
+        }
+        if (AssertHelper.notEmpty(_userProfile.getGender())) {
+            yyUserInfo.setGender(_userProfile.getGender());
+        }
+        if (AssertHelper.notEmpty(_userProfile.getPhone())) {
+            yyUserInfo.setPhone(_userProfile.getPhone());
+        }
+        if (AssertHelper.notEmpty(_userProfile.getAdministrativePost())) {
+            yyUserInfo.setAdministrativePost(_userProfile.getAdministrativePost());
+        }
+        if (AssertHelper.notEmpty(_userProfile.getAdministrativeRank())) {
+            yyUserInfo.setAdministrativeRank(_userProfile.getAdministrativeRank());
+        }
+        if (AssertHelper.notEmpty(_userProfile.getOccupationType())) {
+            yyUserInfo.setOccupationType(_userProfile.getOccupationType());
+        }
+        if (AssertHelper.notEmpty(_userProfile.getProfessionalTitle())) {
+            yyUserInfo.setProfessionalTitle(_userProfile.getProfessionalTitle());
+        }
+        yyUserInfo.setBirthiday(DateUtils.formatDate(_userProfile.getBirthday(), "yyyy-MM-dd"));
+        yyUserInfo.setUserName(_userProfile.getUserName());
+
+        yyUserInfo.setUser(yyUser);
+        yyUser.setUserInfo(yyUserInfo);
+        yyUserRepository.save(yyUser);
+        // 绑定角色
+        if (_userProfile.getRoles() != null && !_userProfile.getRoles().isEmpty()) {
+            List<YYUserRole> foxUserRoles = foxUserRoleRepository.findByUserId(_userProfile.getId());
+            foxUserRoleRepository.deleteInBatch(foxUserRoles);
+
+            // 过滤重复的roleId
+            Set<String> roleIdSet = new HashSet<String>();
+            _userProfile.getRoles().forEach(roleProfile -> {
+                roleIdSet.add(roleProfile.getId());
+            });
+
+            roleIdSet.forEach(roleId -> {
+                YYUserRole foxUserRole = new YYUserRole();
+                foxUserRole.setRoleId(roleId);
+                foxUserRole.setUserId(userId);
+                foxUserRole.setCreateDate(new Date());
+                foxUserRoleRepository.save(foxUserRole);
+            });
+        }
+    }
 
     @Override
     public void updateUserStatus(String _userId, Byte _status) {
@@ -275,63 +260,75 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName) {
-		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
-				Sort.Direction.ASC, "loginName");
+    public List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName, String _orgId) {
+        PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
+                Sort.Direction.ASC, "loginName");
 
-		UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
-		Page<YYUser> yyUsersPage;
-		if (StringUtils.isBlank(_userName)) {
-            yyUsersPage = yyUserRepository.findByStatusLessThanAndLoginNameIsNotLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED,UserMgmtConstants.ACCOUNT_SYSADMIN,
-					pageRequest);
-		} else {
-            yyUsersPage = yyUserRepository.findByStatusLessThanAndUserInfoUserNameLikeAndLoginNameNotLike(
-					 CommonConstant.DIC_GLOBAL_STATUS_DELETED,
-					"%" + _userName + "%", UserMgmtConstants.ACCOUNT_SYSADMIN,pageRequest);
-		}
-		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", yyUsersPage);
+        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
+        Page<YYUser> yyUsersPage;
+        if (StringUtils.isBlank(_userName)) {
+            if (StringUtils.isBlank(_orgId)) {
+                yyUsersPage = yyUserRepository.findByStatusLessThanAndLoginNameIsNotLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED, UserMgmtConstants.ACCOUNT_SYSADMIN,
+                        pageRequest);
+            } else {
+                yyUsersPage = yyUserRepository.findByStatusLessThanAndUserInfoDeptIdIsAndLoginNameIsNotLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _orgId, UserMgmtConstants.ACCOUNT_SYSADMIN,
+                        pageRequest);
+            }
+        } else {
+            if(StringUtils.isBlank(_orgId)) {
+                log.debug("Going to query user with user name[{}].", _userName);
+                yyUsersPage = yyUserRepository.findByStatusLessThanAndLoginNameContainingAndLoginNameNotLike(
+                        CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+                        _userName, UserMgmtConstants.ACCOUNT_SYSADMIN, pageRequest);
+            } else {
+                log.debug("Going to query user with user name[{}] and dept[{}].", _userName, _orgId);
+                yyUsersPage = yyUserRepository.findByStatusLessThanAndLoginNameContainingAndUserInfoDeptIdIsAndAndLoginNameNotLike(
+                        CommonConstant.DIC_GLOBAL_STATUS_DELETED,
+                        _userName, _orgId, UserMgmtConstants.ACCOUNT_SYSADMIN, pageRequest);
+            }
+        }
+        log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", yyUsersPage);
 
         List<UserDetailsItem> UserDetailsItems = yyUsersPage.getContent().stream().map(this::restructUserBean).collect(Collectors.toList());
 
         _pageInfo.setTotalPage(yyUsersPage.getTotalPages());
-		_pageInfo.setTotalRecords(new Long(yyUsersPage.getTotalElements()));
+        _pageInfo.setTotalRecords(new Long(yyUsersPage.getTotalElements()));
 
-		return UserDetailsItems;
-	}
+        return UserDetailsItems;
+    }
 
     /**
-     * 
      * @param _yyUser
      * @return
      */
-    private UserDetailsItem  restructUserBean(YYUser _yyUser){
-    	UserDetailsItem userDetailsItem= new UserDetailsItem();
-    	 userDetailsItem.setUserId(_yyUser.getId());
-         userDetailsItem.setLoginName(_yyUser.getLoginName());
-         userDetailsItem.setPassword(_yyUser.getPassword());
-         userDetailsItem.setUserName(_yyUser.getUserInfo().getUserName());
-         userDetailsItem.setEmail(_yyUser.getUserInfo().getEmail());
-         userDetailsItem.setPhone(_yyUser.getUserInfo().getPhone());
-         userDetailsItem.setStatus(_yyUser.getStatus());
-         userDetailsItem.setDescription(_yyUser.getDescription());
-         userDetailsItem.setBirthday(_yyUser.getUserInfo().getBirthiday());
-    	
-         userDetailsItem.setAdministrativePost(_yyUser.getUserInfo().getAdministrativePost());
-         userDetailsItem.setGender(_yyUser.getUserInfo().getGender());
-         userDetailsItem.setAdministrativeRank(_yyUser.getUserInfo().getAdministrativeRank());
-         userDetailsItem.setDeptId(_yyUser.getUserInfo().getDeptId());
-         userDetailsItem.setProfessionalTitle(_yyUser.getUserInfo().getProfessionalTitle());
-         userDetailsItem.setOccupationType(_yyUser.getUserInfo().getOccupationType());
+    private UserDetailsItem restructUserBean(YYUser _yyUser) {
+        UserDetailsItem userDetailsItem = new UserDetailsItem();
+        userDetailsItem.setUserId(_yyUser.getId());
+        userDetailsItem.setLoginName(_yyUser.getLoginName());
+        userDetailsItem.setPassword(_yyUser.getPassword());
+        userDetailsItem.setUserName(_yyUser.getUserInfo().getUserName());
+        userDetailsItem.setEmail(_yyUser.getUserInfo().getEmail());
+        userDetailsItem.setPhone(_yyUser.getUserInfo().getPhone());
+        userDetailsItem.setStatus(_yyUser.getStatus());
+        userDetailsItem.setDescription(_yyUser.getDescription());
+        userDetailsItem.setBirthday(_yyUser.getUserInfo().getBirthiday());
+
+        userDetailsItem.setAdministrativePost(_yyUser.getUserInfo().getAdministrativePost());
+        userDetailsItem.setGender(_yyUser.getUserInfo().getGender());
+        userDetailsItem.setAdministrativeRank(_yyUser.getUserInfo().getAdministrativeRank());
+        userDetailsItem.setDeptId(_yyUser.getUserInfo().getDeptId());
+        userDetailsItem.setProfessionalTitle(_yyUser.getUserInfo().getProfessionalTitle());
+        userDetailsItem.setOccupationType(_yyUser.getUserInfo().getOccupationType());
         // 获取每个用户的部门名称
         YYOrganization tempYYOrg = yyOrganzationRepository.findOne(_yyUser.getUserInfo().getDeptId());
-        if (tempYYOrg!=null) {
+        if (tempYYOrg != null) {
             userDetailsItem.setDeptName(tempYYOrg.getName());
         }
         // 获取用户所管理的部门
         List<YYOrganization> foxOrganizations = yyOrganzationRepository.findOrganizationByUserId(_yyUser.getId());
         List<OrganizationItem> organizations = new ArrayList<OrganizationItem>();
-        for(YYOrganization tempItem : foxOrganizations){
+        for (YYOrganization tempItem : foxOrganizations) {
             OrganizationItem orgItem = new OrganizationItem();
             orgItem.setId(tempItem.getId());
             orgItem.setDesc(tempItem.getDescription());
@@ -353,7 +350,7 @@ public class UserServiceImpl implements UserService {
             roleItems.add(roleItem);
         });
         userDetailsItem.setRoles(roleItems);
-    	return userDetailsItem;
+        return userDetailsItem;
     }
 
     @Override
@@ -376,30 +373,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-	public List<UserDetailsItem> listUsersInOrganization(String _organizationId, PageInfo _pageInfo) {
-		PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
+    public List<UserDetailsItem> listUsersInOrganization(String _organizationId, PageInfo _pageInfo) {
+        PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
                 Sort.Direction.ASC, "loginName");
 
-		UserDetailsItem userDetailsItem = securityService.getCurrentUser();
-		log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
+        UserDetailsItem userDetailsItem = securityService.getCurrentUser();
+        log.debug(CommonConstant.LOG_DEBUG_TAG + "获取当前用户信息：{}" + userDetailsItem);
 
-        Page<YYUser> yyUsersPage = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId, pageRequest);
-		log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", yyUsersPage.getTotalElements());
+        Page<YYUser> yyUsersPage = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _organizationId, pageRequest);
+        log.info(CommonConstant.LOG_DEBUG_TAG + "查询当前登录用户下所属企业的用户结果：{}", yyUsersPage.getTotalElements());
 
         List<UserDetailsItem> UserDetailsItems = yyUsersPage.getContent().stream().map(this::restructUserBean).collect(Collectors.toList());
 
-		_pageInfo.setTotalPage(yyUsersPage.getTotalPages());
-		_pageInfo.setTotalRecords(new Long(yyUsersPage.getTotalElements()));
+        _pageInfo.setTotalPage(yyUsersPage.getTotalPages());
+        _pageInfo.setTotalRecords(new Long(yyUsersPage.getTotalElements()));
 
-		return UserDetailsItems;
-	}
+        return UserDetailsItems;
+    }
 
     @Override
     public Map<String, UserDetailsItem> listUsersInOrganization(String _organizationId) {
         Map<String, UserDetailsItem> tempUserMap = new HashMap<>();
-       // List<YYUser> yyUsers = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId);
+        // List<YYUser> yyUsers = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED,_organizationId);
         List<YYUser> yyUsers = null;
-        if(_organizationId == CommonConstant.ORG_ALL)
+        if (_organizationId == CommonConstant.ORG_ALL)
             yyUsers = yyUserRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED);
         else
             yyUsers = yyUserRepository.findByStatusLessThanAndUserInfoDeptId(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _organizationId);
@@ -423,9 +420,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetailsItem loadUserByLoginName(String _loginName) {
-        YYUser yyUser = yyUserRepository.findByLoginNameAndStatusLessThan(_loginName , CommonConstant.DIC_GLOBAL_STATUS_DELETED);
-        if(yyUser==null){
-        	throw new NoRecordFoundException(String.format("user with login name %s not exist.", _loginName));
+        YYUser yyUser = yyUserRepository.findByLoginNameAndStatusLessThan(_loginName, CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+        if (yyUser == null) {
+            throw new NoRecordFoundException(String.format("user with login name %s not exist.", _loginName));
         }
         UserDetailsItem userDetailsItem = this.restructUserBean(yyUser);
 
@@ -443,27 +440,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetailsItem loadUserByLoginNameOrId(String loginNameOrId){
+    public UserDetailsItem loadUserByLoginNameOrId(String loginNameOrId) {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "根据登录名或者ID获取用户信息：{}", loginNameOrId);
-        YYUser yyUser = yyUserRepository.findByLoginNameAndStatusLessThan(loginNameOrId.trim(),CommonConstant.DIC_GLOBAL_STATUS_DELETED);
-        
+        YYUser yyUser = yyUserRepository.findByLoginNameAndStatusLessThan(loginNameOrId.trim(), CommonConstant.DIC_GLOBAL_STATUS_DELETED);
+
         log.debug(CommonConstant.LOG_DEBUG_TAG + "yyUser：{}", loginNameOrId);
-        if(null == yyUser){
+        if (null == yyUser) {
             throw new NoRecordFoundException(String.format("user %s not exist.", loginNameOrId));
         }
         UserDetailsItem userDetailsItem = this.restructUserBean(yyUser);
         return userDetailsItem;
     }
 
-    public GeneralContentResult<String> validateLoginName(String loginName){
+    public GeneralContentResult<String> validateLoginName(String loginName) {
         log.debug(CommonConstant.LOG_DEBUG_TAG + "验证登录名是否存在：{}", loginName);
         GeneralContentResult<String> generalContentResult = new GeneralContentResult<String>();
         generalContentResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         YYUser foxUser = yyUserRepository.findByLoginNameAndStatusLessThan(loginName, CommonConstant.DIC_GLOBAL_STATUS_DELETED);
-        if(null != foxUser){
+        if (null != foxUser) {
             log.debug(CommonConstant.LOG_DEBUG_TAG + "登录名已存在：{}", loginName);
             generalContentResult.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
-            generalContentResult.setResultContent("用户名 " + loginName +" 已存在");
+            generalContentResult.setResultContent("用户名 " + loginName + " 已存在");
         }
         return generalContentResult;
     }
@@ -482,11 +479,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public GeneralResult deleteUser(String id) {
-    	yyUserRepository.setStatusFor(UserMgmtConstants.STATUS_GLOBAL_DELETED, id);
-    	GeneralResult result = new GeneralResult();
-    	result.setResultCode(ResultCode.OPERATION_SUCCESS);
-    	return result;
-	}
+    @Override
+    public GeneralResult deleteUser(String id) {
+        yyUserRepository.setStatusFor(UserMgmtConstants.STATUS_GLOBAL_DELETED, id);
+        GeneralResult result = new GeneralResult();
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        return result;
+    }
 }

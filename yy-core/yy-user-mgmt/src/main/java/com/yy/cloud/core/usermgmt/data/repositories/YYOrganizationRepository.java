@@ -45,7 +45,7 @@ public interface YYOrganizationRepository extends JpaRepository<YYOrganization, 
 	 * @param pageable
 	 * @return
 	 */
-	Page<YYOrganization> findByStatusLessThanAndNameLike(Byte status, String name, Pageable pageable);
+	Page<YYOrganization> findByStatusLessThanAndNameContaining(Byte status, String name, Pageable pageable);
 
 	List<YYOrganization> findByStatusLessThan( Byte status);
 
@@ -66,7 +66,7 @@ public interface YYOrganizationRepository extends JpaRepository<YYOrganization, 
 	 * @param pageable
 	 * @return
 	 */
-	Page<YYOrganization> findByStatusAndNameLike( Byte status, String name, Pageable pageable);
+	Page<YYOrganization> findByStatusAndNameContaining(Byte status, String name, Pageable pageable);
 
 	
 	List<YYOrganization> findByNameAndStatusLessThan(String name, Byte status);

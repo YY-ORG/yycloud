@@ -179,16 +179,17 @@ public class UserController {
     })
     public GeneralPagingResult<List<UserDetailsItem>> findUsersByUserName(
             @RequestParam(value = "userName", required = false) String _userName,
+            @RequestParam(value = "orgId", required = false) String _orgId,
             @RequestParam(value = "page") Integer _page,
             @RequestParam(value = "size") Integer _size) {
-        GeneralPagingResult<List<UserDetailsItem>> result = new GeneralPagingResult<List<UserDetailsItem>>();
+        GeneralPagingResult<List<UserDetailsItem>> result = new GeneralPagingResult<>();
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
 
         PageInfo pageInfo = new PageInfo();
         pageInfo.setCurrentPage(_page);
         pageInfo.setPageSize(_size);
 
-        List<UserDetailsItem> userItems = userService.listUsersByUserName(pageInfo, _userName);
+        List<UserDetailsItem> userItems = userService.listUsersByUserName(pageInfo, _userName, _orgId);
 
         result.setResultContent(userItems);
         result.setPageInfo(pageInfo);

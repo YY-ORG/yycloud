@@ -3,8 +3,6 @@ package com.yy.cloud.core.usermgmt.service;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralResult;
 import com.yy.cloud.common.data.PageInfo;
@@ -14,7 +12,6 @@ import com.yy.cloud.common.data.otd.usermgmt.FoxUserItem;
 import com.yy.cloud.common.data.otd.usermgmt.OrganizationItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.data.otd.usermgmt.UserItem;
-import com.yy.cloud.core.usermgmt.constant.UserMgmtConstants;
 
 public interface UserService {
 
@@ -24,7 +21,7 @@ public interface UserService {
 
     List<UserItem> listUsersByPage(PageInfo _pageInfo, Byte _status);
 
-    List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName);
+    List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName, String _orgId);
 
     void modifyUser(UserProfile _userProfile);
 

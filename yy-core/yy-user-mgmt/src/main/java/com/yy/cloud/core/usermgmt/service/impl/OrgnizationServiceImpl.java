@@ -157,14 +157,14 @@ public class OrgnizationServiceImpl implements OrgnizationService {
 							.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED, pageRequest);
 				} else {
 					YYOrganizations = yyOrganizationRepository
-							.findByStatusLessThanAndNameLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _name.trim(), pageRequest);
+							.findByStatusLessThanAndNameContaining(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _name.trim(), pageRequest);
 				}
 			} else {
 				// 查询状态为_status的后台机构
 				if(StringUtils.isBlank(_name)) {
 					YYOrganizations = yyOrganizationRepository.findByStatus(_status, pageRequest);
 				} else {
-					YYOrganizations = yyOrganizationRepository.findByStatusAndNameLike(_status, _name, pageRequest);
+					YYOrganizations = yyOrganizationRepository.findByStatusAndNameContaining(_status, _name, pageRequest);
 				}
 			}
 		} else {
@@ -172,7 +172,7 @@ public class OrgnizationServiceImpl implements OrgnizationService {
 				YYOrganizations = yyOrganizationRepository.findByStatusLessThan(CommonConstant.DIC_GLOBAL_STATUS_DELETED,
 						pageRequest);
 			} else {
-				YYOrganizations = yyOrganizationRepository.findByStatusLessThanAndNameLike(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _name.trim(),
+				YYOrganizations = yyOrganizationRepository.findByStatusLessThanAndNameContaining(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _name.trim(),
 						pageRequest);
 			}
 		}
