@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 @Data
 public class AssessPaperExamineeMapItem implements Serializable {
     private static final long serialVersionUID = 228037165958467588L;
+    private String id;
     private String userId;
     private String userName;
     private Byte title;

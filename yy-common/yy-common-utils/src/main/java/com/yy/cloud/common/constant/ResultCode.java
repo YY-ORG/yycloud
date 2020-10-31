@@ -75,6 +75,12 @@ public class ResultCode {
 	public final static String ASSESS_ANSWER_AU_NOT_STARTED = "10015";
 	public final static String ASSESS_ANSWER_AU_ENDED_ALREADY = "10016";
 
+	public final static String ASSESS_ANSWER_EXAMINEE_MAP_NOT_EXISTS = "10017";
+	public final static String ASSESS_ANSWER_EXAMINEE_MAP_ORG_INVALID = "10018";
+	public final static String ASSESS_ANSWER_EXAMINEE_MAP_STATUS_INVALID = "10019";
+	public final static String ASSESS_ANSWER_EXAMINEE_MAP_STATUS_EXPIRED = "10020";
+
+
 	public final static String ACCESS_LIMITED = "999999";
 
 	public final static String SCORING_RATIO_EXCEED_MIN = "10004001";

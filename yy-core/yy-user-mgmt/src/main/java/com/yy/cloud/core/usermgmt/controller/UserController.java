@@ -71,7 +71,26 @@ public class UserController {
         result.setResultCode(ResultCode.OPERATION_SUCCESS);
         return result;
     }
-    
+    @RequestMapping(value = "/authsec/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "根据用户的名字模糊查找用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true, value = "Token", defaultValue = "bearer ")
+    })
+    public GeneralContentResult<List<String>> queryUserByUserName(
+            @RequestParam(value = "userName") String _userName) {
+        GeneralContentResult<List<String>> result = new GeneralContentResult<>();
+        List<String> userId = null;
+        try {
+            userId = userService.listUsersByName(_userName);
+        } catch (UserExistException e) {
+            result.setResultCode(ResultCode.USERMGMT_UNEXPECTED_EXCEPTION);
+            result.setDetailDescription(String.format("用户名 %s 的用户查询出错.", _userName));
+            return result;
+        }
+        result.setResultContent(userId);
+        result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        return result;
+    }
     
      /**
       * 获取部门信息

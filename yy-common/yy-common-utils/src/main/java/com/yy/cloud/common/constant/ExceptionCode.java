@@ -43,5 +43,11 @@ public final class ExceptionCode {
 
         EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_COPY_FAILED_SOURCE_ERROR, "请选择已启用的试卷！");
         EXCEPTION_MSG.put(ResultCode.ASSESSPAPER_COPY_FAILED_ANNUAL_EXISTS, "要复制创建的目的年份试卷已生成，请勿重复复制！");
+
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_EXAMINEE_MAP_NOT_EXISTS, "待打回的考核记录不存在，请重新选择可打回的考核记录！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_EXAMINEE_MAP_ORG_INVALID, "初评人员只能打回本部门的已提交的考核记录！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_EXAMINEE_MAP_STATUS_INVALID, "该考核记录状态不可打回，请重新选择可打回的考核记录！");
+        EXCEPTION_MSG.put(ResultCode.ASSESS_ANSWER_EXAMINEE_MAP_STATUS_EXPIRED, "该考核记录已复核归档，无法再次打回！");
+
     }
 }

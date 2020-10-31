@@ -25,8 +25,8 @@ import java.util.List;
  * @since JDK 1.8
  */
 public interface MarkedScoreService {
-    GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnMarkedAssessPaperListByOrg(String _orgId, Pageable _page) throws YYException;
-    GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnAuditedAssessPaperListByOrg(String _orgId, Pageable _page) throws YYException;
+    GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnMarkedAssessPaperListByOrg(String _examineeName, Integer _annual, Byte _status, String _orgId, Pageable _page) throws YYException;
+    GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnAuditedAssessPaperListByOrg(String _examineeName, Integer _annual, Byte _status, String _orgId, Pageable _page) throws YYException;
     GeneralContentResult<MarkedAssessAnswer> getUnMarkedAssessAnswer(String _userId, String _assessPaperId, String _assessId) throws YYException;
     GeneralContentResult<MarkedAssessAnswer> markScoreAssessAnswer(String _userId, String _assessPaperId, String _assessId, AssessAnswerScoringReq _req) throws YYException;
     GeneralContentResult<MarkedAssessAnswer> auditScoreAssessAnswer(String _userId, String _assessPaperId, String _assessId, AssessAnswerScoringReq _req) throws YYException;
@@ -36,4 +36,13 @@ public interface MarkedScoreService {
     GeneralPagingResult<List<ApAssessScoringItem>> getScoringAssessListForPaper(String _assessPaperId, String _categoryId, Pageable _page) throws YYException;
     GeneralResult commitScoringForApAc(String _userId, List<ApAcScoringReq> _apAcList) throws YYException;
     GeneralResult commitScoringForApAssess(String _userId, List<ApAssessScoringReq> _apAssessList) throws YYException;
+
+    /**
+     * Rollback the commit for some aspExamineeMap.
+     *
+     * @param _aspExamineeMapId
+     * @param _orgId
+     * @return
+     */
+    GeneralResult rollbackAssessPaperCommit(String _aspExamineeMapId, String _orgId) throws YYException;
 }

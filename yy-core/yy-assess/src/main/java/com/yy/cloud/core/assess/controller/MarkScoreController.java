@@ -1,9 +1,9 @@
 package com.yy.cloud.core.assess.controller;
 
+import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ExceptionCode;
 import com.yy.cloud.common.constant.ResultCode;
 import com.yy.cloud.common.constant.SecurityConstant;
-import com.yy.cloud.common.data.GeneralContent;
 import com.yy.cloud.common.data.GeneralContentResult;
 import com.yy.cloud.common.data.GeneralPagingResult;
 import com.yy.cloud.common.data.GeneralResult;
@@ -51,6 +51,9 @@ public class MarkScoreController {
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralPagingResult<List<AssessPaperExamineeMapItem>> getAssessPaperAnswerItemList(
+            @RequestParam(value = "examineeName", required = false) String _examineeName,
+            @RequestParam(value = "annual", required = false) Integer _annual,
+            @RequestParam(value = "status", required = false) Byte _status,
             @PageableDefault(sort = {"createDate"}, direction = Sort.Direction.ASC) Pageable _page
     ){
         GeneralPagingResult<List<AssessPaperExamineeMapItem>> result = new GeneralPagingResult<>();
@@ -72,7 +75,7 @@ public class MarkScoreController {
                 throw new YYException(ResultCode.ACCESS_LIMITED);
             }
             log.info("Going to get [{}] un-marked answer paper list.", tempOrgId);
-            result = this.markedScoreService.getUnMarkedAssessPaperListByOrg(tempOrgId, _page);
+            result = this.markedScoreService.getUnMarkedAssessPaperListByOrg(_examineeName, _annual, _status, tempOrgId, _page);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ye) {
             log.error("YYException occured: {}", ye.getCode());
@@ -92,6 +95,9 @@ public class MarkScoreController {
     @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
             value = "Token", defaultValue = "bearer ")
     public GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnAuditAssessPaperAnswerItemList(
+            @RequestParam(value = "examineeName", required = false) String _examineeName,
+            @RequestParam(value = "annual", required = false) Integer _annual,
+            @RequestParam(value = "status", required = false) Byte _status,
             @PageableDefault(sort = {"createDate"}, direction = Sort.Direction.ASC) Pageable _page
     ){
         GeneralPagingResult<List<AssessPaperExamineeMapItem>> result = new GeneralPagingResult<>();
@@ -112,7 +118,7 @@ public class MarkScoreController {
             if(!tempFlag){
                 throw new YYException(ResultCode.ACCESS_LIMITED);
             }
-            result = this.markedScoreService.getUnAuditedAssessPaperListByOrg(tempOrgId, _page);
+            result = this.markedScoreService.getUnAuditedAssessPaperListByOrg(_examineeName, _annual, _status, tempOrgId, _page);
             result.setResultCode(ResultCode.OPERATION_SUCCESS);
         } catch (YYException ye) {
             log.error("YYException occured: {}", ye.getCode());
@@ -254,6 +260,81 @@ public class MarkScoreController {
         return result;
     }
 
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/rollbacksubmit/{_aspExamineeMapId}", method = RequestMethod.PUT)
+    @ApiOperation(value = "打回某个用户某个卷子的提交记录")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult rollbackAspStatus(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                           @ApiParam(value = "提交记录ID") @PathVariable (value = "_aspExamineeMapId", required = true) String _aspExamineeMapId){
+        GeneralResult result = new GeneralResult();
+        try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("Going to rollback the submit of [{}]'s [{}] assess paper by [{}].", _assessPaperId, _aspExamineeMapId, tempUserId);
+            List<RoleItem> tempRoleList = this.securityService.getCurrentUser().getRoles();
+
+            if(tempRoleList == null || tempRoleList.size() == 0)
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            boolean tempFlag = false;
+            for(RoleItem tempItem : tempRoleList){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_MARK_SCORE)){
+                    tempFlag = true;
+                    break;
+                }
+            }
+            if(!tempFlag){
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            }
+            result = this.markedScoreService.rollbackAssessPaperCommit(_aspExamineeMapId, this.securityService.getCurrentUser().getDeptId());
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/rollbackmark/{_aspExamineeMapId}", method = RequestMethod.PUT)
+    @ApiOperation(value = "打回某个用户某个卷子的初评记录")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+            value = "Token", defaultValue = "bearer ")
+    public GeneralResult rollbackAspMarkStatus(@ApiParam(value = "试卷的ID") @PathVariable(value = "_assessPaperId", required = true) String _assessPaperId,
+                                           @ApiParam(value = "提交记录ID") @PathVariable (value = "_aspExamineeMapId", required = true) String _aspExamineeMapId){
+        GeneralResult result = new GeneralResult();
+        try {
+            String tempUserId = this.securityService.getCurrentUser().getUserId();
+            log.info("Going to rollback the scoring of [{}]'s [{}] assess paper by [{}].", _assessPaperId, _aspExamineeMapId, tempUserId);
+            List<RoleItem> tempRoleList = this.securityService.getCurrentUser().getRoles();
+
+            if(tempRoleList == null || tempRoleList.size() == 0)
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            boolean tempFlag = false;
+            for(RoleItem tempItem : tempRoleList){
+                if(tempItem.getCode().equals(SecurityConstant.ROLE_AUDIT_SCORE)){
+                    tempFlag = true;
+                    break;
+                }
+            }
+            if(!tempFlag){
+                throw new YYException(ResultCode.ACCESS_LIMITED);
+            }
+            result = this.markedScoreService.rollbackAssessPaperCommit(_aspExamineeMapId, CommonConstant.ORG_ALL);
+            result.setResultCode(ResultCode.OPERATION_SUCCESS);
+        } catch (YYException ye) {
+            log.error("YYException occured: {}", ye.getCode());
+            result.setDetailDescription(ExceptionCode.EXCEPTION_MSG.get(ye.getCode()));
+            result.setResultCode(ye.getCode());
+        } catch (Exception e) {
+            log.error("Unexpected Error occured", e);
+            result.setDetailDescription("Unexpected Error occured...");
+            result.setResultCode(ResultCode.ASSESS_GET_FAILED);
+        }
+        return result;
+    }
 
     @RequestMapping(value = "/authsec/assesspaper/{_assessPaperId}/markassessanswer", method = RequestMethod.POST)
     @ApiOperation(value = "提交某个用户某个卷子的答案初评总分")

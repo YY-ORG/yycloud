@@ -19,6 +19,9 @@ public interface UserService {
 
     UserItem findUserById(String _userId);
 
+
+    List<String> listUsersByName(String _name);
+
     List<UserItem> listUsersByPage(PageInfo _pageInfo, Byte _status);
 
     List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName, String _orgId);

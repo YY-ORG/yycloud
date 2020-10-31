@@ -260,6 +260,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<String> listUsersByName(String _name) {
+        if(StringUtils.isBlank(_name)) {
+            return new ArrayList<>();
+        }
+        List<YYUserInfo> tempUserInfoList = this.yyUserInfoRepository.findByUserNameLike(_name);
+        if(tempUserInfoList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return tempUserInfoList.stream().map(item -> item.getUser().getId()).collect(Collectors.toList());
+    }
+
+    @Override
     public List<UserDetailsItem> listUsersByUserName(PageInfo _pageInfo, String _userName, String _orgId) {
         PageRequest pageRequest = new PageRequest(_pageInfo.getCurrentPage(), _pageInfo.getPageSize(),
                 Sort.Direction.ASC, "loginName");

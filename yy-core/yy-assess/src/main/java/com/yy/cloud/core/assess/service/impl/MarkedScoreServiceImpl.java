@@ -1,5 +1,12 @@
 package com.yy.cloud.core.assess.service.impl;
 
+import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yy.cloud.common.clients.SecurityClient;
 import com.yy.cloud.common.constant.CommonConstant;
 import com.yy.cloud.common.constant.ResultCode;
@@ -13,15 +20,19 @@ import com.yy.cloud.common.data.dto.assess.AssessAnswerScoringReq;
 import com.yy.cloud.common.data.otd.assess.*;
 import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
 import com.yy.cloud.common.utils.YYException;
+import com.yy.cloud.core.assess.clients.UserMgmtClient;
 import com.yy.cloud.core.assess.data.domain.*;
 import com.yy.cloud.core.assess.data.repositories.*;
 import com.yy.cloud.core.assess.service.MarkedScoreService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -64,23 +75,41 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
     private PerTemplateItemRepository perTemplateItemRepository;
     @Autowired
     private PerContentRepository perContentRepository;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private UserMgmtClient userMgmtClient;
 
     private static Map<String, PerAssessPaper> assessPaperMap;
 
     @Override
-    public GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnMarkedAssessPaperListByOrg(String _orgId, Pageable _page) throws YYException {
+    public GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnMarkedAssessPaperListByOrg(
+            String _examineeName, Integer _annual, Byte _status, String _orgId, Pageable _page) throws YYException {
         List<Byte> statusList = new ArrayList<>();
-        statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_SUBMITTED);
-        statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_MARKED);
-        return this.getAssessPaperListByOrg(_orgId, statusList, _page);
+        if(_status == null || _status < 0) {
+            statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT);// Add unsubmitted status for phase2.
+            statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_SUBMITTED);
+            statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_MARKED);
+            statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_AUDITED);// Add unsubmitted status for phase2.
+        } else {
+            statusList.add(_status);
+        }
+        return this.getAssessPaperListByOrg(_examineeName, _annual, _orgId, statusList, _page);
     }
 
     @Override
-    public GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnAuditedAssessPaperListByOrg(String _orgId, Pageable _page) throws YYException {
+    public GeneralPagingResult<List<AssessPaperExamineeMapItem>> getUnAuditedAssessPaperListByOrg(
+            String _examineeName, Integer _annual, Byte _status, String _orgId, Pageable _page) throws YYException {
         List<Byte> statusList = new ArrayList<>();
-        statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_MARKED);
-        statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_AUDITED);
-        return this.getAssessPaperListByOrg(CommonConstant.ORG_ALL, statusList, _page);
+        if(_status == null || _status < 0) {
+            statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT);// Add unsubmitted status for phase2.
+            statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_SUBMITTED);// Add unsubmitted status for phase2.
+            statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_MARKED);
+            statusList.add(CommonConstant.DIC_ASSESSPAPER_STATUS_AUDITED);
+        } else {
+            statusList.add(_status);
+        }
+        return this.getAssessPaperListByOrg(_examineeName, _annual, CommonConstant.ORG_ALL, statusList, _page);
     }
 
     /**
@@ -90,17 +119,45 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
      * @param _statusList
      * @return
      */
-    private GeneralPagingResult<List<AssessPaperExamineeMapItem>> getAssessPaperListByOrg(String _orgId, List<Byte> _statusList, Pageable _page) throws YYException {
-        Page<PerAssessPaperExamineeMap> tempPAPEPage;
-        if (_orgId.equals(CommonConstant.ORG_ALL))
-            tempPAPEPage = this.perAssessPaperExamineeMapRepository.findByStatusIn(_statusList, _page);
-        else
-            tempPAPEPage = this.perAssessPaperExamineeMapRepository.findByDeptIdAndStatusIn(_orgId, _statusList, _page);
-        List<PerAssessPaperExamineeMap> tempPAPEList = tempPAPEPage.getContent();
+    private GeneralPagingResult<List<AssessPaperExamineeMapItem>> getAssessPaperListByOrg(
+            String _examineeName, Integer _annual, String _orgId, List<Byte> _statusList, Pageable _page) throws YYException {
+        log.info("The Query ExamineeName:{}, Annual:{}", _examineeName, _annual);
+        //动态条件
+        QPerAssessPaperExamineeMap tempPAPEMQuery = QPerAssessPaperExamineeMap.perAssessPaperExamineeMap;
+        //该Predicate为querydsl下的类,支持嵌套组装复杂查询条件
+        BooleanExpression predicate = tempPAPEMQuery.status.in(_statusList);
+        if(!_orgId.equals(CommonConstant.ORG_ALL)) {
+            predicate = predicate.and(tempPAPEMQuery.deptId.eq(_orgId));
+        }
+        if(StringUtils.isNotBlank(_examineeName)) {
+            GeneralContentResult<List<String>> tempUserIdList = this.userMgmtClient.getUserByUserName(_examineeName);
+            List<String> tempIdList = tempUserIdList.getResultContent();
+            if(!CollectionUtils.isEmpty(tempIdList)) {
+                log.info("Add ExamineeName QueyCOndition: {}", tempUserIdList.getResultContent().toString());
+                predicate = predicate.and(tempPAPEMQuery.creatorId.in(tempUserIdList.getResultContent()));
+            }
+        }
+        if(_annual != null && _annual > 2000) {
+            log.info("Add Annual QueyCOndition: {}", _annual);
+            predicate = predicate.and(tempPAPEMQuery.assessPaperId.in(
+                    JPAExpressions.selectFrom(QPerAssessPaper.perAssessPaper).where(
+                            QPerAssessPaper.perAssessPaper.status.eq(CommonConstant.DIC_GLOBAL_STATUS_ENABLE).and(
+                                    QPerAssessPaper.perAssessPaper.annual.eq(_annual))).select(QPerAssessPaper.perAssessPaper.id)));
+        }
+        OrderSpecifier tempOrder = new OrderSpecifier(Order.ASC, QPerAssessPaperExamineeMap.perAssessPaperExamineeMap.createDate);
+        JPAQueryFactory tempFactory = new JPAQueryFactory(this.entityManager);
+        JPAQuery<PerAssessPaperExamineeMap> tempQuery = tempFactory.select(QPerAssessPaperExamineeMap.perAssessPaperExamineeMap).from(
+                QPerAssessPaperExamineeMap.perAssessPaperExamineeMap);
+        tempQuery.where(predicate).
+        offset(_page.getOffset()).limit(_page.getPageSize())
+        .orderBy(tempOrder);
 
+        QueryResults<PerAssessPaperExamineeMap> tempQueryResult = tempQuery.fetchResults();
+
+        List<PerAssessPaperExamineeMap> tempPAPEList = tempQueryResult.getResults();
         GeneralPagingResult<List<AssessPaperExamineeMapItem>> tempResult = new GeneralPagingResult<>();
         if (tempPAPEList == null || tempPAPEList.size() == 0) {
-            log.info("There  is nobody having submitted the assess paper...");
+            log.info("There is nobody having submitted the assess paper...");
             PageInfo _pageInfo = new PageInfo();
             _pageInfo.setCurrentPage(_page.getPageNumber());
             _pageInfo.setPageSize(_page.getPageSize());
@@ -110,26 +167,25 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
             tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
             return tempResult;
         }
-//        GeneralContentResult<Map<String, UserDetailsItem>> tempUserMapResult = this.securityClient.getAllMembersInOrganization(_orgId);
-//
-//        if(!tempUserMapResult.getResultCode().equals(ResultCode.OPERATION_SUCCESS)){
-//            log.error("Retrieve Org Mem List failed: {}", tempUserMapResult);
-//            throw new YYException(ResultCode.ORG_USER_RETRIEVE_FAILED);
-//        }
-        //Map<String, UserDetailsItem> tempUserMap = tempUserMapResult.getResultContent();
+
         if (assessPaperMap == null) {
             assessPaperMap = new HashMap<>();
         }
         List<AssessPaperExamineeMapItem> tempResultList = new ArrayList<>();
         for (PerAssessPaperExamineeMap tempItem : tempPAPEList) {
             AssessPaperExamineeMapItem tempAPEMItem = new AssessPaperExamineeMapItem();
+            tempAPEMItem.setId(tempItem.getId());
             tempAPEMItem.setAssessPaperId(tempItem.getAssessPaperId());
             PerAssessPaper tempAssessPaper = assessPaperMap.get(tempItem.getAssessPaperId());
             if (tempAssessPaper == null) {
                 tempAssessPaper = this.perAssessPaperRepository.findOne(tempItem.getAssessPaperId());
                 assessPaperMap.put(tempItem.getAssessPaperId(), tempAssessPaper);
             }
-            tempAPEMItem.setAssessPaperName(tempAssessPaper.getName());
+            if(tempAssessPaper.getName().contains("年度")) {
+                tempAPEMItem.setAssessPaperName(tempAssessPaper.getName());
+            } else {
+                tempAPEMItem.setAssessPaperName(tempAssessPaper.getAnnual() + "年度" + tempAssessPaper.getName());
+            }
             tempAPEMItem.setUserId(tempItem.getCreatorId());
 
             tempAPEMItem.setOrgId(_orgId);
@@ -155,10 +211,10 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
             tempResultList.add(tempAPEMItem);
         }
         PageInfo _pageInfo = new PageInfo();
-        _pageInfo.setCurrentPage(tempPAPEPage.getNumber());
-        _pageInfo.setPageSize(tempPAPEPage.getSize());
-        _pageInfo.setTotalPage(tempPAPEPage.getTotalPages());
-        _pageInfo.setTotalRecords(tempPAPEPage.getTotalElements());
+        _pageInfo.setCurrentPage(Long.valueOf(tempQueryResult.getOffset()).intValue());
+        _pageInfo.setPageSize(Long.valueOf(tempQueryResult.getLimit()).intValue());
+        _pageInfo.setTotalPage(Double.valueOf(Math.ceil(Double.valueOf(tempQueryResult.getTotal()) / Double.valueOf(tempQueryResult.getLimit()))).intValue());
+        _pageInfo.setTotalRecords(Long.valueOf(tempQueryResult.getTotal()));
         tempResult.setPageInfo(_pageInfo);
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         tempResult.setResultContent(tempResultList);
@@ -201,6 +257,36 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
         }
 
         return tempResult;
+    }
+
+    @Override
+    public GeneralResult rollbackAssessPaperCommit(String _aspExamineeMapId, String _orgId) throws YYException {
+        PerAssessPaperExamineeMap tempAspEM = this.perAssessPaperExamineeMapRepository.findOne(_aspExamineeMapId);
+        if(tempAspEM == null) {
+            throw new YYException(ResultCode.ASSESS_ANSWER_EXAMINEE_MAP_NOT_EXISTS);
+        }
+        GeneralResult tempResult = new GeneralResult();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        //For Auditor.
+        if(_orgId.equals(CommonConstant.ORG_ALL)) {
+            if(tempAspEM.getStatus().equals(CommonConstant.DIC_ASSESSPAPER_STATUS_AUDITED)) {
+                throw new YYException(ResultCode.ASSESS_ANSWER_EXAMINEE_MAP_STATUS_EXPIRED);
+            } else if(tempAspEM.getStatus().equals(CommonConstant.DIC_ASSESSPAPER_STATUS_MARKED)) {
+                tempAspEM.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_SUBMITTED);
+                this.perAssessPaperExamineeMapRepository.save(tempAspEM);
+                return tempResult;
+            }
+        } else { // For Marker.
+            if(!tempAspEM.getDeptId().equals(_orgId)) {
+                throw new YYException(ResultCode.ASSESS_ANSWER_EXAMINEE_MAP_ORG_INVALID);
+            }
+            if(tempAspEM.getStatus().equals(CommonConstant.DIC_ASSESSPAPER_STATUS_SUBMITTED)) {
+                tempAspEM.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT);
+                this.perAssessPaperExamineeMapRepository.save(tempAspEM);
+                return tempResult;
+            }
+        }
+        throw new YYException(ResultCode.ASSESS_ANSWER_EXAMINEE_MAP_STATUS_INVALID);
     }
 
     /**

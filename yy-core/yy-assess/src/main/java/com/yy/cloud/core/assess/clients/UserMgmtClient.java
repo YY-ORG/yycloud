@@ -110,6 +110,9 @@ public interface UserMgmtClient {
 	@RequestMapping(method = RequestMethod.GET, value = "/authsec/enterprise/currentuser")
 	GeneralContentResult<List<CommonKeyValue>> getCurrentUserEnterprises();
 
+	@RequestMapping(method = RequestMethod.GET, value = "/authsec/user")
+	GeneralContentResult<List<String>> getUserByUserName(@RequestParam(value = "userName")String _userName);
+
 	/**
 	 * 获取当前用户所属企业下的所有部门
 	 *
