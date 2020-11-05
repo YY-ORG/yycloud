@@ -624,6 +624,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     private void addAspExamineeMap(String _assessPaperId, String _userId) {
         PerAssessPaperExamineeMap tempPAPEM = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
         if (tempPAPEM == null) {
+            log.info("Going to Add ASP Examineemap item for [{}]'s [{}].", _userId, _assessPaperId);
             GeneralContentResult<UserDetailsItem> tempResult = this.userMgmtClient.findUserById(_userId);
             if(tempResult.getResultCode().equals(ResultCode.OPERATION_SUCCESS)) {
                 UserDetailsItem tempUser = tempResult.getResultContent();
