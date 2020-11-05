@@ -11,7 +11,10 @@ import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerDetailItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessAnswerItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessGroupAnswerItem;
 import com.yy.cloud.common.data.otd.assess.SimpleAssessPaperAnswerItem;
+import com.yy.cloud.common.data.otd.usermgmt.UserDetailsItem;
+import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.common.utils.YYException;
+import com.yy.cloud.core.assess.clients.UserMgmtClient;
 import com.yy.cloud.core.assess.data.domain.*;
 import com.yy.cloud.core.assess.data.repositories.*;
 import com.yy.cloud.core.assess.service.DoingAssessService;
@@ -40,6 +43,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class DoingAssessServiceImpl implements DoingAssessService {
+    @Autowired
+    private UserMgmtClient userMgmtClient;
     @Autowired
     private PerAssessAnswerRepository perAssessAnswerRepository;
     @Autowired
@@ -97,6 +102,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         this.perAssessAnswerRepository.save(tempAnswer);
         this.perAssessAnswerRepository.flush();
         this.updateAssessPaperProcessOverview(_answer.getAssessPaperId(), _answer.getGroupId(), _userId);
+        this.addAspExamineeMap(_answer.getAssessPaperId(), _userId);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         return tempResult;
@@ -338,6 +344,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         this.perAssessAnswerRepository.save(tempAnswer);
         this.perAssessAnswerRepository.flush();
         this.updateAssessPaperProcessOverview(_answer.getAssessPaperId(), _answer.getGroupId(), _userId);
+        this.addAspExamineeMap(_answer.getAssessPaperId(), _userId);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         return tempResult;
@@ -606,6 +613,30 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             return tempResult;
         } else {
             throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_ALREADY, "你已提交该考卷，无法进行更改！");
+        }
+    }
+
+    /**
+     * Add Asp ExamineeMap while add some answer.
+     *  @param _assessPaperId
+     * @param _userId
+     */
+    private void addAspExamineeMap(String _assessPaperId, String _userId) {
+        PerAssessPaperExamineeMap tempPAPEM = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
+        if (tempPAPEM == null) {
+            GeneralContentResult<UserDetailsItem> tempResult = this.userMgmtClient.findUserById(_userId);
+            if(tempResult.getResultCode().equals(ResultCode.OPERATION_SUCCESS)) {
+                UserDetailsItem tempUser = tempResult.getResultContent();
+                if(tempUser!= null) {
+                    tempPAPEM = new PerAssessPaperExamineeMap();
+                    tempPAPEM.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT);
+                    tempPAPEM.setAssessPaperId(_assessPaperId);
+                    tempPAPEM.setDeptId(tempUser.getDeptId());
+                    tempPAPEM.setTitle(tempUser.getProfessionalTitle());
+                    tempPAPEM.setCreatorId(_userId);
+                    this.perAssessPaperExamineeMapRepository.save(tempPAPEM);
+                }
+            }
         }
     }
 
