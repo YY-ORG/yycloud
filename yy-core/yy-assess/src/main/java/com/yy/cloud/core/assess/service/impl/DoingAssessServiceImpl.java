@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -63,6 +64,8 @@ public class DoingAssessServiceImpl implements DoingAssessService {
     private PerAssessPeriodRepository perAssessPeriodRepository;
     @Autowired
     private PerContentRepository perContentRepository;
+    @Autowired
+    private PerApAcMapRepository perApAcMapRepository;
 
     @Override
     @Transactional
@@ -497,9 +500,12 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
 
         PerAssessPaperExamineeMap tempPAPEM = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
+        List<PerApacExamineeMap> tempApAcEMList = null;
         if (tempPAPEM != null) {
             tempPaperAnswerItem.setStatus(tempPAPEM.getStatus());
+            tempApAcEMList = tempPAPEM.getPerApacExamineeMaps();
         } else {
+            tempApAcEMList = new ArrayList<>();
             tempPaperAnswerItem.setStatus(CommonConstant.DIC_ASSESSPAPER_STATUS_UNSUBMIT);
         }
 
@@ -537,6 +543,15 @@ public class DoingAssessServiceImpl implements DoingAssessService {
                     tempDoneCount += tempOverViewItem.getCompletedCount();
                     tempMarkedCount += tempOverViewItem.getMarkedCount();
                     tempAuditedCount += tempOverViewItem.getAuditCount();
+                }
+            }
+            if(!CollectionUtils.isEmpty(tempApAcEMList)) {
+                for(PerApacExamineeMap tempApAcItem : tempApAcEMList) {
+                    PerApAcMap tempAp = this.perApAcMapRepository.findOne(tempApAcItem.getApAcMapId());
+                    if(tempAp.getAssessCategoryId().equals(tempItem.getGroupId())) {
+                        tempGroupItem.setMarkedScore(tempApAcItem.getrMarkedScore());
+                        tempGroupItem.setAuditScore(tempApAcItem.getrAuditScore());
+                    }
                 }
             }
             tempGrouAnswerItemList.add(tempGroupItem);

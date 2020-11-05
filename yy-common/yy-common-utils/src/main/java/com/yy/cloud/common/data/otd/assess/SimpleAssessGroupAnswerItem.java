@@ -3,6 +3,7 @@ package com.yy.cloud.common.data.otd.assess;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Function: TODO ADD FUNCTION. <br/>
@@ -25,4 +26,6 @@ public class SimpleAssessGroupAnswerItem implements Serializable {
     private Integer markedCount = 0;
     private Integer auditedCount = 0;
     private Integer totalCount = 0;
+    private BigDecimal markedScore = BigDecimal.ZERO;
+    private BigDecimal auditScore = BigDecimal.ZERO;
 }

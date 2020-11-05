@@ -1182,7 +1182,11 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
     private AssessPeriodItem convertToPeriodItem(IPerAssespaperPeriod _org) {
         AssessPeriodItem tempItem = new AssessPeriodItem();
         tempItem.setAssessPaperId(_org.getAssessPaperId());
-        tempItem.setAssessPaperName(_org.getAssessPaperName());
+        if(_org.getAssessPaperName().contains("年度")) {
+            tempItem.setAssessPaperName(_org.getAssessPaperName());
+        } else {
+            tempItem.setAssessPaperName(_org.getAnnual() + "年度" + _org.getAssessPaperName());
+        }
         tempItem.setPeriodId(_org.getPeriodId());
         tempItem.setExStartTime(_org.getExStartTime());
         tempItem.setExEndTime(_org.getExEndTime());

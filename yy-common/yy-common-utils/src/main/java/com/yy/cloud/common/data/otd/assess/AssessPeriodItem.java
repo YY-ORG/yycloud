@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 @Data
 public class AssessPeriodItem {
     private String assessPaperId;
+    private Integer annual;
     private String assessPaperName;
     private String periodId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")

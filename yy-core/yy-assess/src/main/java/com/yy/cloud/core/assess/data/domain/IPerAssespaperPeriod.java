@@ -13,6 +13,7 @@ import java.sql.Timestamp;
  */
 public interface IPerAssespaperPeriod {
     String getAssessPaperId();
+    Integer getAnnual();
     String getAssessPaperName();
     String getPeriodId();
     Timestamp getExStartTime();
