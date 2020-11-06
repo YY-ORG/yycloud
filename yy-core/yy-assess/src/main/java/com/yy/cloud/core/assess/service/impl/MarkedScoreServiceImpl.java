@@ -135,6 +135,9 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
             if(!CollectionUtils.isEmpty(tempIdList)) {
                 log.info("Add ExamineeName QueyCOndition: {}", tempUserIdList.getResultContent().toString());
                 predicate = predicate.and(tempPAPEMQuery.creatorId.in(tempUserIdList.getResultContent()));
+            } else {
+                log.info("Could not found user with name: {}, so use the original examinee name.", _examineeName);
+                predicate = predicate.and(tempPAPEMQuery.creatorId.in(_examineeName));
             }
         }
         if(_annual != null && _annual > 2000) {
