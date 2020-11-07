@@ -29,6 +29,7 @@ import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import com.yy.cloud.common.service.SecurityService;
 import com.yy.cloud.common.utils.YYException;
+import com.yy.cloud.core.assess.data.domain.IPerAssessPaperAnnual;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -633,6 +634,7 @@ public class AssessMgmtController {
 		}
 		return result;
 	}
+
 	@RequestMapping(value = "/authsec/assessespaper/perioditems", method = RequestMethod.POST)
 	@ApiOperation(value = "批量更新试题的有效期设置")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
@@ -651,4 +653,22 @@ public class AssessMgmtController {
 		}
 		return result;
 	}
+
+	@RequestMapping(value = "/authsec/assessespaper/annuallist", method = RequestMethod.GET)
+	@ApiOperation(value = "检索题库中的试题的年度列表")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", dataType = "String", required = true,
+			value = "Token", defaultValue = "bearer ")
+	public GeneralContentResult<List<IPerAssessPaperAnnual>> getAssessPaperAnnualList(){
+		GeneralContentResult<List<IPerAssessPaperAnnual>> result = new GeneralContentResult<>();
+		try {
+			log.info("Going to load assess papers' annual list.");
+			result = this.assessService.getAssessPaperAnnualList();
+		} catch (Exception e) {
+			log.error("Unexpected Error occured", e);
+			result.setDetailDescription("Unexpected Error occured...");
+			result.setResultCode(ResultCode.ASSESSPAPER_PERIOD_GET_FAILED);
+		}
+		return result;
+	}
+
 }

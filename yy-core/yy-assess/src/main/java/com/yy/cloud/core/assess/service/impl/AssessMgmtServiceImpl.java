@@ -1179,6 +1179,15 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
         return tempResult;
     }
 
+    @Override
+    public GeneralContentResult<List<IPerAssessPaperAnnual>> getAssessPaperAnnualList() {
+        List<IPerAssessPaperAnnual> tempAnnualList = this.perAssessPaperRepository.findDistinctByAnnual();
+        GeneralContentResult<List<IPerAssessPaperAnnual>> tempResult = new GeneralContentResult<>();
+        tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
+        tempResult.setResultContent(tempAnnualList);
+        return tempResult;
+    }
+
     private AssessPeriodItem convertToPeriodItem(IPerAssespaperPeriod _org) {
         AssessPeriodItem tempItem = new AssessPeriodItem();
         tempItem.setAssessPaperId(_org.getAssessPaperId());

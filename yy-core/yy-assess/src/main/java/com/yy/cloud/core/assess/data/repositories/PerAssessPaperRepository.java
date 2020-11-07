@@ -10,6 +10,7 @@
 package com.yy.cloud.core.assess.data.repositories;
 
 import com.yy.cloud.core.assess.data.domain.IPerAssespaperPeriod;
+import com.yy.cloud.core.assess.data.domain.IPerAssessPaperAnnual;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -62,5 +63,8 @@ public interface PerAssessPaperRepository extends JpaRepository<PerAssessPaper, 
      */
     @Procedure(procedureName = "P_DUPLICATE_ASSESS_PAPER")
     void pDuplicateAssessPaper(Integer _annual, String _sourceId, String _creatorId);
+
+    @Query(value = "select distinct p.annual as annual from PerAssessPaper p where p.status = 1")
+    List<IPerAssessPaperAnnual> findDistinctByAnnual();
 }
 

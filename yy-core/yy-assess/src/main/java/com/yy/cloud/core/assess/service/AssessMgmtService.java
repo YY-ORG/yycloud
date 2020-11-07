@@ -28,6 +28,7 @@ import com.yy.cloud.common.data.otd.metadata.ComplexTemplateItem;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplate;
 import com.yy.cloud.common.data.otd.metadata.SimpleTemplateItem;
 import com.yy.cloud.common.utils.YYException;
+import com.yy.cloud.core.assess.data.domain.IPerAssessPaperAnnual;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -119,5 +120,7 @@ public interface AssessMgmtService {
 
 	public GeneralResult updateAssessPeriod(AssessPeriodReq _req, String _userId);
 	public GeneralResult updateAssessPeriodList(List<AssessPeriodReq> _reqList, String _userId);
+
+	public GeneralContentResult<List<IPerAssessPaperAnnual>> getAssessPaperAnnualList();
 }
 
