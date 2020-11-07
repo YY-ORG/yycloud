@@ -41,8 +41,6 @@ import java.util.List;
 @FeignClient("usermgmt")
 // @FeignClient(url = "http://localhost:9101", name = "usermgmt")
 public interface UserMgmtClient {
-
-
 	/**
 	 * updateEnterpriseStatus:更新企业状态. <br/>
 	 *
@@ -54,10 +52,6 @@ public interface UserMgmtClient {
 	@ResponseBody
 	GeneralResult updateEnterpriseStatus(@PathVariable("_tenantId") String _tenantId,
                                          @PathVariable("_status") Byte _status);
-
-
-
-
 
 	/**
 	 * updateEnterpriseAdminStatus:更新企业管理员状态. <br/>
@@ -71,7 +65,6 @@ public interface UserMgmtClient {
 	GeneralPagingResult<GeneralContent> updateEnterpriseAdminStatus(@PathVariable("_adminId") String _adminId,
                                                                     @PathVariable("_status") Byte _status);
 
-
 	/**
 	 * deleteEnterpriseAdmin:删除某个企业管理员. <br/>
 	 *
@@ -81,9 +74,6 @@ public interface UserMgmtClient {
 	@RequestMapping(method = RequestMethod.DELETE, value = "/tenant/admin/{_adminId}")
 	@ResponseBody
 	GeneralPagingResult<GeneralContent> deleteEnterpriseAdmin(@PathVariable("_adminId") String _adminId);
-
-
-
 
 	/**
 	 * 审批中心-待审批列表，根据部门ID 获取用户,返回结果中，key 为userid，value 为用户名
@@ -160,9 +150,6 @@ public interface UserMgmtClient {
   })
   public GeneralContentResult<String> createAdmUser(@RequestBody UserProfile _userProfile);
 
-
-
-
   @RequestMapping(value = "/authsec/user/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(value = "用户中心-账户管理，查询当前账户")
   @ApiImplicitParams({
@@ -175,8 +162,8 @@ public interface UserMgmtClient {
 	GeneralPagingResult<List<UserItem>> findUsers(@RequestParam(value = "status", required = false) Byte _status,
                                                   @RequestParam(value = "page") Integer _page, @RequestParam(value = "size") Integer _size);
 
-	@RequestMapping(value = "/authsec/user/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	GeneralContentResult<UserDetailsItem> findUserById(@PathVariable("user_id") String _userId);
+	@RequestMapping(value = "/authsec/users/loadById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	GeneralContentResult<UserDetailsItem> findUserById(@RequestParam("user_id") String _userId);
 
 
 	@RequestMapping(value = "/authsec/users/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
