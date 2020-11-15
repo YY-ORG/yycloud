@@ -45,6 +45,14 @@ public interface PerAssessPaperRepository extends JpaRepository<PerAssessPaper, 
     Page<PerAssessPaper> findByStatus(Byte _status, Pageable _page);
 
     /**
+     * Find By status not deleted
+     * @param _status
+     * @param _page
+     * @return
+     */
+    Page<PerAssessPaper> findByStatusIsNot(Byte _status, Pageable _page);
+
+    /**
      * Try to find the assess paper with code and annual.
      *
      * @param _code

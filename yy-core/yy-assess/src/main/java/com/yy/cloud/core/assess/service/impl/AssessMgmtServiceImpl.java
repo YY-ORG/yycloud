@@ -1015,10 +1015,9 @@ public class AssessMgmtServiceImpl implements AssessMgmtService {
 
     @Override
     public GeneralPagingResult<List<SimpleAssessPaperItem>> getAssessPaperList(Pageable _page) {
-        Page<PerAssessPaper> tempPAPPage = this.perAssessPaperRepository.findAll(_page);
+        Page<PerAssessPaper> tempPAPPage = this.perAssessPaperRepository.findByStatusIsNot(CommonConstant.DIC_GLOBAL_STATUS_DELETED, _page);
         log.info("The Paper page is: [{}].", tempPAPPage);
-        List<SimpleAssessPaperItem> tempSAPI = tempPAPPage.getContent().stream().filter(item -> item.getStatus() != CommonConstant.DIC_GLOBAL_STATUS_DELETED)
-                .map(this::convertToAPIOTD).collect(Collectors.toList());
+        List<SimpleAssessPaperItem> tempSAPI = tempPAPPage.getContent().stream().map(this::convertToAPIOTD).collect(Collectors.toList());
         GeneralPagingResult<List<SimpleAssessPaperItem>> tempResult = new GeneralPagingResult<>();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
         tempResult.setResultContent(tempSAPI);
