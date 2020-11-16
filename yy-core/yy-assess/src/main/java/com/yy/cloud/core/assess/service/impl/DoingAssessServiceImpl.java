@@ -85,7 +85,6 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             tempAnswer = new PerAssessAnswer();
             tempAnswer.setAssessId(_answer.getAssessId());
             tempAnswer.setAssessPaperId(_answer.getAssessPaperId());
-            tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DONE);
             tempAnswer.setType(CommonConstant.DIC_ASSESSANSWER_TYPE_SINGLEANSWER);
             tempAnswer.setCreatorId(_userId);
         } /*else {
@@ -99,6 +98,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
                 map(tempTemplate -> this.packAssessAnswerItemDTO(tempTemplate, CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY, tempAnswerAA, false)).collect(Collectors.toList());
         tempAnswer.setPerAssessAnswerItems(tempAnswerItemList);
 
+        tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_DONE);
         this.perAssessAnswerRepository.save(tempAnswer);
         this.perAssessAnswerRepository.flush();
         this.updateAssessPaperProcessOverview(_answer.getAssessPaperId(), _answer.getGroupId(), _userId);
