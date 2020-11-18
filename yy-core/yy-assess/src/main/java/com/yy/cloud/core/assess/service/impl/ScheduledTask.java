@@ -34,7 +34,7 @@ import java.util.List;
  * @see
  * @since JDK 1.8
  */
-@Component
+//@Component
 @Slf4j
 public class ScheduledTask {
     @Autowired
@@ -50,7 +50,7 @@ public class ScheduledTask {
     @Autowired
     private PerAssessPeriodRepository perAssessPeriodRepository;
 
-    @Scheduled(cron = "0 0 1 * * *")
+//    @Scheduled(cron = "0 0 1 * * *")
     public void autoCommitUnCompletePaper() throws InterruptedException {
         log.info("Going to auto-commit the uncompleted assess paper.");
         GeneralPagingResult<List<UserItem>> tempUserPageResult = this.userMgmtClient.findUsers(CommonConstant.DIC_GLOBAL_STATUS_ENABLE, 0, 2000);
@@ -67,7 +67,7 @@ public class ScheduledTask {
                             LocalDate startDate = tempPeriod.getDoingEnd().toLocalDateTime().toLocalDate();
                             LocalDate endDate = startDate.plusDays(5);
 
-                            if (currentDate.isAfter(startDate) && startDate.isBefore(endDate)) {
+                            if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
                                 this.doingAssessService.submitAssessPaperAnswer(tempUser.getId(), tempUser.getDeptId(), tempUser.getProfessionalTitle(), tempAssessPaperId);
                             } else {
                                 log.info("The current data is [{}], so the examinee still can submit the answer.");
@@ -85,7 +85,7 @@ public class ScheduledTask {
         });
     }
 
-    @Scheduled(cron = "0 0 2 * * *")
+//    @Scheduled(cron = "0 0 2 * * *")
     public void autoCommitUnScoringPaper() throws InterruptedException {
         log.info("Going to auto-submit the scoring.");
         List<Byte> tempStatusList = new ArrayList<>();
@@ -120,7 +120,7 @@ public class ScheduledTask {
         );
     }
 
-    @Scheduled(cron = "0 0 3 * * *")
+//    @Scheduled(cron = "0 0 3 * * *")
     public void autoCommitUnAuditPaper() throws InterruptedException {
         log.info("Going to auto-Audit the scoring.");
         List<Byte> tempStatusList = new ArrayList<>();

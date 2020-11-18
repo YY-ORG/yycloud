@@ -587,6 +587,7 @@ public class DoingAssessServiceImpl implements DoingAssessService {
 
     @Override
     public GeneralResult submitAssessPaperAnswer(String _userId, String _orgId, Byte _title, String _assessPaperId) throws YYException {
+        this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
         PerAssessOrgMap tempAssessPaper = this.perAssessOrgMapRepository.findByAssessPaperIdAndOrgIdAndTitleTypeAndStatus(_assessPaperId, _orgId, _title, CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
         if (tempAssessPaper == null) {
             throw new YYException(ResultCode.ASSESS_ANSWER_SUBMIT_NOTEXISTS, "该考核人员不在该考卷的考核人员列表中，请重新选择考卷答题！");
