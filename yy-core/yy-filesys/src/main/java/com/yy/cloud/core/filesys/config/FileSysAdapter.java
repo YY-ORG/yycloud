@@ -36,6 +36,7 @@ public class FileSysAdapter extends WebMvcConfigurerAdapter {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setLocation("/yy/tmp");
         //  单个数据大小
         factory.setMaxFileSize("1024MB");
         /// 总上传数据大小
