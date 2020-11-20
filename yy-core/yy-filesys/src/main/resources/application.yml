@@ -35,6 +35,7 @@ spring:
       enabled: true
       max-file-size: 1024MB
       max-request-size: 1024MB
+      location: /yy/tmp
     encoding:
       enabled: true
       charset: UTF-8
