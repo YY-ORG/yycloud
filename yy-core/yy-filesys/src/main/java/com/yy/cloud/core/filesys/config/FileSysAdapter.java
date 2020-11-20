@@ -29,20 +29,6 @@ public class FileSysAdapter extends WebMvcConfigurerAdapter {
                 Charset.forName("UTF-8"));
         return converter;
     }
-    /**
-     * 配置上传文件大小的配置
-     * @return
-     */
-    @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setLocation("/yy/tmp");
-        //  单个数据大小
-        factory.setMaxFileSize("1024MB");
-        /// 总上传数据大小
-        factory.setMaxRequestSize("1024MB");
-        return factory.createMultipartConfig();
-    }
 
     @Override
     public void configureMessageConverters(
