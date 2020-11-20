@@ -466,6 +466,7 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
 
     private void calculateSummaryScore(String _userId, String _assessPaperId, Boolean _maFlag, String _currentUserId, Byte _level) throws YYException {
         this.checkAssessPaperAnswerStatus(_maFlag, _assessPaperId);
+        log.info("Going to submit score user:{} -> asp:{}", _userId, _assessPaperId);
         List<PerApacExamineeMap> tempApacExamineeMapList = this.perApacExamineeMapRepository.getApacExamineeMapItems(_assessPaperId, _userId);
         BigDecimal tempScore = BigDecimal.ZERO;
         PerAssessPaperExamineeMap tempPaperExamineeMap = this.perAssessPaperExamineeMapRepository.findByAssessPaperIdAndCreatorId(_assessPaperId, _userId);
@@ -511,6 +512,9 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
                     tempItem.setrAuditScore(tempItemScore);
                     tempScore = tempScore.add(tempItemScore);
                 }
+                log.info("The apac_em:{}, marked score: {} -> {}, audited score: {} -> {}",
+                        tempItem.getId(), tempItem.getMarkedScore(), tempItem.getrMarkedScore(),
+                        tempItem.getAuditScore(), tempItem.getrAuditScore());
                 tempItem.setPerAssessPaperExamineeMap(tempPaperExamineeMap);
             }
             tempPaperExamineeMap.setPerApacExamineeMaps(tempApacExamineeMapList);
