@@ -55,7 +55,7 @@ eureka:
 spring:
   profiles: development
   jpa:
-    show-sql: false
+    show-sql: true
     database: MYSQL
     hibernate:
       ddl-auto: update
