@@ -35,10 +35,7 @@ import org.springframework.util.CollectionUtils;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -237,7 +234,8 @@ public class MarkedScoreServiceImpl implements MarkedScoreService {
                 tempItemList = tempAnswer.getPerAssessAnswerItems().stream().filter(item -> item.getType().equals(
                         CommonConstant.DIC_ASSESSANSWERITEM_TYPE_PRIMARY)).map(this::convertToMAAI).collect(Collectors.toList());
             } else {
-                tempItemList = tempAnswer.getPerAssessAnswerItems().stream().map(this::convertToMAAI).collect(Collectors.toList());
+                tempItemList = tempAnswer.getPerAssessAnswerItems().stream().sorted(Comparator.comparing(PerAssessAnswerItem::getCreateDate))
+                        .map(this::convertToMAAI).collect(Collectors.toList());
             }
             tempMarkAnswer.setId(tempAnswer.getId());
             tempMarkAnswer.setAuditComment(tempAnswer.getAuditComment());
