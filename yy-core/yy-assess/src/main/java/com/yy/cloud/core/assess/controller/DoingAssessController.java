@@ -156,7 +156,7 @@ public class DoingAssessController {
         GeneralResult result = new GeneralResult();
         try {
             String tempUserId = this.securityService.getCurrentUser().getUserId();
-            log.info("oing to delete sub answer [{}].", _subAnswerId);
+            log.info("Going to delete sub answer [{}].", _subAnswerId);
             List<String> subIdList = new ArrayList<>();
             subIdList.add(_subAnswerId);
             result = this.doingAssessService.deleteAssessSubAnswer(_userId, _assessPaperId, subIdList, tempUserId);

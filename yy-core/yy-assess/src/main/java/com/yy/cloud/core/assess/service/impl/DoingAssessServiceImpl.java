@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -224,12 +225,31 @@ public class DoingAssessServiceImpl implements DoingAssessService {
             _userId = _commitorId;
             this.checkAssessPaperAnswerStatus(_userId, _assessPaperId);
         }
-
-        this.perAssessAnswerDetailRepository.deleteByPerAssessAnswerItemIdIn(_answerItemId);
-        this.perAssessAnswerItemRepository.deleteByIdIn(_answerItemId);
+        PerAssessAnswerItem tempItem = this.perAssessAnswerItemRepository.findOne(_answerItemId.get(0));
+        if(tempItem == null) {
+            log.warn("The AssessAnswerItem wth id: {} does not exists", _answerItemId.get(0));
+        }
+        PerAssessAnswer tempAnswer = tempItem.getPerAssessAnswer();
+        for(PerAssessAnswerItem tempItem1 : tempAnswer.getPerAssessAnswerItems()) {
+            if(CollectionUtils.contains(_answerItemId.listIterator(), tempItem1.getId())) {
+                tempAnswer.removePerAssessAnswerItem(tempItem1);
+                log.info("Going to remove item: {} from answer:{}.", tempItem1.getId(), tempAnswer.getId());
+            }
+        }
+//        this.perAssessAnswerDetailRepository.deleteByPerAssessAnswerItemIdIn(_answerItemId);
+//        this.perAssessAnswerItemRepository.deleteByIdIn(_answerItemId);
 //        List<PerAssessAnswerItem> tempItems = this.perAssessAnswerItemRepository.findAll(_answerItemId);
 //        this.perAssessAnswerItemRepository.deleteInBatch(tempItems);
-
+        PerAPAAScore tempScore = this.perAssessAnswerItemRepository.getAssessAnswerScoreWithoutSomeAnswerItemIds(tempAnswer.getId(), _answerItemId);
+        if (tempScore != null) {
+            tempAnswer.setMarkedScore(tempScore.getMarkedScore());
+            tempAnswer.setAuditScore(tempScore.getAuditScore());
+            log.info("Updated AssessAnswer[{}] score to: MarkedScore: {}, AuditScore: {}", tempAnswer.getId(), tempScore.getMarkedScore(), tempScore.getAuditScore());
+        } else {
+            tempAnswer.setMarkedScore(BigDecimal.ZERO);
+            tempAnswer.setAuditScore(BigDecimal.ZERO);
+        }
+        this.perAssessAnswerRepository.save(tempAnswer);
         GeneralResult tempResult = new GeneralResult();
         tempResult.setResultCode(ResultCode.OPERATION_SUCCESS);
 
