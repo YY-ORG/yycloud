@@ -330,8 +330,15 @@ public class DoingAssessServiceImpl implements DoingAssessService {
         log.debug("This time deleted {}'s records.", _answerIdList);
         for (String _tempAnswerId : tempAssessAnswerIdList) {
             PerAssessAnswer tempAnswer = this.perAssessAnswerRepository.getOne(_tempAnswerId);
-            List<PerAssessAnswerItem> itemList = tempAnswer.getPerAssessAnswerItems();
-            if (itemList == null || itemList.size() == 0) {//如果答案删除完了，则将该题置为"未开始"
+
+            PerApAACountAndScore tempScore = this.perAssessAnswerItemRepository.getAssessAnswerScoreAmount(_tempAnswerId);
+
+            tempAnswer.setMarkedScore(tempScore.getMarkedScore() == null? BigDecimal.ZERO: tempScore.getMarkedScore());
+            tempAnswer.setAuditScore(tempScore.getAuditScore() == null? BigDecimal.ZERO: tempScore.getAuditScore());
+            log.info("Updated AssessAnswer[{}] score to: MarkedScore: {}, AuditScore: {}", tempAnswer.getId(), tempScore.getMarkedScore(), tempScore.getAuditScore());
+            this.perAssessAnswerRepository.save(tempAnswer);
+
+            if (tempScore.getItemCount() == 0) {//如果答案删除完了，则将该题置为"未开始"
                 tempAnswer.setStatus(CommonConstant.DIC_ASSESS_ANSWER_STATUS_NOT_STARTED);
             }
             PerAssessAspMap tempAssessAspMap = this.perAssessAspMapRepository.findByAssessPaperIdAndAssessIdAndStatus(_assessPaperId, tempAnswer.getAssessId(), CommonConstant.DIC_GLOBAL_STATUS_ENABLE);
