@@ -33,4 +33,10 @@ public interface PerAssessAnswerItemRepository extends JpaRepository<PerAssessAn
     @Query(value = "SELECT sum(pi.markedScore) as markedScore, sum(pi.auditScore) as auditScore FROM PerAssessAnswerItem pi " +
             " where pi.id <> :assessAnswerItemId and pi.assessAnswerId = :assessAnswerId")
     PerAPAAScore getAssessAnswerScore(@Param("assessAnswerId") String _assessAnswerId, @Param("assessAnswerItemId") String _assessAnswerItemId);
+
+
+    @Query(value = "SELECT sum(pi.markedScore) as markedScore, sum(pi.auditScore) as auditScore FROM PerAssessAnswerItem pi " +
+            " where pi.id not in (:assessAnswerItemId) and pi.assessAnswerId = :assessAnswerId")
+    PerAPAAScore getAssessAnswerScoreWithoutSomeAnswerItemIds(@Param("assessAnswerId") String _assessAnswerId, @Param("assessAnswerItemId") List<String> _assessAnswerItemId);
+
 }
