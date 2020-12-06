@@ -1,6 +1,7 @@
 package com.yy.cloud.core.assess.data.repositories;
 
 import com.yy.cloud.core.assess.data.domain.PerAPAAScore;
+import com.yy.cloud.core.assess.data.domain.PerApAACountAndScore;
 import com.yy.cloud.core.assess.data.domain.PerAssessAnswerItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -38,5 +39,9 @@ public interface PerAssessAnswerItemRepository extends JpaRepository<PerAssessAn
     @Query(value = "SELECT sum(pi.markedScore) as markedScore, sum(pi.auditScore) as auditScore FROM PerAssessAnswerItem pi " +
             " where pi.id not in (:assessAnswerItemId) and pi.assessAnswerId = :assessAnswerId")
     PerAPAAScore getAssessAnswerScoreWithoutSomeAnswerItemIds(@Param("assessAnswerId") String _assessAnswerId, @Param("assessAnswerItemId") List<String> _assessAnswerItemId);
+
+    @Query(value = "SELECT count(pi.id) as itemCount, sum(pi.markedScore) as markedScore, sum(pi.auditScore) as auditScore FROM PerAssessAnswerItem pi " +
+            " where pi.assessAnswerId = :assessAnswerId")
+    PerApAACountAndScore getAssessAnswerScoreAmount(@Param("assessAnswerId") String _assessAnswerId);
 
 }
