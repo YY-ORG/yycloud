@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public GeneralContentResult<String> handleError1(MaxUploadSizeExceededException e, RedirectAttributes redirectAttributes) {
         GeneralContentResult<String> tempResult = new GeneralContentResult<>();
+        log.error("Get Exception while upload file.", e);
         tempResult.setDetailDescription("Unexpected Error occured...");
         tempResult.setResultCode(ResultCode.FILE_EXCEED_SIZE_MAX);
         return tempResult;
